@@ -1,0 +1,7 @@
+.paket/paket.exe
+.fake
+build
+packages
+*.userprefs
+bin
+obj
