@@ -19,4 +19,4 @@ The library is available under Apache 2.0. For more information see the [License
 
 The maintainer of this project is [Serge Slipchenko](http://github.com/sslipchenko)
 
-    [1]: https://github.com/fsharp/FSharp.Data/blob/master/LICENSE.md
+ [1]: https://github.com/sslipchenko/semagle-framework/blob/master/LICENSE.md
