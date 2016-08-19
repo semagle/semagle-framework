@@ -14,18 +14,27 @@
 
 namespace Semagle.MachineLearning.SVM
 
-/// Kernel function
+/// <summary>Kernel function</summary>
+/// <typeparam name="'X">Type of support vector</typeparam>
 type Kernel<'X> = 'X -> 'X -> float32
 
-/// SVM model definition includes kernel function, array of support vectors with respective weights and bias value.
+/// <summary>SVM model definition includes kernel function, array of support vectors 
+/// with respective weights and bias value.</summary>
+/// <typeparam name="'X">The type of support vector.</typeparam>
 type SVM<'X> = 
+    /// SVM model for two class classification
     | TwoClass of Kernel<'X> * ('X[]) *  (float32[]) * float32
+    /// SVM model for one class classification
     | OneClass of Kernel<'X> * ('X[]) *  (float32[]) * float32
+    /// SVM model for regression
     | Regression of Kernel<'X> * ('X[]) *  (float32[]) * float32
 
 /// Two class classification
 module TwoClass =
-    /// Predict {+1,0,-1} class of the sample x using the specified SVM model.
+    /// <summary>Predict {+1,0,-1} class of the sample x using the specified SVM model.</summary>
+    /// <param name="model">The two class classification model.</param>
+    /// <param name="x">The input sample.</param>
+    /// <returns>The class of the sample.</returns>
     let inline predict (model : SVM<'X>) (x : 'X) =
         match model with 
         | TwoClass (K,X,A,b) -> sign (b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A)
@@ -33,7 +42,10 @@ module TwoClass =
 
 /// One class classification (distribution estimation)
 module OneClass =
-    /// Predict {+1, 0, -1} class of the sample usung the specified SVM model.
+    /// <summary>Predict {+1, 0, -1} class of the sample usung the specified SVM model.</summary>
+    /// <param name="model">The one class classification model.</param>
+    /// <param name="x">The input sample.</param>
+    /// <returns>The class of the sample.</returns>
     let inline predict (model : SVM<'X>) (x : 'X) =
         match model with
         | OneClass (K,X,A,b) -> sign (b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A)
@@ -41,7 +53,10 @@ module OneClass =
 
 /// Regression
 module Regression =
-    /// Predict $y \in R$ target output.
+    /// <summary>Predict $y \in R$ target output.</summary>
+    /// <param name="model">The regression model.</param>
+    /// <param name="x">The input sample.</param>
+    /// <returns>The predicted value.</returns>
     let inline predict (model : SVM<'X>) (x : 'X) =
         match model with
         | Regression (K,X,A,b) -> b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A

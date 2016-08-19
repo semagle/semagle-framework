@@ -17,8 +17,9 @@ namespace Semagle.Numerics.Vectors.IO
 open System.IO
 open Semagle.Numerics.Vectors
 
+/// Reading and writing LIBSVM files
 module LibSVM =
-    /// read sequence of (y, x) pairs from LIBSVM file
+    /// Read sequence of (y, x) pairs from LIBSVM file
     let read (file : string) = seq {
         use r = new StreamReader(file)
         while not r.EndOfStream do
@@ -32,7 +33,7 @@ module LibSVM =
             yield y, SparseVector(indices, values)
     }
 
-    /// write sequence of (y, x) pairs to LIBSVM file
+    /// Write sequence of (y, x) pairs to LIBSVM file
     let write (file : string) (samples : seq<float32*SparseVector>) =
         use w = new StreamWriter(file)
         let str (x : SparseVector) =

@@ -46,9 +46,11 @@ type DenseVector(values : float32[]) =
     /// Returns hash code
     override vector.GetHashCode() = vector.Values.GetHashCode()
 
+    /// Apply function `f` to vector `a` elements and return the resulting `DenseVector` 
     static member inline map (f : float32 -> float32) (a : DenseVector) =
         DenseVector(Array.map f a.Values)
 
+    /// Apply function `f` to vector `a` and `b` elements and return the resulting `DenseVector`
     static member inline map2 (f : float32 -> float32 -> float32) (a : DenseVector) (b : DenseVector) =
         DenseVector(Array.map2 f a.Values b.Values)
 
@@ -121,6 +123,7 @@ type SparseVector(indices : int[], values : float32[]) =
     /// Returns hash code
     override vector.GetHashCode() = 32*vector.Indices.GetHashCode() + 16*vector.Values.GetHashCode()
 
+    /// Apply function `f` to vector `a` elements and return the resulting `SparseVector`
     static member inline map (f : float32 -> float32) (a : SparseVector) =
         let mutable k = 0
 
@@ -134,6 +137,7 @@ type SparseVector(indices : int[], values : float32[]) =
 
         SparseVector(newIndices, newValues)
 
+    /// Apply function `f` to vector `a` and `b` elements and return the resulting `SparseVector`
     static member inline map2 (f : float32 -> float32 -> float32) (a : SparseVector) (b : SparseVector) =
         let mutable i = 0
         let mutable j = 0
@@ -172,6 +176,7 @@ type SparseVector(indices : int[], values : float32[]) =
     /// Element-wise multiplication
     static member inline (*) (a : SparseVector, b : SparseVector) = SparseVector.map2 (*) a b
 
+    /// Fold vectors `a` and `b` by function `f`
     static member inline fold2 (f : float32 -> float32 -> float32 -> float32) (state: float32) (a : SparseVector) (b : SparseVector) = 
         let mutable i = 0
         let mutable j = 0

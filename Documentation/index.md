@@ -2,8 +2,20 @@
 
 Semagle F# Framework is a demonstration of the idea that machine learning and natural language processing 
 problems can be productively solved using F# language. At the current stage, it is hard to achieve even the 
-2x performance of the C code, but .NET runtime and F# compiler are improving. Thus, we might expect 
-that the performance will improve over the time. 
+2x performance of the C code, but .NET runtime and F# compiler are improving.
+
+## Tutorials and documentation
+
+### Tutorials
+
+The following tutorials contain examples that demonstrate features of Semagle.Framework:
+
+ * [SVM classification and regression](tutorials/SVM.html) - shows how to train and evaluate the performance of 
+   SVM models for classification and regression problems.
+
+### Reference documentation
+
+There's also [reference documentation](reference/index.html) available. 
 
 ## License
 

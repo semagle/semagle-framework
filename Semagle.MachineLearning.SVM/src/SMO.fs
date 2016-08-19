@@ -16,6 +16,7 @@ namespace Semagle.MachineLearning.SVM
 
 open LanguagePrimitives
 
+/// Unit of measure for cache size
 [<Measure>] type MB
 
 /// Implementation of Sequential Minimal Optimization (SMO) algorithm
@@ -38,7 +39,7 @@ module SMO =
     [<Literal>]
     let private UpperBound = +1y
 
-    let inline swap (a : 'A[]) i j =
+    let inline private swap (a : 'A[]) i j =
         let tmp = a.[i]
         a.[i] <- a.[j]
         a.[j] <- tmp
@@ -119,13 +120,36 @@ module SMO =
         /// Returns L elements of j-th column of Q matrix
         abstract member C : int -> int -> float32[]
 
+    /// Working set selection strategy
     type WSSStrategy = MaximalViolatingPair | SecondOrderInformation
 
     /// Optimization options of SMO algorithm
-    type OptimizationOptions = { maxIterations : int; strategy : WSSStrategy; shrinking : bool; cacheSize : int<MB> }
+    type OptimizationOptions = {
+        /// The maximum number of SMO algorithm iterations
+        maxIterations : int; 
+        /// The working set selection strategy
+        strategy : WSSStrategy; 
+        /// Enable/disable working set shrinking
+        shrinking : bool; 
+        /// Kernel cache size
+        cacheSize : int<MB> 
+    }
 
     /// General parameters for C_SVM problem
-    type C_SVM = { A : float32[]; C : float32[]; p: float32[]; epsilon : float32; Q : Q; options : OptimizationOptions }
+    type C_SVM = { 
+        /// Initial feasible values of optimization varibles
+        A : float32[];
+        /// Per-sample penalties 
+        C : float32[];
+        /// The linear term of the optimized function 
+        p: float32[]; 
+        /// The maximum optimization error
+        epsilon : float32; 
+        /// The kernel matrix
+        Q : Q; 
+        /// General SMO algorithm options
+        options : OptimizationOptions 
+    }
 
     /// Sequential Minimal Optimization (SMO) problem solver
     let C_SMO (X : 'X[]) (Y : float32[]) (K : Kernel<'X>) (parameters : C_SVM) = 
@@ -463,7 +487,16 @@ module SMO =
             member q.C (j : int) (L : int) = lru.Get j L
 
     /// Optimization parameters for C_SVC problem 
-    type C_SVC = { C_p : float32; C_n : float32; epsilon : float32; options : OptimizationOptions }
+    type C_SVC = {
+        /// The penalty for +1 class instances 
+        C_p : float32;
+        /// The penalty for -1 class instances 
+        C_n : float32; 
+        /// The maximum optimization error
+        epsilon : float32; 
+        /// General SMO algorithm options
+        options : OptimizationOptions 
+    }
 
     /// C Support Vector Classification (SVC) problem solver
     let C_SVC (X : 'X[]) (Y : float32[]) (K : Kernel<'X>) (parameters : C_SVC) =
@@ -494,7 +527,14 @@ module SMO =
         TwoClass(K,X'',A'',b)
 
     /// Optimization parameters for One-Class problem
-    type OneClass = { nu : float32; epsilon : float32; options : OptimizationOptions }
+    type OneClass = {
+        /// The fraction of support vectors 
+        nu : float32;
+        /// The maximum optimization error 
+        epsilon : float32;
+        /// General SMO algorithm options 
+        options : OptimizationOptions 
+    }
 
     /// One-Class problem solver
     let OneClass (X : 'X[]) (K : Kernel<'X>) (parameters : OneClass) = 
@@ -562,7 +602,16 @@ module SMO =
 
 
     /// Optimization parameters for C_SVR problem
-    type C_SVR = { eta : float32; C : float32; epsilon : float32; options : OptimizationOptions }
+    type C_SVR = {
+        /// The boundary of the approximated function
+        eta : float32;
+        /// The penalty 
+        C : float32;
+        /// The maximum optimization error  
+        epsilon : float32;
+        /// General SMO algorithm options 
+        options : OptimizationOptions 
+    }
 
     /// C Support Vector Regression (SVR) problem solver
     let C_SVR (X : 'X[]) (Y : float32[]) (K : Kernel<'X>) (parameters : C_SVR) =

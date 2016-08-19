@@ -24,9 +24,9 @@
       <div class="masthead">
         <h3 class="muted">
           @if(Properties.Dictionary.ContainsKey("library-name")) {
-            <a href="@Root/../index.html">@Properties["project-name"]</a>
+            <a href="@Root/index.html">@Properties["project-name"]</a>
             <span>::</span>
-            <a href="@Root/index.html">@Properties["library-name"]</a> 
+            <a href="@Root/@Properties["library-name"]/index.html">@Properties["library-name"]</a> 
           } else {
             <a href="@Root/index.html">@Properties["project-name"]</a>
           }
@@ -45,6 +45,7 @@
             <li class="divider"></li>
 
             <!-- <li><a href="@Properties["project-nuget"]">Get @Properties["project-name"] package via NuGet</a></li> -->
+            <li><a href="http://blog.semagle.com">Semagle Blog</a>
             <li><a href="@Properties["project-github"]">Source Code on GitHub</a></li>
             <li><a href="@Properties["project-github"]/blob/master/LICENSE.md">License (Apache 2.0)</a></li>
 
@@ -54,17 +55,13 @@
 
             <li class="nav-header">Libraries</li>
 
-            <li><a href="@Root/Semagle.Numeric.Vectors/index.html">Vectors Library</a></li>
-            <li><a href="@Root/Semagle.Numeric.Vectors.IO/index.html">Vectors I/O Library</a></li>
+            <li><a href="@Root/Semagle.Numerics.Vectors/index.html">Vectors Library</a></li>
+            <li><a href="@Root/Semagle.Numerics.Vectors.IO/index.html">Vectors I/O Library</a></li>
             <li><a href="@Root/Semagle.MachineLearning.SVM/index.html">SVM Library</a></li>
 
-            <!--
             <li class="nav-header">Tutorials</li>
 
-            <li><a href="@Root/tutorial1.html">Tutorial 1</a></li>
-            <li><a href="@Root/tutorial2.html">Tutorial 2</a></li>
-
-            -->
+            <li><a href="@Root/tutorials/SVM.html">SVM classification and regression</a></li>
 
             <li class="nav-header">Reference</li>
 

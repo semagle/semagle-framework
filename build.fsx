@@ -1,7 +1,23 @@
+// Copyright 2016 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #r "packages/build/FAKE/tools/FakeLib.dll"
 
 open Fake.FscHelper
 open Fake
+open Fake.Git
+open System
 open System.IO
 
 let buildDir = "./build/"
@@ -19,7 +35,7 @@ Target "TestAll" (fun _ ->
 
 Target "BuildLibraries" (fun _ -> 
     !!"Semagle.*/*.fsproj"
-    |> MSBuildRelease buildDir "Build"
+    |> MSBuildRelease buildDir "Build" 
     |> Log "LibrariesBuild-Output: ")
 
 Target "BuildTests" (fun _ -> 
@@ -45,7 +61,68 @@ Target "BuildSamples" ( fun _ ->
     |> Log "Sample: "
 )
 
-Target "BuildAll" (fun _ -> ())
+// Generate the documentation
+let fakePath = "packages" </> "build" </> "FAKE" </> "tools" </> "FAKE.exe"
+let fakeStartInfo script workingDirectory args fsiargs environmentVars =
+    (fun (info: System.Diagnostics.ProcessStartInfo) ->
+        info.FileName <- System.IO.Path.GetFullPath fakePath
+        info.Arguments <- sprintf "%s --fsiargs -d:FAKE %s \"%s\"" args fsiargs script
+        info.WorkingDirectory <- workingDirectory
+        let setVar k v =
+            info.EnvironmentVariables.[k] <- v
+        for (k, v) in environmentVars do
+            setVar k v
+        setVar "MSBuild" msBuildExe
+        setVar "GIT" Git.CommandHelper.gitPath
+        setVar "FSI" fsiPath)
+
+/// Run the given buildscript with FAKE.exe
+let executeFAKEWithOutput workingDirectory script fsiargs envArgs =
+    let exitCode =
+        ExecProcessWithLambdas
+            (fakeStartInfo script workingDirectory "" fsiargs envArgs)
+            TimeSpan.MaxValue false ignore ignore
+    System.Threading.Thread.Sleep 1000
+    exitCode
+
+// Documentation
+let buildDocumentationTarget fsiargs target =
+    trace (sprintf "Building documentation (%s), this could take some time, please wait..." target)
+    let exit = executeFAKEWithOutput "Documentation" "generate.fsx" fsiargs ["target", target]
+    if exit <> 0 then
+        failwith "generating reference documentation failed"
+    ()  
+
+Target "GenerateReference" (fun _ ->
+    buildDocumentationTarget "-d:RELEASE -d:REFERENCE" "Default"
+)      
+
+Target "GenerateHelp" (fun _ ->
+    buildDocumentationTarget "-d:RELEASE -d:HELP" "Default"
+)
+
+Target "BuildDocumentation" DoNothing
+
+Target "ReleaseDocumentation" (fun _ ->
+    let url = CommandHelper.runSimpleGitCommand __SOURCE_DIRECTORY__ "remote get-url origin"
+    let ghPages = buildDir + "gh-pages"
+    CleanDir ghPages
+    Repository.cloneSingleBranch "" url "gh-pages" ghPages
+
+    Directory.GetDirectories(ghPages) 
+    |> Seq.filter (fun dir -> Path.GetFileName(dir) <> ".git") 
+    |> Seq.iter (fun dir -> Directory.Delete(dir, true))
+    Directory.GetFiles(ghPages) |> Seq.iter File.Delete
+
+    !! "Documentation/**/*.html" ++ "Documentation/**/*.css" ++ "Documentation/**/*.js" ++ "Documentation/**/*.png"
+    |> Seq.iter (fun file -> CopyFileWithSubfolder "Documentation" ghPages file)
+
+    StageAll ghPages
+    Git.Commit.Commit ghPages (sprintf "Update generated documentation")
+    Branches.push ghPages
+)
+
+Target "BuildAll" DoNothing
 
 "Clean" ==> "BuildLibraries"
 
@@ -54,7 +131,14 @@ Target "BuildAll" (fun _ -> ())
 
 "BuildTests" ==> "TestAll"
 
+"BuildLibraries" ==> "GenerateReference"
+"GenerateHelp" ==> "BuildDocumentation"
+"GenerateReference" ==> "BuildDocumentation"
+
 "TestAll" ==> "BuildAll"
+"BuildDocumentation" ==> "BuildAll"
 "BuildSamples" ==> "BuildAll" 
+
+"BuildDocumentation" ==> "ReleaseDocumentation"
 
 RunTargetOrDefault "TestAll"
