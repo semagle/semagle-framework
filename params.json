@@ -1,0 +1,6 @@
+{
+  "name": "Semagle Framework",
+  "tagline": "Semagle: F# Framework for Machine Learning and Natural Language Processing",
+  "body": "# Semagle: F# Framework for Machine Learning and Natural Language Processing\r\n\r\nSemagle F# Framework is a demonstration of the idea that machine learning and natural language processing \r\nproblems can be productively solved using F# language. At the current stage, it is hard to achieve even the \r\n2x performance of the C code, but .NET runtime and F# compiler are improving. Thus, we might expect \r\nthat the performance will improve over the time. \r\n\r\n## Building\r\n\r\n- Simply build Semagle.Framework.sln in Visual Studio 2015, Mono Develop, or Xamarin Studio, or use the FAKE build:\r\n * Windows: Run *build.cmd*\r\n * Mono on Linux or MacOS X: Run *build.sh*  \r\n\r\n## License\r\n\r\nThe library is available under Apache 2.0. For more information see the [License file][1] in the GitHub repository.\r\n\r\n## Maintainers\r\n\r\nThe maintainer of this project is [Serge Slipchenko](http://github.com/sslipchenko)\r\n\r\n [1]: https://github.com/sslipchenko/semagle-framework/blob/master/LICENSE.md\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
