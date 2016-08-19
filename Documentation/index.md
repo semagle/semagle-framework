@@ -4,6 +4,12 @@ Semagle F# Framework is a demonstration of the idea that machine learning and na
 problems can be productively solved using F# language. At the current stage, it is hard to achieve even the 
 2x performance of the C code, but .NET runtime and F# compiler are improving.
 
+## Building
+
+- Simply build Semagle.Framework.sln in Visual Studio 2015, Mono Develop, or Xamarin Studio, or use the FAKE build:
+ * Windows: Run *build.cmd*
+ * Mono on Linux or MacOS X: Run *build.sh*  
+
 ## Tutorials and documentation
 
 ### Tutorials
