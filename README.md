@@ -9,7 +9,11 @@ that the performance will improve over the time.
 
 - Simply build Semagle.Framework.sln in Visual Studio 2015, Mono Develop, or Xamarin Studio, or use the FAKE build:
  * Windows: Run *build.cmd*
- * Mono on Linux or MacOS X: Run *build.sh*  
+ * Mono on Linux or MacOS X: Run *build.sh*
+
+## Documentation
+
+See [Semagle.Framework](https://sslipchenko.github.io/semagle-framework/) documentation pages. 
 
 ## License
 
