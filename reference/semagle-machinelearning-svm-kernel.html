@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Kernel - Semagle.Framework</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Serge Slipchenko">
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="/Semagle.Framework/content/style.css" />
+    <script type="text/javascript" src="/Semagle.Framework/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <h3 class="muted">
+            <a href="/Semagle.Framework/index.html">Semagle.Framework</a>
+        </h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>Kernel</h1>
+<p>
+  <span>Namespace: Semagle.MachineLearning.SVM</span><br />
+</p>
+<div class="xmldoc">
+<p>Popular kernel functions definitions</p>
+
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1', 1)" onmouseover="showTip(event, '1', 1)">
+            linear x1 x2
+          </code>
+          <div class="tip" id="1">
+            <strong>Signature:</strong> x1:^X -&gt; x2:^X -&gt; float32<br />
+                          <strong>Type parameters:</strong> ^X          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/Kernel.fs#L20-20" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Linear kernel function <span class="math">\((x_1 \cdot x_2)\)</span></p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
+            polynomial gamma mu n x1 x2
+          </code>
+          <div class="tip" id="2">
+            <strong>Signature:</strong> gamma:float32 -&gt; mu:float32 -&gt; n:float32 -&gt; x1:^X -&gt; x2:^X -&gt; float32<br />
+                          <strong>Type parameters:</strong> ^X          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/Kernel.fs#L23-23" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Polynomial kernel function <span class="math">\((\gamma*(x_1 \cdot x_2)+\mu)^n\)</span></p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
+            rbf gamma x1 x2
+          </code>
+          <div class="tip" id="3">
+            <strong>Signature:</strong> gamma:float32 -&gt; x1:^X -&gt; x2:^X -&gt; float32<br />
+                          <strong>Type parameters:</strong> ^X          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/Kernel.fs#L26-26" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Radial basis kernel function <span class="math">\(exp(-\gamma||x_1 - x_2||^2)\)</span></p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
+            sigmoid gamma mu x1 x2
+          </code>
+          <div class="tip" id="4">
+            <strong>Signature:</strong> gamma:float32 -&gt; mu:float32 -&gt; x1:^X -&gt; x2:^X -&gt; float32<br />
+                          <strong>Type parameters:</strong> ^X          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/Kernel.fs#L30-30" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Sigmoid kernel function <span class="math">\(tanh(\gamma(x_1 \cdot x_2)+\mu)\)</span></p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+            <ul class="nav nav-list" id="menu">
+
+            <li class="nav-header">Semagle.Framework</li>
+
+            <li class="divider"></li>
+
+            <!-- <li><a href="">Get Semagle.Framework package via NuGet</a></li> -->
+            <li><a href="http://blog.semagle.com">Semagle Blog</a>
+            <li><a href="https://github.com/sslipchenko/semagle-framework">Source Code on GitHub</a></li>
+            <li><a href="https://github.com/sslipchenko/semagle-framework/blob/master/LICENSE.md">License (Apache 2.0)</a></li>
+
+            <li class="nav-header">Documentation</li>
+
+            <li><a href="/Semagle.Framework/index.html">Introduction</a></li>
+
+            <li class="nav-header">Libraries</li>
+
+            <li><a href="/Semagle.Framework/Semagle.Numerics.Vectors/index.html">Vectors Library</a></li>
+            <li><a href="/Semagle.Framework/Semagle.Numerics.Vectors.IO/index.html">Vectors I/O Library</a></li>
+            <li><a href="/Semagle.Framework/Semagle.MachineLearning.SVM/index.html">SVM Library</a></li>
+
+            <li class="nav-header">Tutorials</li>
+
+            <li><a href="/Semagle.Framework/tutorials/SVM.html">SVM classification and regression</a></li>
+
+            <li class="nav-header">Reference</li>
+
+            <li><a href="/Semagle.Framework/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/sslipchenko/semagle-framework"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  </body>
+  </html>

@@ -2,10 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Semagle: F# Framework for Machine Learning and Natural Language Processing
-</title>
+    <title>TwoClass - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Semagle: F# Framework for Machine Learning and Natural Language Processing">
+    <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
 
     <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
@@ -31,29 +30,48 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h1>Semagle: F# Framework for Machine Learning and Natural Language Processing</h1>
-<p>Semagle F# Framework is a demonstration of the idea that machine learning and natural language processing
-problems can be productively solved using F# language. At the current stage, it is hard to achieve even the
-2x performance of the C code, but .NET runtime and F# compiler are improving.</p>
-<h2>Tutorials and documentation</h2>
-<h3>Tutorials</h3>
-<p>The following tutorials contain examples that demonstrate features of Semagle.Framework:</p>
-<ul>
-<li>
-<a href="tutorials/SVM.html">SVM classification and regression</a> - shows how to train and evaluate the performance of 
-SVM models for classification and regression problems.
-</li>
-</ul>
-<h3>Reference documentation</h3>
-<p>There's also <a href="reference/index.html">reference documentation</a> available.</p>
-<h2>License</h2>
-<p>Copyright 2016 Serge Slipchenko (Serge.Slipchenko@gmail.com)</p>
-<p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
-with the License. You may obtain a copy of the License at <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
-<p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
-on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
-the specific language governing permissions and limitations under the License.</p>
 
+
+
+<h1>TwoClass</h1>
+<p>
+  <span>Namespace: Semagle.MachineLearning.SVM</span><br />
+</p>
+<div class="xmldoc">
+<p>Two class classification</p>
+
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
+            predict model x
+          </code>
+          <div class="tip" id="11">
+            <strong>Signature:</strong> model:SVM&lt;&#39;X&gt; -&gt; x:&#39;X -&gt; int<br />
+                          <strong>Type parameters:</strong> 'X          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SVM.fs#L38-38" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Predict {+1,0,-1} class of the sample x using the specified SVM model.</p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
         </div>
         <div class="span3">

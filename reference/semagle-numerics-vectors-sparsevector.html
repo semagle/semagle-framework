@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>SparseVector - Semagle.Framework</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Serge Slipchenko">
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="/Semagle.Framework/content/style.css" />
+    <script type="text/javascript" src="/Semagle.Framework/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <h3 class="muted">
+            <a href="/Semagle.Framework/index.html">Semagle.Framework</a>
+        </h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>SparseVector</h1>
+<p>
+  <span>Namespace: Semagle.Numerics.Vectors</span><br />
+</p>
+<div class="xmldoc">
+<p>Sparse vector stores non-zero values and non-zero values indeces</p>
+
+</div>
+  <h3>Constructors</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Constructor</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
+            new(indices, values)
+          </code>
+          <div class="tip" id="57">
+            <strong>Signature:</strong> (indices:int [] * values:float32 []) -&gt; SparseVector<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L85-85" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
+            GetSlice(a, b)
+          </code>
+          <div class="tip" id="58">
+            <strong>Signature:</strong> (a:int option * b:int option) -&gt; SparseVector<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L99-99" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Returns vector slice</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
+            Indices
+          </code>
+          <div class="tip" id="59">
+            <strong>Signature:</strong> int []<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L87-87" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Returns underlying indices array</p>
+
+
+              <p>CompiledName: <code>get_Indices</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
+            [i]
+          </code>
+          <div class="tip" id="60">
+            <strong>Signature:</strong> i:int -&gt; float32<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L93-93" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Gets vector element value</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
+            Values
+          </code>
+          <div class="tip" id="61">
+            <strong>Signature:</strong> float32 []<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L90-90" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Returns underlying values array</p>
+
+
+              <p>CompiledName: <code>get_Values</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Static members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Static member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
+            ( - )(a, b)
+          </code>
+          <div class="tip" id="62">
+            <strong>Signature:</strong> (a:SparseVector * b:SparseVector) -&gt; SparseVector<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L174-174" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Element-wise substraction</p>
+
+
+              <p>CompiledName: <code>op_Subtraction</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
+            ( * )(a, c)
+          </code>
+          <div class="tip" id="63">
+            <strong>Signature:</strong> (a:SparseVector * c:float32) -&gt; SparseVector<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L227-227" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Mutiply each element of vector by scalar</p>
+
+
+              <p>CompiledName: <code>op_Multiply</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
+            ( * )(a, b)
+          </code>
+          <div class="tip" id="64">
+            <strong>Signature:</strong> (a:SparseVector * b:SparseVector) -&gt; SparseVector<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L177-177" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Element-wise multiplication</p>
+
+
+              <p>CompiledName: <code>op_Multiply</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+            ( .* )(a, b)
+          </code>
+          <div class="tip" id="65">
+            <strong>Signature:</strong> (a:SparseVector * b:SparseVector) -&gt; float32<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L204-204" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Scalar product</p>
+
+
+              <p>CompiledName: <code>op_DotMultiply</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+            ( / )(a, c)
+          </code>
+          <div class="tip" id="66">
+            <strong>Signature:</strong> (a:SparseVector * c:float32) -&gt; SparseVector<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L230-230" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Divide each element of vector by scalar</p>
+
+
+              <p>CompiledName: <code>op_Division</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
+            ( ~- )(a)
+          </code>
+          <div class="tip" id="67">
+            <strong>Signature:</strong> a:SparseVector -&gt; SparseVector<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L224-224" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Negation of vector</p>
+
+
+              <p>CompiledName: <code>op_UnaryNegation</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
+            ( + )(a, b)
+          </code>
+          <div class="tip" id="68">
+            <strong>Signature:</strong> (a:SparseVector * b:SparseVector) -&gt; SparseVector<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L171-171" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Element-wise addition</p>
+
+
+              <p>CompiledName: <code>op_Addition</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
+            fold2(f state a b)
+          </code>
+          <div class="tip" id="69">
+            <strong>Signature:</strong> (f:(float32 -&gt; float32 -&gt; float32 -&gt; float32)) -&gt; state:float32 -&gt; a:SparseVector -&gt; b:SparseVector -&gt; float32<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L180-180" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Fold vectors <code>a</code> and <code>b</code> by function <code>f</code></p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
+            map(f a)
+          </code>
+          <div class="tip" id="70">
+            <strong>Signature:</strong> (f:(float32 -&gt; float32)) -&gt; a:SparseVector -&gt; SparseVector<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L127-127" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Apply function <code>f</code> to vector <code>a</code> elements and return the resulting <a href="semagle-numerics-vectors-sparsevector.html" title="SparseVector"><code>SparseVector</code></a></p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
+            map2(f a b)
+          </code>
+          <div class="tip" id="71">
+            <strong>Signature:</strong> (f:(float32 -&gt; float32 -&gt; float32)) -&gt; a:SparseVector -&gt; b:SparseVector -&gt; SparseVector<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L141-141" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Apply function <code>f</code> to vector <code>a</code> and <code>b</code> elements and return the resulting <a href="semagle-numerics-vectors-sparsevector.html" title="SparseVector"><code>SparseVector</code></a></p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+            <ul class="nav nav-list" id="menu">
+
+            <li class="nav-header">Semagle.Framework</li>
+
+            <li class="divider"></li>
+
+            <!-- <li><a href="">Get Semagle.Framework package via NuGet</a></li> -->
+            <li><a href="http://blog.semagle.com">Semagle Blog</a>
+            <li><a href="https://github.com/sslipchenko/semagle-framework">Source Code on GitHub</a></li>
+            <li><a href="https://github.com/sslipchenko/semagle-framework/blob/master/LICENSE.md">License (Apache 2.0)</a></li>
+
+            <li class="nav-header">Documentation</li>
+
+            <li><a href="/Semagle.Framework/index.html">Introduction</a></li>
+
+            <li class="nav-header">Libraries</li>
+
+            <li><a href="/Semagle.Framework/Semagle.Numerics.Vectors/index.html">Vectors Library</a></li>
+            <li><a href="/Semagle.Framework/Semagle.Numerics.Vectors.IO/index.html">Vectors I/O Library</a></li>
+            <li><a href="/Semagle.Framework/Semagle.MachineLearning.SVM/index.html">SVM Library</a></li>
+
+            <li class="nav-header">Tutorials</li>
+
+            <li><a href="/Semagle.Framework/tutorials/SVM.html">SVM classification and regression</a></li>
+
+            <li class="nav-header">Reference</li>
+
+            <li><a href="/Semagle.Framework/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/sslipchenko/semagle-framework"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  </body>
+  </html>
