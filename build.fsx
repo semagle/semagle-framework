@@ -31,7 +31,8 @@ Target "TestAll" (fun _ ->
     |> NUnit (fun p ->
         {p with
             DisableShadowCopy = true;
-            OutputFile = buildDir + "TestResults.xml" }))
+            OutputFile = "TestResults.xml";
+            WorkingDir = buildDir }))
 
 Target "BuildLibraries" (fun _ -> 
     !!"Semagle.*/*.fsproj"
