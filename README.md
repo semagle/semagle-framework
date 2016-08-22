@@ -8,10 +8,10 @@ that the performance will improve over the time.
 ## Building
 
 - Simply build Semagle.Framework.sln in Visual Studio 2015, Mono Develop, or Xamarin Studio, or use the FAKE build:
- * Windows: Run *build.cmd*
-   [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/nik2nx0m9kh3a84f?svg=true)](https://ci.appveyor.com/project/sslipchenko/semagle-framework/)
- * Mono on Linux or MacOS X: Run *build.sh* 
-   [![Travis build status](https://travis-ci.org/sslipchenko/semagle-framework.svg)](https://travis-ci.org/sslipchenko/semagle-framework)
+ * [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/nik2nx0m9kh3a84f?svg=true)](https://ci.appveyor.com/project/sslipchenko/semagle-framework/)
+   Windows: Run *build.cmd*
+ * [![Travis build status](https://travis-ci.org/sslipchenko/semagle-framework.svg)](https://travis-ci.org/sslipchenko/semagle-framework)
+   Mono on Linux or MacOS X: Run *build.sh*
 
 ## Documentation
 
