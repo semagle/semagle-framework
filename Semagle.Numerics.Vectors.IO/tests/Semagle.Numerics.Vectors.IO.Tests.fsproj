@@ -47,6 +47,9 @@
     <Reference Include="FsUnit.NUnit">
       <HintPath>..\..\packages\test\FsUnit\lib\net45\FsUnit.NUnit.dll</HintPath>
     </Reference>
+    <Reference Include="NHamcrest">
+      <HintPath>..\..\packages\test\FsUnit\lib\net45\NHamcrest.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LibSVMTests.fs" />
