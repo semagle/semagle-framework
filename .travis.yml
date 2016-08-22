@@ -1,0 +1,8 @@
+language: csharp
+mono:
+    - latest
+    - 4.4.2
+solution: Semagle.Framework.sln
+script:
+    - ./build.sh BuildAll
+    
