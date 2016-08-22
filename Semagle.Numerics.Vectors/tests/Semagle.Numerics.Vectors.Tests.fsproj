@@ -61,5 +61,8 @@
       <Name>Semagle.Numerics.Vectors</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" />
 </Project>
