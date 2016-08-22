@@ -1,8 +1,6 @@
 init:
   - git config --global core.autocrlf input
-build_script:
-  - cmd: build.cmd
-test: off
+test: on
 artifacts:
   - path: build\Semagle.*.dll
     name: Libraries
