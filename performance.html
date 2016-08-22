@@ -2,9 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>WSSStrategy - Semagle.Framework</title>
+    <title>Performance
+</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
+    <meta name="description" content="Semagle: F# Framework for Machine Learning and Natural Language Processing">
     <meta name="author" content="Serge Slipchenko">
 
     <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
@@ -30,62 +31,97 @@
       <div class="row">
         <div class="span9" id="main">
           
+<h1>Performance</h1>
+<p>Performance is one of the main concerns of machine learning algorithms developers. The native SVM
+implementation highly optimized for specific kernel types  (LIBSVM) definitely shows the best training
+and testing times. Yet on Windows, LIBSVM is it is just 3 times faster than the general F# implementation
+that runs on Microsoft .Net Framework 4.6.1. On MacOS X and Mono 4.4.2 the performance of the F# code is
+more than 10 times worse that the native code, but on .NET Core 1.0.1 it is similar to Windows. Thus,
+tradeoff between productivity and performance is fair enough.</p>
+<h2>Windows</h2>
+<ul>
+<li><strong>Computer</strong>: Dell Inspirion 5521</li>
+<li><strong>Processor</strong>: 2.0 GHz Intel Core i7</li>
+<li><strong>Memory</strong>: 8 GB</li>
+<li><strong>Operating System</strong>: Windows 10 64-bit</li>
+<li><strong>.NET Framework</strong>: Microsoft .NET Framework 4.6.1</li>
+</ul>
+<p><table border="1" cellpadding="5">
+<thead>
+<tr>
+<th rowspan="3">Time<br>(seconds)</th>
+<th colspan="3">Executables</th>
+</tr>
+<tr>
+<th rowspan="2">LIBSVM 3.20<br>Native</th>
+<th colspan="2">Microsoft .NET 4.6.1 Runtime</th>
+</tr>
+<tr>
+<th>Mono 4.4.2</th>
+<th>MS .NET 4.6.1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>train</td>
+<td>83.937</td>
+<td>268.364</td>
+<td>260.278</td>
+</tr>
+<tr>
+<td>test</td>
+<td>18.945</td>
+<td>39.990</td>
+<td>38.854</td>
+</tr>
+</tbody>
+</table></p>
+<h2>MacOS X</h2>
+<ul>
+<li><strong>Computer</strong>: MacBook Pro (Retina, 15-inch, Mid 2014)</li>
+<li><strong>Processor</strong>: 2.2 GHz Intel Core i7</li>
+<li><strong>Memory</strong>: 16 GB 1600 MHz DDR3</li>
+<li><strong>Operating System</strong>: OS X El Capitan (10.11.6)</li>
+<li><strong>.NET Framework</strong>: Mono 4.4.2 / .NET Core 1.0.1</li>
+</ul>
+<p><table border="1" cellpadding="5">
+<thead>
+<tr>
+<th rowspan="3">Time<br>(seconds)</th>
+<th colspan="5">Executables</th>
+</tr>
+<tr>
+<th rowspan="2">LIBSVM 3.20<br>Native</th>
+<th colspan="2">Mono 4.4.2 Runtime</th>
+<th colspan="2">.NET Core 1.0.1</th>
+</tr>
+<tr>
+<th>Mono 4.4.2</th>
+<th>MS .NET 4.6.1</th>
+<th>Mono 4.4.2</th>
+<th>MS .NET 4.6.1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>train</td>
+<td>56.497</td>
+<td>702.595</td>
+<td>728.337</td>
+<td>234.270</td>
+<td>236.324</td>
+</tr>
+<tr>
+<td>test</td>
+<td>12.706</td>
+<td>88.464</td>
+<td>102.674</td>
+<td>36.199</td>
+<td>29.427</td>
+</tr>
+</tbody>
+</table></p>
 
-
-
-<h1>WSSStrategy</h1>
-<p>
-  <span>Namespace: Semagle.MachineLearning.SVM</span><br />
-  <span>Parent Module: <a href="semagle-machinelearning-svm-smo.html">SMO</a></span>
-</p>
-<div class="xmldoc">
-<p>Working set selection strategy</p>
-
-</div>
-  <h3>Union Cases</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Union Case</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
-            MaximalViolatingPair
-          </code>
-          <div class="tip" id="38">
-            <strong>Signature:</strong> <br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L124-124" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
-            SecondOrderInformation
-          </code>
-          <div class="tip" id="39">
-            <strong>Signature:</strong> <br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L124-124" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-    </tbody>
-  </table>
 
         </div>
         <div class="span3">
