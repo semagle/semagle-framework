@@ -15,6 +15,7 @@
 namespace Semagle.MachineLearning.SVM
 
 open LanguagePrimitives
+open System.Threading.Tasks
 
 /// Unit of measure for cache size
 [<Measure>] type MB
@@ -60,12 +61,12 @@ module SMO =
                 let column = columns.[index]
                 let length = lengths.[index]
                 if length < L then
-                    for i = length to L-1 do
-                        column.[i] <- Q i j
+                    Parallel.For(length, L, fun i -> column.[i] <- Q i j) |> ignore
                     lengths.[index] <- L
                 column
             else 
-                let column = Array.init N (fun i -> if i < L then Q i j else 0.0f)
+                let column = Array.zeroCreate N
+                Parallel.For(0, L, fun i -> column.[i] <- Q i j) |> ignore
                 lru.insert j column L
                 column
 
