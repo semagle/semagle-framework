@@ -135,8 +135,8 @@ module SMO =
         cacheSize : int<MB> 
     }
 
-    /// General parameters for C_SVM problem
-    type C_SVM = { 
+    /// General parameters for C_SMO problem
+    type C_SMO = { 
         /// Initial feasible values of optimization varibles
         A : float32[];
         /// Per-sample penalties 
@@ -145,14 +145,12 @@ module SMO =
         p: float32[]; 
         /// The maximum optimization error
         epsilon : float32; 
-        /// The kernel matrix
-        Q : Q; 
         /// General SMO algorithm options
         options : OptimizationOptions 
     }
 
     /// Sequential Minimal Optimization (SMO) problem solver
-    let C_SMO (X : 'X[]) (Y : float32[]) (K : Kernel<'X>) (parameters : C_SVM) = 
+    let C_SMO (X : 'X[]) (Y : float32[]) (Q : Q) (parameters : C_SMO) = 
         if Array.length X <> Array.length Y then
             invalidArg "X and Y" "have different lengths"
 
@@ -163,7 +161,6 @@ module SMO =
         let p = parameters.p
 
         let N = Array.length X
-        let Q = parameters.Q
         let A = parameters.A
 
         let inline status i = 
@@ -467,7 +464,7 @@ module SMO =
                     M <- M + 1
             DivideByInt b M
 
-        (K,X,Y,A,bias)
+        (X,Y,A,bias)
 
     /// Q matrix for classification problems
     type private Q_C(capacity : int, N : int, Q : int -> int -> float32) =
@@ -507,10 +504,9 @@ module SMO =
         let p = Array.create N -1.0f
         let A = Array.zeroCreate N
 
-        let (K,X',Y',A',b) = C_SMO X' Y' K { epsilon = parameters.epsilon; A = A; C = C; p = p;
-                                             Q = new Q_C(LRU.capacity parameters.options.cacheSize N, N, 
-                                                         (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j])); 
-                                             options = parameters.options }
+        let Q = new Q_C(LRU.capacity parameters.options.cacheSize N, N, (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]))
+        let (X',Y',A',b) = C_SMO X' Y' Q { epsilon = parameters.epsilon; A = A; C = C; p = p;
+                                           options = parameters.options }
 
         // Remove support vectors with A.[i] = 0.0 and compute Y.[i]*A.[i]
         let N'' = Array.sumBy (fun a -> if a <> 0.0f then 1 else 0) A'
@@ -550,10 +546,9 @@ module SMO =
             | _ when i > n -> 0.0f
             | _ -> parameters.nu * (float32 N) - (float32 n))
 
-        let (K,X',_,A',b) = C_SMO X' Y K { epsilon = parameters.epsilon; A = A; C = C; p = p; 
-                                           Q = new Q_C(LRU.capacity parameters.options.cacheSize N, N, 
-                                                       (fun i j -> K X'.[i] X'.[j]));
-                                           options = parameters.options }
+        let Q = new Q_C(LRU.capacity parameters.options.cacheSize N, N, (fun i j -> K X'.[i] X'.[j]))
+        let (X',_,A',b) = C_SMO X' Y Q { epsilon = parameters.epsilon; A = A; C = C; p = p; 
+                                         options = parameters.options }
 
         // Remove support vectors with A.[i] = 0.0
         let N'' = Array.sumBy (fun a -> if a <> 0.0f then 1 else 0) A'
@@ -624,8 +619,8 @@ module SMO =
         let A' = Array.zeroCreate N'
 
         let Q = new Q_R(LRU.capacity parameters.options.cacheSize (2*N), N, (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]))
-        let (K,X',_,A',b) = C_SMO X' Y' K { epsilon = parameters.epsilon; A = A'; C = C'; p = p'; Q = Q;
-                                            options = parameters.options }
+        let (X',_,A',b) = C_SMO X' Y' Q { epsilon = parameters.epsilon; A = A'; C = C'; p = p';
+                                          options = parameters.options }
 
         // Compute -A.[i] + A.[i+N]
         let A = Array.zeroCreate N
