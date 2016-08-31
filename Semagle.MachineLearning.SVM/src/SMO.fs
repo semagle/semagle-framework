@@ -496,7 +496,7 @@ module SMO =
         options : OptimizationOptions 
     }
 
-    /// C Support Vector Classification (SVC) problem solver
+    /// Two class C Support Vector Classification (SVC) problem solver
     let C_SVC (X : 'X[]) (Y : float32[]) (K : Kernel<'X>) (parameters : C_SVC) =
         let N = Array.length X
         let X' = Array.copy X
@@ -522,6 +522,26 @@ module SMO =
                 k <- k + 1
 
         TwoClass(K,X'',A'',b)
+
+    /// Multi-class C Support Vector Classification (SVC) problem solver
+    let C_SVC_M (X : 'X[]) (Y : 'Y[]) (K : Kernel<'X>) (parameters : C_SVC) =
+        let models = 
+            seq { 
+                let S = Array.distinct Y
+                for i = 0 to (Array.length S)-2 do
+                    for j = i+1 to (Array.length S)-1 do
+                        yield (S.[i], S.[j]) }
+            |> Seq.toArray
+            |> Array.Parallel.map (fun (y', y'') ->
+                let X',Y' = 
+                    Array.zip X Y 
+                    |> Array.filter (fun (_, y) -> y = y' || y = y'')
+                    |> Array.map (fun (x, y) -> (x, if y = y' then +1.0f else -1.0f))
+                    |> Array.unzip
+                match C_SVC X' Y' K parameters with
+                | TwoClass(_, X, A,b) -> (y', y'', X, A, b)
+                | _ -> invalidArg "svm" "type is invalid")
+        MultiClass(K, models)
 
     /// Optimization parameters for One-Class problem
     type OneClass = {

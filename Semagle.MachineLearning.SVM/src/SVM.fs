@@ -21,13 +21,15 @@ type Kernel<'X> = 'X -> 'X -> float32
 /// <summary>SVM model definition includes kernel function, array of support vectors 
 /// with respective weights and bias value.</summary>
 /// <typeparam name="'X">The type of support vector.</typeparam>
-type SVM<'X> = 
+type SVM<'X,'Y> = 
     /// SVM model for two class classification
     | TwoClass of Kernel<'X> * ('X[]) *  (float32[]) * float32
     /// SVM model for one class classification
     | OneClass of Kernel<'X> * ('X[]) *  (float32[]) * float32
     /// SVM model for regression
     | Regression of Kernel<'X> * ('X[]) *  (float32[]) * float32
+    /// SVM model for multi-class classification
+    | MultiClass of Kernel<'X> * (('Y * 'Y * ('X[]) * (float32[]) * float32)[])
 
 /// Two class classification
 module TwoClass =
@@ -35,7 +37,7 @@ module TwoClass =
     /// <param name="model">The two class classification model.</param>
     /// <param name="x">The input sample.</param>
     /// <returns>The class of the sample.</returns>
-    let inline predict (model : SVM<'X>) (x : 'X) =
+    let inline predict (model : SVM<'X,'Y>) (x : 'X) =
         match model with 
         | TwoClass (K,X,A,b) -> sign (b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A)
         | _ -> invalidArg "svm" "type is invalid"
@@ -46,7 +48,7 @@ module OneClass =
     /// <param name="model">The one class classification model.</param>
     /// <param name="x">The input sample.</param>
     /// <returns>The class of the sample.</returns>
-    let inline predict (model : SVM<'X>) (x : 'X) =
+    let inline predict (model : SVM<'X,'Y>) (x : 'X) =
         match model with
         | OneClass (K,X,A,b) -> sign (b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A)
         | _ -> invalidArg "svm" "type is invalid"
@@ -57,8 +59,25 @@ module Regression =
     /// <param name="model">The regression model.</param>
     /// <param name="x">The input sample.</param>
     /// <returns>The predicted value.</returns>
-    let inline predict (model : SVM<'X>) (x : 'X) =
+    let inline predict (model : SVM<'X,'Y>) (x : 'X) =
         match model with
         | Regression (K,X,A,b) -> b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A
         | _ -> invalidArg "svm" "type is invalid"
 
+/// Multi-class classification
+module MultiClass =
+    /// <summary>Predict $y \in Y$ class of the sample x using the specified SVM model.</summary>
+    /// <param name="model">The multi-class classification model.</param>
+    /// <param name="x">The input sample.</param>
+    /// <returns>The class of the sample.</returns>
+    let inline predict(model : SVM<'X,'Y>) (x : 'X) =
+        match model with
+        | MultiClass (K, models) -> 
+            models
+            |> Array.Parallel.map (fun (y', y'', X, A, b) ->
+                let y = sign (b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A) in
+                if y > 0 then y' else y'')
+            |> Array.countBy id
+            |> Array.maxBy snd
+            |> fst
+        | _ -> invalidArg "svm" "type is invalid"

@@ -56,20 +56,27 @@ let main(args) =
 
     printfn "Loading train data..." 
     let train_y, train_x = duration { return readData args.[0] }
+    let multiclass = (train_y |> Array.distinct |> Array.length) <> 2
 
     printfn "Loading test data..."
     let test_y, test_x = duration { return readData args.[1] }
 
     // create SVM model
     printfn "Training SVM model..."
-    let svm = duration { return SMO.C_SVC train_x train_y (Kernel.rbf 0.1f) 
-                                          { C_p = 1.0f; C_n = 1.0f; epsilon = 0.001f;
-                                            options = { strategy = SMO.SecondOrderInformation; maxIterations = 1000000; 
-                                                        shrinking = true; cacheSize = 200<MB> } } }
+    let svm = duration { 
+        let C_SVC = if multiclass then SMO.C_SVC_M else SMO.C_SVC
+        return C_SVC train_x train_y (Kernel.rbf 0.1f) 
+                     { C_p = 1.0f; C_n = 1.0f; epsilon = 0.001f;
+                       options = { strategy = SMO.SecondOrderInformation; maxIterations = 1000000; 
+                                   shrinking = true; cacheSize = 200<MB> } } }
 
     // predict and compute correct count
     printfn "Predicting SVM model..."
-    let predict = TwoClass.predict svm
+    let predict x = 
+        if multiclass then 
+            MultiClass.predict svm x
+        else
+            float32 (TwoClass.predict svm x)
     let predict_y = duration { return test_x |> Array.map (fun x -> predict x) }
 
     // compute statistics
