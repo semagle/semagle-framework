@@ -17,8 +17,7 @@ namespace Semagle.MachineLearning.SVM
 open LanguagePrimitives
 open System.Threading.Tasks
 
-/// Unit of measure for cache size
-[<Measure>] type MB
+open Semagle.MachineLearning.SVM.LRU
 
 /// Implementation of Sequential Minimal Optimization (SMO) algorithm
 module SMO =
@@ -39,76 +38,6 @@ module SMO =
 
     [<Literal>]
     let private UpperBound = +1y
-
-    let inline private swap (a : 'A[]) i j =
-        let tmp = a.[i]
-        a.[i] <- a.[j]
-        a.[j] <- tmp
-
-    /// LRU list of computed columns
-    type private LRU(capacity : int, N : int, Q : int -> int -> float32) =
-        let indices = Array.zeroCreate<int> capacity
-        let columns = Array.zeroCreate<float32[]> capacity
-        let lengths = Array.zeroCreate<int> capacity
-
-        let mutable first = 0
-        let mutable last = 0
-
-        /// Returns L elements of j-th column of Q matrix
-        member lru.Get (j : int) (L : int) =
-            let index = lru.tryFindIndex j
-            if index <> not_found then
-                let column = columns.[index]
-                let length = lengths.[index]
-                if length < L then
-                    Parallel.For(length, L, fun i -> column.[i] <- Q i j) |> ignore
-                    lengths.[index] <- L
-                column
-            else 
-                let column = Array.zeroCreate N
-                Parallel.For(0, L, fun i -> column.[i] <- Q i j) |> ignore
-                lru.insert j column L
-                column
-
-        /// Swap column elements
-        member lru.Swap (i : int) (j : int) = 
-            let mutable index_i = not_found
-            let mutable index_j = not_found
-
-            let mutable k = first
-            while k <> last do
-                if indices.[k] = i then index_i <- k
-                if indices.[k] = j then index_j <- k
-                swap columns.[k] i j
-                k <- (k + 1) % capacity 
-
-            if index_i <> not_found && index_j <> not_found then
-                swap lengths index_i index_j
-
-            if index_i <> not_found then indices.[index_i] <- j
-            if index_j <> not_found then indices.[index_j] <- i
-
-        /// Try to find computed column values
-        member private lru.tryFindIndex t =
-            let mutable i = first
-            while (i <> last) && (indices.[i] <> t) do
-                i <- (i + 1) % capacity 
-
-            if i <> last then i else not_found
-
-        /// Insert new computed column values
-        member private lru.insert index column length =
-            indices.[last] <- index
-            columns.[last] <- column
-            lengths.[last] <- length
-            last <- (last + 1) % capacity
-
-            if first = last then first <- (first + 1) % capacity
-
-        /// Returns required capacity for the specified cache size and column length
-        static member capacity (cacheSize : int<MB>) (length : int) =
-           let columnSize = sizeof<float32>*length + sizeof<int> + sizeof<float32[]>
-           max 2 ((int cacheSize)*1024*1024 / columnSize)
 
     /// Interface of Q matrix
     type Q =
@@ -346,8 +275,8 @@ module SMO =
 
             let inline swapAll i j =
                 swap X i j; swap Y i j
-                swap C i j; swap A i j
-                swap G i j; swap G' i j
+                swap C i j; swap p i j;
+                swap A i j; swap G i j; swap G' i j
                 swap S i j; Q.Swap i j
 
             let mutable swaps = 0
