@@ -1,0 +1,68 @@
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{27E62143-74B8-4EA5-8319-D53B49685E71}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Semagle.MachineLearning.SSVM</RootNamespace>
+    <AssemblyName>Semagle.MachineLearning.SSVM</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget></PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants></DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <ConsolePause>false</ConsolePause>
+    <GenerateTailCalls>true</GenerateTailCalls>
+    <PlatformTarget></PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '10.0' OR '$(VisualStudioVersion)' == '11.0'">
+    <FSharpTargetsPath>$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\AssemblyInfo.fs" />
+    <Compile Include="src\SSVM.fs" />
+    <Compile Include="src\OneSlack.fs" />
+    <Compile Include="src\MultiClass.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\" />
+    <Folder Include="samples\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Semagle.MachineLearning.SVM\Semagle.MachineLearning.SVM.fsproj">
+      <Project>{0A2DB641-DAF5-4C43-B92C-808FFF505DDD}</Project>
+      <Name>Semagle.MachineLearning.SVM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Semagle.Numerics.Vectors\Semagle.Numerics.Vectors.fsproj">
+      <Project>{6CAE413B-B3B7-45B1-935F-926237E2A5AD}</Project>
+      <Name>Semagle.Numerics.Vectors</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="samples\MultiClass.fsx" />
+    <None Include="experiments.txt" />
+  </ItemGroup>
+  <Import Project="$(FSharpTargetsPath)" />
+</Project>

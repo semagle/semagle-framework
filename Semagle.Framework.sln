@@ -11,6 +11,8 @@ Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.Numerics.Vectors.IO
 EndProject
 Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.MachineLearning.SVM", "Semagle.MachineLearning.SVM\Semagle.MachineLearning.SVM.fsproj", "{0A2DB641-DAF5-4C43-B92C-808FFF505DDD}"
 EndProject
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.MachineLearning.SSVM", "Semagle.MachineLearning.SSVM\Semagle.MachineLearning.SSVM.fsproj", "{27E62143-74B8-4EA5-8319-D53B49685E71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,5 +39,9 @@ Global
 		{0A2DB641-DAF5-4C43-B92C-808FFF505DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A2DB641-DAF5-4C43-B92C-808FFF505DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A2DB641-DAF5-4C43-B92C-808FFF505DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27E62143-74B8-4EA5-8319-D53B49685E71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27E62143-74B8-4EA5-8319-D53B49685E71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27E62143-74B8-4EA5-8319-D53B49685E71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27E62143-74B8-4EA5-8319-D53B49685E71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
