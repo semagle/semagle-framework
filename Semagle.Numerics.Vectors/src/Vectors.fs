@@ -75,6 +75,10 @@ type DenseVector(values : float32[]) =
             // general case
             Array.fold2 (fun sum va vb -> sum + va*vb) 0.0f a.Values b.Values
 
+    /// Scalar product
+    static member inline (.*) (a : DenseVector, b : SparseVector) =
+        Array.fold2 (fun sum i v -> if i < a.Length then sum + a.[i]*v else sum) 0.0f b.Indices b.Values
+
     /// Mutiply each element of vector by scalar
     static member inline (*)(a : DenseVector, c : float32) = DenseVector.map (fun va -> va * c) a
 
@@ -82,7 +86,7 @@ type DenseVector(values : float32[]) =
     static member inline (/)(a : DenseVector, c : float32) = DenseVector.map (fun va -> va / c) a
 
 /// Sparse vector stores non-zero values and non-zero values indeces
-type SparseVector(indices : int[], values : float32[]) =
+and SparseVector(indices : int[], values : float32[]) =
     /// Returns underlying indices array
     member vector.Indices = indices
 
