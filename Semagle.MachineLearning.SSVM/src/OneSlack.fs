@@ -16,6 +16,9 @@ namespace Semagle.MachineLearning.SSVM
 
 open System.Threading.Tasks
 
+open Logary
+open Hopac
+
 open Semagle.Numerics.Vectors
 open Semagle.MachineLearning.SVM
 open Semagle.MachineLearning.SVM.LRU
@@ -64,7 +67,9 @@ module OneSlack =
         if Array.length X <> Array.length Y then
             invalidArg "X and Y" "have different lengths"
 
-        let info = printfn
+        let logger = Logging.getCurrentLogger()
+        let log msg = msg |> Logary.Logger.log logger |> Hopac.start
+        let info fmt = Printf.kprintf (fun s -> s |> Logary.Message.eventInfo |> log) fmt
 
         let N = Array.length X
 

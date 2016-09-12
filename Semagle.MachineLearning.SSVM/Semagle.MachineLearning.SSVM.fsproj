@@ -39,6 +39,18 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="Logary">
+      <HintPath>..\packages\Logary\lib\net40\Logary.dll</HintPath>
+    </Reference>
+    <Reference Include="Hopac">
+      <HintPath>..\packages\Hopac\lib\net45\Hopac.dll</HintPath>
+    </Reference>
+    <Reference Include="Hopac.Core">
+      <HintPath>..\packages\Hopac\lib\net45\Hopac.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="NodaTime">
+      <HintPath>..\packages\NodaTime\lib\portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+XamariniOS1\NodaTime.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\AssemblyInfo.fs" />

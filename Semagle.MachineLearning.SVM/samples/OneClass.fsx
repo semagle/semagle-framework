@@ -15,6 +15,11 @@
 #if INTERACTIVE
 #I @"../../build"
 
+#r "Hopac.dll"
+#r "Hopac.Core.dll"
+#r "Logary.dll"
+#r "NodaTime.dll"
+
 #r "Semagle.Numerics.Vectors.dll"
 #r "Semagle.Numerics.Vectors.IO.dll"
 #r "Semagle.MachineLearning.SVM.dll"
@@ -23,6 +28,11 @@
 
 open LanguagePrimitives
 open System
+
+open Hopac
+open Logary
+open Logary.Targets
+open Logary.Configuration
 
 open Semagle.Numerics.Vectors
 open Semagle.Numerics.Vectors.IO
@@ -51,11 +61,15 @@ let main (args) =
         printfn "Usage: [fsi OneClass.fsx | OneClass.exe] <train.data> <test.data>"
         exit 1
 
+    withLogaryManager "OneClass" (
+        withTargets [Console.create (Console.ConsoleConf.create Formatting.StringFormatter.verbatim) "console"] >> 
+        withRules [Rule.createForTarget "console"]) |> Job.Ignore |> Hopac.run
+
     // load train and test data
     let readData file = LibSVM.read file |> Seq.toArray |> Array.unzip
 
     printfn "Loading train data..." 
-    let train_y, train_x = duration { return readData args.[0] }
+    let _, train_x = duration { return readData args.[0] }
 
     printfn "Loading test data..."
     let test_y, test_x = duration { return readData args.[1] }

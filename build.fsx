@@ -56,7 +56,7 @@ Target "BuildSamples" ( fun _ ->
                     if line.StartsWith ("#r") then
                         yield (Path.GetFullPath buildDir) + line.[line.IndexOf("\"") + 1..line.LastIndexOf("\"")-1]} 
             |> Seq.toList
-        compileFiles [s] (List.append [ "--standalone"; "--target:exe"; "--out:" + output; "--lib:" + buildDir] 
+        compileFiles [s] (List.append [ "--target:exe"; "--out:" + output; "--lib:" + buildDir] 
             (List.map (fun r -> "--reference:" + r) references)) |> ignore
         output)
     |> Log "Sample: "
