@@ -17,12 +17,24 @@ namespace Semagle.MachineLearning.SSVM
 open Semagle.MachineLearning.SVM
 open Semagle.Numerics.Vectors
 
+/// Structured SVM model for multi-class classification
 type MultiClass<'X,'Y> = MultiClass of SSVM<'X,'Y> * ('Y[])
 
 module MultiClass =
-    type Parameters<'Y> = { rescaling : Rescaling; C : float32; epsilon : float32; loss : LossFunction<'Y>; 
-                            options : SMO.OptimizationOptions  }
+    /// Optimzation parameters for Multi-Class Structured SVMs
+    type Parameters<'Y> = { 
+        /// The rescaling type
+        rescaling : Rescaling;
+        /// The penalty for slack variables  
+        C : float32; 
+        /// The maximum optimization error
+        epsilon : float32;
+        /// The loss function 
+        loss : LossFunction<'Y>;
+        /// General SMO algorithm optimization options
+        options : SMO.OptimizationOptions  }
 
+    /// Default optimzation parameters for Multi-Class Structured SVMs
     let defaults : Parameters<'Y> = 
         { rescaling = Slack; C = 1.0f; epsilon = 0.001f; 
           loss = (fun y y' -> if y = y' then 0.0f else 1.0f);

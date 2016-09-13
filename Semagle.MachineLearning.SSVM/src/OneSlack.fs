@@ -23,13 +23,21 @@ open Semagle.Numerics.Vectors
 open Semagle.MachineLearning.SVM
 open Semagle.MachineLearning.SVM.LRU
 
+/// Implementation of 1-Slack Structured SVM algorithm
 module OneSlack = 
+    /// Optimization parameters for 1-Slack algorithm
     type OneSlack<'X,'Y> = { 
-        rescaling : Rescaling; 
+        /// The rescaling type
+        rescaling : Rescaling;
+        /// The penalty for slack variables
         C : float32;  
+        /// The maximum optimization error
         epsilon : float32;
+        /// The loss function
         loss : LossFunction<'Y>;
+        /// The argmax function
         argmaxLoss : ArgmaxLossFunction<'X,'Y>; 
+        /// General SMO algorithm optimization options
         options : SMO.OptimizationOptions
     }
 
@@ -40,6 +48,7 @@ module OneSlack =
         let mutable diagonal = Array.init N (fun i -> Q i i)
         let lru = LRU(capacity, N, Q)
 
+        /// Resize Q matrix
         member this.Resize (n : int) =
             lru.Resize n
             if n > N then
@@ -63,6 +72,7 @@ module OneSlack =
             /// Returns L elements of j-th column of Q matrix
             member q.C (j : int) (L : int) = lru.Get j L
 
+    /// 1-Slack optimization problem solver
     let optimize (X : 'X[]) (Y : 'Y[]) (F : JointFeatureFunction<'X, 'Y>) (parameters : OneSlack<'X,'Y>) =
         if Array.length X <> Array.length Y then
             invalidArg "X and Y" "have different lengths"
