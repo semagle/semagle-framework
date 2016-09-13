@@ -1,7 +1,7 @@
 init:
   - git config --global core.autocrlf input
 build_script:
-  - cmd: build.cmd BuildSamples
+  - cmd: build.cmd BuildAll
 test: off 
 artifacts:
   - path: build\Semagle.*.dll
