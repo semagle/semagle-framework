@@ -52,17 +52,17 @@
     <tbody>
         <tr>
           <td class="type-name">
-            <a href="semagle-machinelearning-svm-smo-c_svc.html">C_SVC</a>
+            <a href="semagle-machinelearning-svm-smo-c_smo.html">C_SMO</a>
           </td>
-          <td class="xmldoc"><p>Optimization parameters for C_SVC problem</p>
+          <td class="xmldoc"><p>General parameters for C_SMO problem</p>
 
 </td>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="semagle-machinelearning-svm-smo-c_svm.html">C_SVM</a>
+            <a href="semagle-machinelearning-svm-smo-c_svc.html">C_SVC</a>
           </td>
-          <td class="xmldoc"><p>General parameters for C_SVM problem</p>
+          <td class="xmldoc"><p>Optimization parameters for C_SVC problem</p>
 
 </td>
         </tr>
@@ -120,15 +120,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
-            C_SMO X Y K parameters
+          <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
+            C_SMO X Y Q parameters
           </code>
-          <div class="tip" id="7">
-            <strong>Signature:</strong> X:&#39;X [] -&gt; Y:float32 [] -&gt; K:Kernel&lt;&#39;X&gt; -&gt; parameters:C_SVM -&gt; Kernel&lt;&#39;X&gt; * &#39;X [] * float32 [] * float32 [] * float32&lt;MeasureOne&gt;<br />
+          <div class="tip" id="9">
+            <strong>Signature:</strong> X:&#39;X [] -&gt; Y:float32 [] -&gt; Q:Q -&gt; parameters:C_SMO -&gt; &#39;X [] * float32 [] * float32 [] * float32&lt;MeasureOne&gt;<br />
                           <strong>Type parameters:</strong> 'X          </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L155-155" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L86-86" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -140,19 +140,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
+          <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
             C_SVC X Y K parameters
           </code>
-          <div class="tip" id="8">
-            <strong>Signature:</strong> X:&#39;X [] -&gt; Y:float32 [] -&gt; K:Kernel&lt;&#39;X&gt; -&gt; parameters:C_SVC -&gt; SVM&lt;&#39;X&gt;<br />
-                          <strong>Type parameters:</strong> 'X          </div>
+          <div class="tip" id="10">
+            <strong>Signature:</strong> X:&#39;X [] -&gt; Y:float32 [] -&gt; K:Kernel&lt;&#39;X&gt; -&gt; parameters:C_SVC -&gt; SVM&lt;&#39;X,&#39;?19276&gt;<br />
+                          <strong>Type parameters:</strong> 'X, '?19276          </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L502-502" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L434-434" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>C Support Vector Classification (SVC) problem solver</p>
+          <p>Two class C Support Vector Classification (SVC) problem solver</p>
 
 
         </td>
@@ -160,15 +160,35 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
-            C_SVR X Y K parameters
+          <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
+            C_SVC_M X Y K parameters
           </code>
-          <div class="tip" id="9">
-            <strong>Signature:</strong> X:&#39;X [] -&gt; Y:float32 [] -&gt; K:Kernel&lt;&#39;X&gt; -&gt; parameters:C_SVR -&gt; SVM&lt;&#39;X&gt;<br />
-                          <strong>Type parameters:</strong> 'X          </div>
+          <div class="tip" id="11">
+            <strong>Signature:</strong> X:&#39;X [] -&gt; Y:&#39;Y [] -&gt; K:Kernel&lt;&#39;X&gt; -&gt; parameters:C_SVC -&gt; SVM&lt;&#39;X,&#39;Y&gt;<br />
+                          <strong>Type parameters:</strong> 'X, 'Y          </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L617-617" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L461-461" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Multi-class C Support Vector Classification (SVC) problem solver</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
+            C_SVR X Y K parameters
+          </code>
+          <div class="tip" id="12">
+            <strong>Signature:</strong> X:&#39;X [] -&gt; Y:float32 [] -&gt; K:Kernel&lt;&#39;X&gt; -&gt; parameters:C_SVR -&gt; SVM&lt;&#39;X,&#39;?19311&gt;<br />
+                          <strong>Type parameters:</strong> 'X, '?19311          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L567-567" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -180,15 +200,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
+          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
             OneClass X K parameters
           </code>
-          <div class="tip" id="10">
-            <strong>Signature:</strong> X:&#39;X [] -&gt; K:Kernel&lt;&#39;X&gt; -&gt; parameters:OneClass -&gt; SVM&lt;&#39;X&gt;<br />
-                          <strong>Type parameters:</strong> 'X          </div>
+          <div class="tip" id="13">
+            <strong>Signature:</strong> X:&#39;X [] -&gt; K:Kernel&lt;&#39;X&gt; -&gt; parameters:OneClass -&gt; SVM&lt;&#39;X,&#39;?19292&gt;<br />
+                          <strong>Type parameters:</strong> 'X, '?19292          </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L540-540" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L491-491" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

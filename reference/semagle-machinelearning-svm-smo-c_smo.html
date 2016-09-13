@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>C_SVC - Semagle.Framework</title>
+    <title>C_SMO - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
@@ -33,13 +33,13 @@
 
 
 
-<h1>C_SVC</h1>
+<h1>C_SMO</h1>
 <p>
   <span>Namespace: Semagle.MachineLearning.SVM</span><br />
   <span>Parent Module: <a href="semagle-machinelearning-svm-smo.html">SMO</a></span>
 </p>
 <div class="xmldoc">
-<p>Optimization parameters for C_SVC problem</p>
+<p>General parameters for C_SMO problem</p>
 
 </div>
   <h3>Record Fields</h3>
@@ -51,19 +51,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
-            C_n
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+            A
           </code>
-          <div class="tip" id="27">
-            <strong>Signature:</strong> float32<br />
+          <div class="tip" id="22">
+            <strong>Signature:</strong> float32 []<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L426-426" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L74-74" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The penalty for -1 class instances</p>
+          <p>Initial feasible values of optimization varibles</p>
 
 
         </td>
@@ -71,19 +71,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
-            C_p
+          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
+            C
           </code>
-          <div class="tip" id="28">
-            <strong>Signature:</strong> float32<br />
+          <div class="tip" id="23">
+            <strong>Signature:</strong> float32 []<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L424-424" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L76-76" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The penalty for +1 class instances</p>
+          <p>Per-sample penalties</p>
 
 
         </td>
@@ -91,15 +91,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '29', 29)" onmouseover="showTip(event, '29', 29)">
+          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
             epsilon
           </code>
-          <div class="tip" id="29">
+          <div class="tip" id="24">
             <strong>Signature:</strong> float32<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L428-428" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L80-80" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -111,19 +111,39 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
+          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
             options
           </code>
-          <div class="tip" id="30">
+          <div class="tip" id="25">
             <strong>Signature:</strong> OptimizationOptions<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L430-430" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L82-82" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>General SMO algorithm options</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
+            p
+          </code>
+          <div class="tip" id="26">
+            <strong>Signature:</strong> float32 []<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L78-78" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The linear term of the optimized function</p>
 
 
         </td>

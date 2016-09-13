@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>C_SVM - Semagle.Framework</title>
+    <title>SVM<'X, 'Y> - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
@@ -33,37 +33,37 @@
 
 
 
-<h1>C_SVM</h1>
+<h1>SVM<'X, 'Y></h1>
 <p>
   <span>Namespace: Semagle.MachineLearning.SVM</span><br />
-  <span>Parent Module: <a href="semagle-machinelearning-svm-smo.html">SMO</a></span>
 </p>
 <div class="xmldoc">
-<p>General parameters for C_SVM problem</p>
+<p>SVM model definition includes kernel function, array of support vectors
+with respective weights and bias value.</p>
 
 </div>
-  <h3>Record Fields</h3>
+  <h3>Union Cases</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Record Field</td><td>Description</td></tr>
+      <tr><td>Union Case</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
-            A
+          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
+            MultiClass(...)
           </code>
-          <div class="tip" id="18">
-            <strong>Signature:</strong> float32 []<br />
+          <div class="tip" id="47">
+            <strong>Signature:</strong> Kernel&lt;&#39;X&gt; * (&#39;Y * &#39;Y * &#39;X [] * float32 [] * float32) []<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L141-141" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SVM.fs#L32-32" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Initial feasible values of optimization varibles</p>
+          <p>SVM model for multi-class classification</p>
 
 
         </td>
@@ -71,19 +71,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
-            C
+          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
+            OneClass(...)
           </code>
-          <div class="tip" id="19">
-            <strong>Signature:</strong> float32 []<br />
+          <div class="tip" id="48">
+            <strong>Signature:</strong> Kernel&lt;&#39;X&gt; * &#39;X [] * float32 [] * float32<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L143-143" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SVM.fs#L28-28" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Per-sample penalties</p>
+          <p>SVM model for one class classification</p>
 
 
         </td>
@@ -91,19 +91,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
-            epsilon
+          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
+            Regression(...)
           </code>
-          <div class="tip" id="20">
-            <strong>Signature:</strong> float32<br />
+          <div class="tip" id="49">
+            <strong>Signature:</strong> Kernel&lt;&#39;X&gt; * &#39;X [] * float32 [] * float32<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L147-147" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SVM.fs#L30-30" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The maximum optimization error</p>
+          <p>SVM model for regression</p>
 
 
         </td>
@@ -111,59 +111,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
-            options
+          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
+            TwoClass(...)
           </code>
-          <div class="tip" id="21">
-            <strong>Signature:</strong> OptimizationOptions<br />
+          <div class="tip" id="50">
+            <strong>Signature:</strong> Kernel&lt;&#39;X&gt; * &#39;X [] * float32 [] * float32<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L151-151" class="github-link">
+            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SVM.fs#L26-26" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>General SMO algorithm options</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
-            p
-          </code>
-          <div class="tip" id="22">
-            <strong>Signature:</strong> float32 []<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L145-145" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>The linear term of the optimized function</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
-            Q
-          </code>
-          <div class="tip" id="23">
-            <strong>Signature:</strong> Q<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="https://github.com/sslipchenko/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L149-149" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>The kernel matrix</p>
+          <p>SVM model for two class classification</p>
 
 
         </td>
