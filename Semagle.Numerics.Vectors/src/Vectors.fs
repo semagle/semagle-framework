@@ -54,6 +54,9 @@ type DenseVector(values : float32[]) =
     static member inline map2 (f : float32 -> float32 -> float32) (a : DenseVector) (b : DenseVector) =
         DenseVector(Array.map2 f a.Values b.Values)
 
+    /// Zero dense vector
+    static member inline Zero = DenseVector([||])
+
     /// Element-wise addition
     static member inline (+) (a : DenseVector, b : DenseVector) = DenseVector.map2 (+) a b
 
@@ -176,6 +179,9 @@ and SparseVector(indices : int[], values : float32[]) =
             SparseVector([||], [||])
         else
             SparseVector(newIndices.[..k-1], newValues.[..k-1])
+
+    /// Zero sparse vector
+    static member inline Zero = SparseVector([||],[||])
 
     /// Element-wise addition
     static member inline (+) (a : SparseVector, b : SparseVector) = SparseVector.map2 (+) a b
