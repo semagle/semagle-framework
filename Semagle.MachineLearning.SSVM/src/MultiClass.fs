@@ -18,7 +18,7 @@ open Semagle.MachineLearning.SVM
 open Semagle.Numerics.Vectors
 
 /// Structured SVM model for multi-class classification
-type MultiClass<'X,'Y> = MultiClass of SSVM<'X,'Y> * ('Y[])
+type MultiClass<'X,'Y> = MultiClass of FeatureFunction<'X> * SSVM<'X,'Y> * 'Y[]
 
 module MultiClass =
     /// Optimzation parameters for Multi-Class Structured SVMs
@@ -41,24 +41,24 @@ module MultiClass =
           options = { strategy = SMO.SecondOrderInformation; maxIterations = 1000000; 
                       shrinking = true; cacheSize = 200<MB> } } 
 
+    let private index Y k i = let K = Array.length Y in i*K + k
+
     /// Learn structured SVM model for multi-class classification
     let learn (X: 'X[]) (Y : 'Y[]) (F : FeatureFunction<'X>) (parameters : Parameters<'Y>) =
         let YS = Array.distinct Y
 
         let JF x y =  
             let f = F x 
-            let M = Array.length YS
-            let y = Array.findIndex ((=) y) YS
-            SparseVector(Array.map (fun i -> i*M + y) f.Indices, f.Values)
+            SparseVector(Array.map (index YS (Array.findIndex ((=) y) YS)) f.Indices, f.Values)
 
-        let argmaxLoss model loss i = 
+        let argmaxLoss model i = 
             match model with
-            | OneSlack(F, W) ->
-                let F_i = F X.[i] Y.[i]
+            | OneSlack(W) ->
+                let F_i = JF X.[i] Y.[i]
                 YS |> Array.map (fun y ->
-                    let dF = F_i - (F X.[i] y)
+                    let dF = F_i - (JF X.[i] y)
                     let WF = W .* dF
-                    let loss = loss Y.[i] y
+                    let loss = parameters.loss Y.[i] y
                     let m = match parameters.rescaling with | Slack -> loss | Margin -> 1.0f
                     let cost = loss - m * WF
                     y, loss, dF, cost)
@@ -70,9 +70,13 @@ module MultiClass =
                                        loss = parameters.loss; argmaxLoss = argmaxLoss;
                                        options = parameters.options }
 
-        MultiClass(ssvm,YS)
+        MultiClass(F, ssvm, YS)
 
     /// Predict class by multi-class structured SVM model
     let predict (model : MultiClass<'X,'Y>) (x : 'X) : 'Y =
         match model with
-        | MultiClass(OneSlack(F, W), Y) -> Y |> Array.maxBy (fun y -> W .* (F x y))
+        | MultiClass(F, OneSlack(W), Y) -> 
+            let f = F x 
+            Y |> Array.maxBy (fun y -> 
+                let index = index Y (Array.findIndex ((=) y) Y)
+                Array.fold2(fun sum i v -> sum + W.[index i]*v) 0.0f f.Indices f.Values)

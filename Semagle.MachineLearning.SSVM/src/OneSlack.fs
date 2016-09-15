@@ -133,7 +133,7 @@ module OneSlack =
             let L = Array.zeroCreate N
             let DF = Array.zeroCreate N
             let H = Array.zeroCreate N
-            let argmaxLoss = parameters.argmaxLoss (OneSlack(F, W)) parameters.loss
+            let argmaxLoss = parameters.argmaxLoss (OneSlack(W))
             Parallel.For(0, N, (fun i -> 
                 let y, l, dF, h = argmaxLoss i 
                 Y.[i] <- y; L.[i] <- l; DF.[i] <- dF; H.[i] <- h)) |> ignore
@@ -179,4 +179,4 @@ module OneSlack =
         let iterations = optimize 1
         info "iterations = %d" iterations
 
-        OneSlack(F, W)
+        OneSlack(W)

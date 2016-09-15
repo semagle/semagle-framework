@@ -29,7 +29,7 @@ type JointKernel<'X, 'Y> = 'X -> 'Y -> 'X -> 'Y -> float32
 type Rescaling = Slack | Margin
 
 /// Structured SVM model
-type SSVM<'X,'Y> = OneSlack of JointFeatureFunction<'X,'Y> * DenseVector
+type SSVM<'X,'Y> = OneSlack of DenseVector
 
 /// Structured SVM loss function type
 type LossFunction<'Y> = 'Y -> 'Y -> float32
@@ -38,4 +38,4 @@ type LossFunction<'Y> = 'Y -> 'Y -> float32
 type Result<'Y> = (* y *) 'Y * (* loss *) float32 * (* $δΨ_i$ *) SparseVector * (* cost *) float32
 
 /// Argmax function type
-type ArgmaxLossFunction<'X,'Y> = SSVM<'X,'Y> -> LossFunction<'Y> -> int -> Result<'Y>
+type ArgmaxLossFunction<'X,'Y> = SSVM<'X,'Y> -> int -> Result<'Y>
