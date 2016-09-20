@@ -311,7 +311,9 @@ module SMO =
 
             L - shrinked
 
-        let inline isOptimal m M epsilon = (m - M) <= epsilon
+        let inline isOptimal m M epsilon = 
+            let diff = abs (m - M)
+            diff <= epsilon || diff <= epsilon * (min (abs m) (abs M))
 
         /// Sequential Minimal Optimization (SMO) Algorithm
         let inline optimize_solve L =
