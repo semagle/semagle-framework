@@ -41,8 +41,55 @@ module OneSlack =
         options : SMO.OptimizationOptions
     }
 
+    [<Literal>]
+    let private not_found = -1
+
+    /// Feature function cache
+    type private Cache(capacity : int, N : int, F : int -> int -> SparseVector) =
+        let indices = Array.zeroCreate<int> capacity
+        let columns = Array.zeroCreate<SparseVector[]> capacity
+
+        let mutable first = 0
+        let mutable last = 0
+
+        member cache.Item(k : int) =
+            lock cache (fun () ->
+                let index = cache.tryFindIndex k
+                if index <> not_found then
+                    columns.[index]
+                else
+                    let column = Array.init N (fun i -> F i k)
+                    cache.insert k column
+                    column)
+
+        /// Swap rows
+        member cache.Swap (i : int) (j : int) = 
+            let mutable k = first
+            while k <> last do
+                if indices.[k] = i then
+                   indices.[k] <- j
+                else if indices.[k] = j then 
+                    indices.[k] <- i
+                k <- (k + 1) % capacity 
+                  
+        /// Try to find computed column values
+        member private cache.tryFindIndex t =
+            let mutable k = first
+            while (k <> last) && (indices.[k] <> t) do
+                k <- (k + 1) % capacity 
+
+            if k <> last then k else not_found
+
+        /// Insert new computed column values
+        member private cache.insert index column =
+            indices.[last] <- index
+            columns.[last] <- column
+            last <- (last + 1) % capacity
+
+            if first = last then first <- (first + 1) % capacity
+
     /// Q matrix for structured problems
-    type private Q_S(capacity : int, N : int, Q : int -> int -> float32) =
+    type private Q_S(capacity : int, N : int, Q : int -> int -> float32, cache : Cache) =
         let mutable N = N
         let mutable inactive = Array.zeroCreate N
         let mutable diagonal = Array.init N (fun i -> Q i i)
@@ -63,6 +110,7 @@ module OneSlack =
         interface SMO.Q with
             /// Swap column elements
             member q.Swap (i : int) (j : int) = 
+                cache.Swap i j
                 lru.Swap i j
                 swap diagonal i j
 
@@ -83,18 +131,21 @@ module OneSlack =
 
         let N = Array.length X
 
-        let mutable X' = Array.zeroCreate<(* Y *) 'Y[] * (* L *) float32[] * (* dF *) SparseVector[]> 0
+        let mutable X' = Array.zeroCreate<(* Y *) 'Y[] * (* L *) float32[]> 0
         let mutable Y' = Array.zeroCreate<float32> 0
         let mutable p = Array.zeroCreate<float32> 0
         let mutable C = Array.zeroCreate<float32> 0
         let mutable A = Array.zeroCreate<float32> 0
         let mutable W = DenseVector([||])
 
+        let cache = Cache(100, N, (fun i k -> (F X.[i] Y.[i]) - (F X.[i] (fst X'.[k]).[i])))
+
         let inline update (W : DenseVector) k a =
             if a <> 0.0f then
                 let W = W.Values
                 let a = a / (float32 N)
-                let (_, L, dF) = X'.[k]
+                let (_, L) = X'.[k]
+                let dF = cache.[k]
                 Array.iteri2 (fun i (L : float32) (dF : SparseVector) -> 
                     let m = match parameters.rescaling with | Slack -> L | Margin -> 1.0f
                     Array.iter2 (fun j v -> W.[j] <- W.[j] + a * m * v) dF.Indices dF.Values) L dF
@@ -107,7 +158,7 @@ module OneSlack =
             (sumF k) .* (sumF l)
 
         let M = int (1.0f / parameters.epsilon)
-        let Q = new Q_S(LRU.capacity parameters.options.cacheSize M, 0, H)
+        let Q = new Q_S(LRU.capacity parameters.options.cacheSize M, 0, H, cache)
 
         let inline solve () = 
             SMO.C_SMO X' Y' Q { epsilon = parameters.epsilon / 2.0f; 
@@ -118,7 +169,8 @@ module OneSlack =
             Array.iteri (fun k a -> update W k a) A
 
             if not (Array.isEmpty X') then
-                X' |> Array.map (fun (_, L, dF) ->
+                X' |> Array.mapi (fun k (_, L) ->
+                    let dF = cache.[k]
                     let H = Array.Parallel.init N (fun i ->
                         let m = match parameters.rescaling with | Slack -> L.[i] | Margin -> 1.0f
                         L.[i] - m * (W .* dF.[i]))
@@ -131,13 +183,12 @@ module OneSlack =
         let inline findNewConstraint () =
             let Y = Array.zeroCreate N
             let L = Array.zeroCreate N
-            let DF = Array.zeroCreate N
             let H = Array.zeroCreate N
             let argmaxLoss = parameters.argmaxLoss (OneSlack(W))
             Parallel.For(0, N, (fun i -> 
-                let y, l, dF, h = argmaxLoss i 
-                Y.[i] <- y; L.[i] <- l; DF.[i] <- dF; H.[i] <- h)) |> ignore
-            (Y, L, DF), H
+                let y, l, h = argmaxLoss i 
+                Y.[i] <- y; L.[i] <- l; H.[i] <- h)) |> ignore
+            (Y, L), H
 
         let inline append (a : 'A[]) (e: 'A) =
             let M = Array.length a
@@ -168,7 +219,8 @@ module OneSlack =
             Y' <- append Y' 1.0f
             C <- append C parameters.C
             A <- append A (parameters.C - Array.sum A)
-            match x' with | (_, L, DF) -> p <- append p (-(Array.sum L)/(float32 N)); resizeW DF
+            p <- append p (-(Array.sum (snd x'))/(float32 N))
+            resizeW cache.[(Array.length X') - 1]
             Q.Resize (Array.length X')
 
             if (isOptimal xi h) then

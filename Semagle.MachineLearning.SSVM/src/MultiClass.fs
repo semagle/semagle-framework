@@ -61,8 +61,8 @@ module MultiClass =
                     let loss = parameters.loss Y.[i] y
                     let m = match parameters.rescaling with | Slack -> loss | Margin -> 1.0f
                     let cost = loss - m * WF
-                    y, loss, dF, cost)
-                |> Array.maxBy (fun (_, _, _, cost) -> cost)
+                    y, loss, cost)
+                |> Array.maxBy (fun (_, _, cost) -> cost)
 
         let ssvm = OneSlack.optimize X Y JF 
                                      { rescaling = parameters.rescaling; 

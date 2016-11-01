@@ -35,7 +35,7 @@ type SSVM<'X,'Y> = OneSlack of DenseVector
 type LossFunction<'Y> = 'Y -> 'Y -> float32
 
 /// Type alias for argmax function result
-type Result<'Y> = (* y *) 'Y * (* loss *) float32 * (* $δΨ_i$ *) SparseVector * (* cost *) float32
+type Result<'Y> = (* y *) 'Y * (* loss *) float32 * (* cost *) float32
 
 /// Argmax function type
 type ArgmaxLossFunction<'X,'Y> = SSVM<'X,'Y> -> int -> Result<'Y>
