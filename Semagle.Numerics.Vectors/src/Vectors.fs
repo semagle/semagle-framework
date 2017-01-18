@@ -87,6 +87,12 @@ type DenseVector(values : float32[]) =
 
 /// Sparse vector stores non-zero values and non-zero values indeces
 and SparseVector(indices : int[], values : float32[]) =
+    do
+        // check that indices and values arrays have the same size
+        assert ((Array.length indices) = (Array.length values))
+        // check indices are strictly increasing
+        assert (indices |> Array.pairwise |> Array.forall (fun (i, j) -> i < j))
+
     /// Returns underlying indices array
     member vector.Indices = indices
 
