@@ -151,7 +151,7 @@ module OneSlack =
                     Array.iter2 (fun j v -> W.[j] <- W.[j] + a * m * v) dF.Indices dF.Values) L dF
 
         let H k l = 
-            let sumF k =
+            let inline sumF k =
                 let sumF = DenseVector(Array.zeroCreate W.Length)
                 update sumF k 1.0f
                 sumF
