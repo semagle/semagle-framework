@@ -59,6 +59,7 @@
     <Compile Include="src\SSVM.fs" />
     <Compile Include="src\OneSlack.fs" />
     <Compile Include="src\MultiClass.fs" />
+    <Compile Include="src\Sequence.fs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
@@ -73,10 +74,15 @@
       <Project>{6CAE413B-B3B7-45B1-935F-926237E2A5AD}</Project>
       <Name>Semagle.Numerics.Vectors</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Semagle.Algorithms\Semagle.Algorithms.fsproj">
+      <Project>{10265A1D-B610-4685-B18C-0DC028AA3CB0}</Project>
+      <Name>Semagle.Algorithms</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="samples\MultiClass.fsx" />
     <None Include="experiments.txt" />
+    <None Include="samples\Sequence.fsx" />
   </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" />
 </Project>

@@ -13,6 +13,10 @@ Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.MachineLearning.SVM
 EndProject
 Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.MachineLearning.SSVM", "Semagle.MachineLearning.SSVM\Semagle.MachineLearning.SSVM.fsproj", "{27E62143-74B8-4EA5-8319-D53B49685E71}"
 EndProject
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.Algorithms", "Semagle.Algorithms\Semagle.Algorithms.fsproj", "{10265A1D-B610-4685-B18C-0DC028AA3CB0}"
+EndProject
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.Algorithms.Tests", "Semagle.Algorithms\tests\Semagle.Algorithms.Tests.fsproj", "{4611AE29-D2BE-47F5-8B27-B36377E1EE75}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,5 +47,13 @@ Global
 		{27E62143-74B8-4EA5-8319-D53B49685E71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27E62143-74B8-4EA5-8319-D53B49685E71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27E62143-74B8-4EA5-8319-D53B49685E71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10265A1D-B610-4685-B18C-0DC028AA3CB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10265A1D-B610-4685-B18C-0DC028AA3CB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10265A1D-B610-4685-B18C-0DC028AA3CB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10265A1D-B610-4685-B18C-0DC028AA3CB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4611AE29-D2BE-47F5-8B27-B36377E1EE75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4611AE29-D2BE-47F5-8B27-B36377E1EE75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4611AE29-D2BE-47F5-8B27-B36377E1EE75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4611AE29-D2BE-47F5-8B27-B36377E1EE75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
