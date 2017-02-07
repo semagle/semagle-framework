@@ -22,6 +22,7 @@
 
 #r "Semagle.Numerics.Vectors.dll"
 #r "Semagle.Numerics.Vectors.IO.dll"
+#r "Semagle.MachineLearning.Metrics.dll"
 #r "Semagle.MachineLearning.SVM.dll"
 #r "Semagle.MachineLearning.SVM.dll"
 #endif // INTERACTIVE
@@ -34,6 +35,7 @@ open Logary
 open Logary.Targets
 open Logary.Configuration
 
+open Semagle.MachineLearning.Metrics
 open Semagle.Numerics.Vectors
 open Semagle.Numerics.Vectors.IO
 open Semagle.MachineLearning.SVM
@@ -95,13 +97,10 @@ let main(args) =
 
     // compute statistics
     let total = Array.length test_y
-    let correct = 
-        let counts = (Array.zip test_y predict_y) |> Array.countBy (fun (t, p) -> t = float32 p) |> Map.ofArray in
-        match Map.tryFind true counts with
-        | None -> 0
-        | Some(count) -> count
+    let accuracy = Classification.accuracy test_y predict_y
+    let correct = int (accuracy * (float total))
 
-    printfn "Accuracy = %f%%(%d/%d)" ((DivideByInt (float correct) total) * 100.0) correct total
+    printfn "Accuracy = %f%%(%d/%d)" (accuracy * 100.0) correct total
     0
 
 #if INTERACTIVE

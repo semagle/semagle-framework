@@ -17,6 +17,10 @@ Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.Algorithms", "Semag
 EndProject
 Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.Algorithms.Tests", "Semagle.Algorithms\tests\Semagle.Algorithms.Tests.fsproj", "{4611AE29-D2BE-47F5-8B27-B36377E1EE75}"
 EndProject
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.MachineLearning.Metrics", "Semagle.MachineLearning.Metrics\Semagle.MachineLearning.Metrics.fsproj", "{EB957FBE-3AFC-464E-957D-B2B94A566FBB}"
+EndProject
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.MachineLearning.Metrics.Tests", "Semagle.MachineLearning.Metrics\tests\Semagle.MachineLearning.Metrics.Tests.fsproj", "{FE057914-6208-4DEB-AB5E-1D933F15AA86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,5 +59,13 @@ Global
 		{4611AE29-D2BE-47F5-8B27-B36377E1EE75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4611AE29-D2BE-47F5-8B27-B36377E1EE75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4611AE29-D2BE-47F5-8B27-B36377E1EE75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB957FBE-3AFC-464E-957D-B2B94A566FBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB957FBE-3AFC-464E-957D-B2B94A566FBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB957FBE-3AFC-464E-957D-B2B94A566FBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB957FBE-3AFC-464E-957D-B2B94A566FBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE057914-6208-4DEB-AB5E-1D933F15AA86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE057914-6208-4DEB-AB5E-1D933F15AA86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE057914-6208-4DEB-AB5E-1D933F15AA86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE057914-6208-4DEB-AB5E-1D933F15AA86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
