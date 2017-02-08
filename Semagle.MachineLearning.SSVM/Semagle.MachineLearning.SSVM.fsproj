@@ -59,7 +59,6 @@
     <Compile Include="src\SSVM.fs" />
     <Compile Include="src\OneSlack.fs" />
     <Compile Include="src\MultiClass.fs" />
-    <Compile Include="src\Sequence.fs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
