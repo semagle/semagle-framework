@@ -38,27 +38,31 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="FSharp.Core">
+      <HintPath>..\packages\FSharp.Core\lib\net45\FSharp.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Hopac">
       <HintPath>..\packages\Hopac\lib\net45\Hopac.dll</HintPath>
-    </Reference>
-    <Reference Include="Logary">
-      <HintPath>..\packages\Logary\lib\net40\Logary.dll</HintPath>
     </Reference>
     <Reference Include="Hopac.Core">
       <HintPath>..\packages\Hopac\lib\net45\Hopac.Core.dll</HintPath>
     </Reference>
-    <Reference Include="NodaTime">
-      <HintPath>..\packages\NodaTime\lib\portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+XamariniOS1\NodaTime.dll</HintPath>
-    </Reference>
     <Reference Include="Hopac.Platform">
       <HintPath>..\packages\Hopac\lib\net45\Hopac.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="Logary">
+      <HintPath>..\packages\Logary\lib\net452\Logary.dll</HintPath>
+    </Reference>
+    <Reference Include="NodaTime">
+      <HintPath>..\packages\NodaTime\lib\net45\NodaTime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\" />
+    <Folder Include="samples\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\AssemblyInfo.fs" />
@@ -66,12 +70,6 @@
     <Compile Include="src\SVM.fs" />
     <Compile Include="src\LRU.fs" />
     <Compile Include="src\SMO.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\" />
-    <Folder Include="samples\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="samples\C_SVC.fsx" />
     <None Include="samples\OneClass.fsx" />
     <None Include="samples\C_SVR.fsx" />
