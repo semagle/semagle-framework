@@ -1,15 +1,16 @@
-source https://nuget.org/api/v2
+source https://api.nuget.org/v3/index.json
 
-# nuget FSharp.Core redirects: force
+nuget FSharp.Core
 nuget Logary
 
 group Build
-    source https://nuget.org/api/v2
+    source https://api.nuget.org/v3/index.json
     nuget FAKE
     nuget FSharp.Formatting
 
 group Test
-    source https://nuget.org/api/v2
+    source https://api.nuget.org/v3/index.json
     nuget FsUnit
     nuget NUnit ~> 2
     nuget NUnit.Runners ~> 2
+    nuget NHamcrest

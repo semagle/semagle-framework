@@ -18,6 +18,7 @@ open LanguagePrimitives
 open System.Threading.Tasks
 
 open Logary
+open Logary.Logger
 open Hopac
 
 open Semagle.MachineLearning.SVM.LRU
@@ -88,7 +89,7 @@ module SMO =
             invalidArg "X and Y" "have different lengths"
 
         let logger = Logging.getCurrentLogger()
-        let log msg = msg |> Logary.Logger.log logger |> Hopac.start
+        let log msg = msg |> Logger.logSimple logger
         let info fmt = Printf.kprintf (fun s -> s |> Logary.Message.eventInfo |> log) fmt
 
         let epsilon = parameters.epsilon
