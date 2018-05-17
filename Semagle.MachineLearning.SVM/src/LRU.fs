@@ -29,7 +29,7 @@ module LRU =
         a.[j] <- tmp
 
     /// LRU list of computed columns
-    type LRU(capacity : int, N : int, Q : int -> int -> float32) =
+    type LRU(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
         let indices = Array.zeroCreate<int> capacity
         let columns = Array.zeroCreate<float32[]> capacity
         let lengths = Array.zeroCreate<int> capacity
@@ -59,16 +59,20 @@ module LRU =
                 let column = columns.[index]
                 let length = lengths.[index]
                 if length < L then
-                    // Parallel.For(length, L, fun i -> column.[i] <- Q i j) |> ignore
-                    for i = length to L-1 do
-                        column.[i] <- Q i j
+                    if parallelize then
+                        Parallel.For(length, L, fun i -> column.[i] <- Q i j) |> ignore
+                    else
+                        for i = length to L-1 do
+                            column.[i] <- Q i j
                     lengths.[index] <- L
                 column
             else 
                 let column = Array.zeroCreate N
-                // Parallel.For(0, L, fun i -> column.[i] <- Q i j) |> ignore
-                for i = 0 to L-1 do
-                    column.[i] <- Q i j
+                if parallelize then
+                    Parallel.For(0, L, fun i -> column.[i] <- Q i j) |> ignore
+                else
+                    for i = 0 to L-1 do
+                        column.[i] <- Q i j
                 lru.insert j column L
                 column
 

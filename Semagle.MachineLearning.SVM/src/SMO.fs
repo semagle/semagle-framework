@@ -66,7 +66,9 @@ module SMO =
         shrinking : bool; 
         /// Kernel cache size
         cacheSize : int<MB>;
-        // Logger
+        /// Parallelize kernel evaluations
+        parallelize : bool;
+        /// Logger
         logger : Logger;
     }
 
@@ -74,7 +76,8 @@ module SMO =
     let defaultOptimizationOptions : OptimizationOptions =
         { epsilon = 0.001f; maxIterations = 1000000;
           strategy = SecondOrderInformation;  shrinking = true; 
-          cacheSize = 200<MB>; logger = Logging.getCurrentLogger() }
+          cacheSize = 200<MB>; parallelize = true; 
+          logger = Logging.getCurrentLogger() }
 
     /// General parameters for C_SMO problem
     type C_SMO = { 
@@ -407,9 +410,9 @@ module SMO =
         (X,Y,A,bias)
 
     /// Q matrix for classification problems
-    type private Q_C(capacity : int, N : int, Q : int -> int -> float32) =
+    type private Q_C(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
         let diagonal = Array.init N (fun i -> Q i i)
-        let lru = LRU(capacity, N, Q)
+        let lru = LRU(capacity, N, Q, parallelize)
 
         interface Q with
             /// Swap column elements
@@ -440,7 +443,8 @@ module SMO =
         let p = Array.create N -1.0f
         let A = Array.zeroCreate N
 
-        let Q = new Q_C(LRU.capacity options.cacheSize N, N, (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]))
+        let Q = new Q_C(LRU.capacity options.cacheSize N, N, 
+                        (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]), options.parallelize)
         let (X',Y',A',b) = C_SMO X' Y' Q { A = A; C = C; p = p } options
 
         // Remove support vectors with A.[i] = 0.0 and compute Y.[i]*A.[i]
@@ -466,7 +470,7 @@ module SMO =
                     for j = i+1 to (Array.length S)-1 do
                         yield (S.[i], S.[j]) }
             |> Seq.toArray
-            |> Array.Parallel.map (fun (y', y'') ->
+            |> (if options.parallelize then Array.Parallel.map else Array.map) (fun (y', y'') ->
                 let X',Y' = 
                     Array.zip X Y 
                     |> Array.filter (fun (_, y) -> y = y' || y = y'')
@@ -497,7 +501,8 @@ module SMO =
             | _ when i > n -> 0.0f
             | _ -> parameters.nu * (float32 N) - (float32 n))
 
-        let Q = new Q_C(LRU.capacity options.cacheSize N, N, (fun i j -> K X'.[i] X'.[j]))
+        let Q = new Q_C(LRU.capacity options.cacheSize N, N, 
+                        (fun i j -> K X'.[i] X'.[j]), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y Q { A = A; C = C; p = p } options
 
         // Remove support vectors with A.[i] = 0.0
@@ -515,10 +520,10 @@ module SMO =
         OneClass(K,X'',A'',b)
 
     /// Q matrix for regression problems
-    type private Q_R(capacity : int, N : int, Q : int -> int -> float32) =
+    type private Q_R(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
         let diagonal = Q_R.initDiagonal N Q
         let indices = Array.init (2*N) id
-        let lru = LRU(capacity, 2*N, Q)
+        let lru = LRU(capacity, 2*N, Q, parallelize)
 
         /// Initialize elements of the main diagonal of Q
         static member initDiagonal N Q =
@@ -564,7 +569,8 @@ module SMO =
         let p' = Array.init N' (fun i -> parameters.eta - (if i < N then Y.[i] else -Y.[i-N]))
         let A' = Array.zeroCreate N'
 
-        let Q = new Q_R(LRU.capacity options.cacheSize (2*N), N, (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]))
+        let Q = new Q_R(LRU.capacity options.cacheSize (2*N), N, 
+                        (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y' Q { A = A'; C = C'; p = p' } options
 
         // Compute -A.[i] + A.[i+N]

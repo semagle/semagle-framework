@@ -89,7 +89,7 @@ module OneSlack =
         let mutable N = N
         let mutable inactive = Array.zeroCreate N
         let mutable diagonal = Array.init N (fun i -> Q i i)
-        let lru = LRU(capacity, N, Q)
+        let lru = LRU(capacity, N, Q, false)
 
         /// Resize Q matrix
         member this.Resize (n : int) =
