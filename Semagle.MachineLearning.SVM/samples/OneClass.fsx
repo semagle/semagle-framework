@@ -76,10 +76,7 @@ let main (args) =
 
     // create SVM model
     printfn "Training SVM model..."
-    let svm = duration { return SMO.OneClass train_x (Kernel.rbf 0.1f) 
-                                             { nu = 0.5f; epsilon = 0.001f;
-                                               options = { strategy = SMO.SecondOrderInformation; maxIterations = 1000000; 
-                                                           shrinking = true; cacheSize = 200<MB> } } }
+    let svm = duration { return SMO.OneClass train_x (Kernel.rbf 0.1f) { nu = 0.5f } SMO.defaultOptimizationOptions }
 
     // predict and compute correct count
     printfn "Predicting SVM model..."

@@ -81,10 +81,8 @@ let main(args) =
     printfn "Training SVM model..."
     let svm = duration { 
         let C_SVC = if multiclass then SMO.C_SVC_M else SMO.C_SVC
-        return C_SVC train_x train_y (Kernel.rbf 0.1f) 
-                     { C_p = 1.0f; C_n = 1.0f; epsilon = 0.001f;
-                       options = { strategy = SMO.SecondOrderInformation; maxIterations = 1000000; 
-                                   shrinking = true; cacheSize = 200<MB> } } }
+        return C_SVC train_x train_y (Kernel.rbf 0.1f) { C_p = 1.0f; C_n = 1.0f } SMO.defaultOptimizationOptions
+        }
 
     // predict and compute correct count
     printfn "Predicting SVM model..."

@@ -31,14 +31,10 @@ module OneSlack =
         rescaling : Rescaling;
         /// The penalty for slack variables
         C : float32;  
-        /// The maximum optimization error
-        epsilon : float32;
         /// The loss function
         loss : LossFunction<'Y>;
         /// The argmax function
-        argmaxLoss : ArgmaxLossFunction<'X,'Y>; 
-        /// General SMO algorithm optimization options
-        options : SMO.OptimizationOptions
+        argmaxLoss : ArgmaxLossFunction<'X,'Y>
     }
 
     [<Literal>]
@@ -121,7 +117,7 @@ module OneSlack =
             member q.C (j : int) (L : int) = lru.Get j L
 
     /// 1-Slack optimization problem solver
-    let optimize (X : 'X[]) (Y : 'Y[]) (F : JointFeatureFunction<'X, 'Y>) (parameters : OneSlack<'X,'Y>) =
+    let optimize (X : 'X[]) (Y : 'Y[]) (F : JointFeatureFunction<'X, 'Y>) (parameters : OneSlack<'X,'Y>) (options : SMO.OptimizationOptions) =
         if Array.length X <> Array.length Y then
             invalidArg "X and Y" "have different lengths"
 
@@ -157,13 +153,12 @@ module OneSlack =
                 sumF
             (sumF k) .* (sumF l)
 
-        let M = int (1.0f / parameters.epsilon)
-        let Q = new Q_S(LRU.capacity parameters.options.cacheSize M, 0, H, cache)
+        let M = int (1.0f / options.epsilon)
+        let Q = new Q_S(LRU.capacity options.cacheSize M, 0, H, cache)
 
         let inline solve () = 
-            SMO.C_SMO X' Y' Q { epsilon = parameters.epsilon / 2.0f; 
-                                A = A; C = C; p = p;
-                                options = parameters.options } |> ignore
+            SMO.C_SMO X' Y' Q { A = A; C = C; p = p; } 
+                      { options with epsilon = options.epsilon / 2.0f } |> ignore
 
             W <- DenseVector(Array.zeroCreate W.Length)
             Array.iteri (fun k a -> update W k a) A
@@ -208,7 +203,7 @@ module OneSlack =
         let inline isOptimal xi h = 
             let h = (Array.sum h) / (float32 N)
             info "xi=%f, h=%f" xi h
-            h - xi <= parameters.epsilon
+            h - xi <= options.epsilon
 
         let rec optimize k =
             info "iteration=%d, size=%d" k (Array.length X')

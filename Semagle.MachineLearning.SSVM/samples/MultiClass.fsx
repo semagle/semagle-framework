@@ -89,7 +89,8 @@ let main(args) =
 
     // create SVM model
     printfn "Training SVM model..."
-    let multiclass = duration { return MultiClass.learn train_x train_y id { MultiClass.defaults with C = 1000.0f } }
+    let multiclass = duration { return MultiClass.learn train_x train_y id { MultiClass.defaults with C = 1000.0f } 
+        SMO.defaultOptimizationOptions}
 
     // predict and compute correct count
     printfn "Predicting SVM model..."

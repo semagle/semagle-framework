@@ -27,24 +27,18 @@ module MultiClass =
         rescaling : Rescaling;
         /// The penalty for slack variables  
         C : float32; 
-        /// The maximum optimization error
-        epsilon : float32;
         /// The loss function 
-        loss : LossFunction<'Y>;
-        /// General SMO algorithm optimization options
-        options : SMO.OptimizationOptions  }
+        loss : LossFunction<'Y>
+    }
 
     /// Default optimzation parameters for Multi-Class Structured SVMs
     let defaults : Parameters<'Y> = 
-        { rescaling = Slack; C = 1.0f; epsilon = 0.001f; 
-          loss = (fun y y' -> if y = y' then 0.0f else 1.0f);
-          options = { strategy = SMO.SecondOrderInformation; maxIterations = 1000000; 
-                      shrinking = true; cacheSize = 200<MB> } } 
+        { rescaling = Slack; C = 1.0f; loss = (fun y y' -> if y = y' then 0.0f else 1.0f); } 
 
     let private index Y k i = let K = Array.length Y in i*K + k
 
     /// Learn structured SVM model for multi-class classification
-    let learn (X: 'X[]) (Y : 'Y[]) (F : FeatureFunction<'X>) (parameters : Parameters<'Y>) =
+    let learn (X: 'X[]) (Y : 'Y[]) (F : FeatureFunction<'X>) (parameters : Parameters<'Y>) (options : SMO.OptimizationOptions) =
         let YS = Array.distinct Y
 
         let JF x y =  
@@ -65,10 +59,8 @@ module MultiClass =
                 |> Array.maxBy (fun (_, _, cost) -> cost)
 
         let ssvm = OneSlack.optimize X Y JF 
-                                     { rescaling = parameters.rescaling; 
-                                       C = parameters.C; epsilon = parameters.epsilon;
-                                       loss = parameters.loss; argmaxLoss = argmaxLoss;
-                                       options = parameters.options }
+                                     { rescaling = parameters.rescaling; C = parameters.C; 
+                                       loss = parameters.loss; argmaxLoss = argmaxLoss } options
 
         MultiClass(F, ssvm, YS)
 

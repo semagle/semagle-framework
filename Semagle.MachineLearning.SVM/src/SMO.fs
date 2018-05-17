@@ -59,6 +59,8 @@ module SMO =
 
     /// Optimization options of SMO algorithm
     type OptimizationOptions = {
+        /// The maximum optimization error
+        epsilon : float32;
         /// The maximum number of SMO algorithm iterations
         maxIterations : int; 
         /// The working set selection strategy
@@ -66,8 +68,16 @@ module SMO =
         /// Enable/disable working set shrinking
         shrinking : bool; 
         /// Kernel cache size
-        cacheSize : int<MB> 
+        cacheSize : int<MB>;
+        // Logger
+        logger : Logger;
     }
+
+    // default optimization options
+    let defaultOptimizationOptions : OptimizationOptions =
+        { epsilon = 0.001f; maxIterations = 1000000;
+          strategy = SecondOrderInformation;  shrinking = true; 
+          cacheSize = 200<MB>; logger = Logging.getCurrentLogger() }
 
     /// General parameters for C_SMO problem
     type C_SMO = { 
@@ -77,22 +87,17 @@ module SMO =
         C : float32[];
         /// The linear term of the optimized function 
         p: float32[]; 
-        /// The maximum optimization error
-        epsilon : float32; 
-        /// General SMO algorithm options
-        options : OptimizationOptions 
     }
 
     /// Sequential Minimal Optimization (SMO) problem solver
-    let C_SMO (X : 'X[]) (Y : float32[]) (Q : Q) (parameters : C_SMO) = 
+    let C_SMO (X : 'X[]) (Y : float32[]) (Q : Q) (parameters : C_SMO) (options : OptimizationOptions) = 
         if Array.length X <> Array.length Y then
             invalidArg "X and Y" "have different lengths"
 
-        let logger = Logging.getCurrentLogger()
-        let log msg = msg |> Logger.logSimple logger
+        let log msg = msg |> Logger.logSimple options.logger
         let info fmt = Printf.kprintf (fun s -> s |> Logary.Message.eventInfo |> log) fmt
 
-        let epsilon = parameters.epsilon
+        let epsilon = options.epsilon
         let C = parameters.C
         let p = parameters.p
 
@@ -180,7 +185,7 @@ module SMO =
             if i = not_found then None else Some (i, minLowTo i L)
 
         let selectWorkingSet =
-            match parameters.options.strategy with
+            match options.strategy with
                 | MaximalViolatingPair -> maximalViolatingPair
                 | SecondOrderInformation -> secondOrderInformation       
 
@@ -325,7 +330,7 @@ module SMO =
                     let a_i, a_j = solve i j L
                     // Update the gradient
                     updateG i j a_i a_j L
-                    if parameters.options.shrinking then
+                    if options.shrinking then
                         updateG' i a_i
                         updateG' j a_j
                     // Update the solution
@@ -343,7 +348,7 @@ module SMO =
                     reconstructed <- true
                 reconstructed, shrink m M L
 
-            if k < parameters.options.maxIterations then
+            if k < options.maxIterations then
                 let m_k = m L
                 let M_k = M L
 
@@ -374,7 +379,7 @@ module SMO =
 
         /// Optimize without shrinking every 1000 iterations
         let rec optimize_non_shrinking k =
-            if k < parameters.options.maxIterations then
+            if k < options.maxIterations then
                 let m_k = m N
                 let M_k = M N
 
@@ -386,7 +391,7 @@ module SMO =
                 failwith "Exceeded iterations limit"
 
         let iterations = 
-            if parameters.options.shrinking then 
+            if options.shrinking then 
                 optimize_shrinking 0 shrinking_iterations N false
             else
                 optimize_non_shrinking 0
@@ -427,14 +432,10 @@ module SMO =
         C_p : float32;
         /// The penalty for -1 class instances 
         C_n : float32; 
-        /// The maximum optimization error
-        epsilon : float32; 
-        /// General SMO algorithm options
-        options : OptimizationOptions 
     }
 
     /// Two class C Support Vector Classification (SVC) problem solver
-    let C_SVC (X : 'X[]) (Y : float32[]) (K : Kernel<'X>) (parameters : C_SVC) =
+    let C_SVC (X : 'X[]) (Y : float32[]) (K : Kernel<'X>) (parameters : C_SVC) (options : OptimizationOptions) =
         let N = Array.length X
         let X' = Array.copy X
         let Y' = Array.copy Y
@@ -442,9 +443,8 @@ module SMO =
         let p = Array.create N -1.0f
         let A = Array.zeroCreate N
 
-        let Q = new Q_C(LRU.capacity parameters.options.cacheSize N, N, (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]))
-        let (X',Y',A',b) = C_SMO X' Y' Q { epsilon = parameters.epsilon; A = A; C = C; p = p;
-                                           options = parameters.options }
+        let Q = new Q_C(LRU.capacity options.cacheSize N, N, (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]))
+        let (X',Y',A',b) = C_SMO X' Y' Q { A = A; C = C; p = p } options
 
         // Remove support vectors with A.[i] = 0.0 and compute Y.[i]*A.[i]
         let N'' = Array.sumBy (fun a -> if a <> 0.0f then 1 else 0) A'
@@ -461,7 +461,7 @@ module SMO =
         TwoClass(K,X'',A'',b)
 
     /// Multi-class C Support Vector Classification (SVC) problem solver
-    let C_SVC_M (X : 'X[]) (Y : 'Y[]) (K : Kernel<'X>) (parameters : C_SVC) =
+    let C_SVC_M (X : 'X[]) (Y : 'Y[]) (K : Kernel<'X>) (parameters : C_SVC) (options : OptimizationOptions) =
         let models = 
             seq { 
                 let S = Array.distinct Y
@@ -475,7 +475,7 @@ module SMO =
                     |> Array.filter (fun (_, y) -> y = y' || y = y'')
                     |> Array.map (fun (x, y) -> (x, if y = y' then +1.0f else -1.0f))
                     |> Array.unzip
-                match C_SVC X' Y' K parameters with
+                match C_SVC X' Y' K parameters options with
                 | TwoClass(_, X, A,b) -> (y', y'', X, A, b)
                 | _ -> invalidArg "svm" "type is invalid")
         MultiClass(K, models)
@@ -484,14 +484,10 @@ module SMO =
     type OneClass = {
         /// The fraction of support vectors 
         nu : float32;
-        /// The maximum optimization error 
-        epsilon : float32;
-        /// General SMO algorithm options 
-        options : OptimizationOptions 
     }
 
     /// One-Class problem solver
-    let OneClass (X : 'X[]) (K : Kernel<'X>) (parameters : OneClass) = 
+    let OneClass (X : 'X[]) (K : Kernel<'X>) (parameters : OneClass) (options : OptimizationOptions) = 
         let N = (Array.length X)
         let X' = Array.copy X
         let Y = Array.create N 1.0f
@@ -504,9 +500,8 @@ module SMO =
             | _ when i > n -> 0.0f
             | _ -> parameters.nu * (float32 N) - (float32 n))
 
-        let Q = new Q_C(LRU.capacity parameters.options.cacheSize N, N, (fun i j -> K X'.[i] X'.[j]))
-        let (X',_,A',b) = C_SMO X' Y Q { epsilon = parameters.epsilon; A = A; C = C; p = p; 
-                                         options = parameters.options }
+        let Q = new Q_C(LRU.capacity options.cacheSize N, N, (fun i j -> K X'.[i] X'.[j]))
+        let (X',_,A',b) = C_SMO X' Y Q { A = A; C = C; p = p } options
 
         // Remove support vectors with A.[i] = 0.0
         let N'' = Array.sumBy (fun a -> if a <> 0.0f then 1 else 0) A'
@@ -560,14 +555,10 @@ module SMO =
         eta : float32;
         /// The penalty 
         C : float32;
-        /// The maximum optimization error  
-        epsilon : float32;
-        /// General SMO algorithm options 
-        options : OptimizationOptions 
     }
 
     /// C Support Vector Regression (SVR) problem solver
-    let C_SVR (X : 'X[]) (Y : float32[]) (K : Kernel<'X>) (parameters : C_SVR) =
+    let C_SVR (X : 'X[]) (Y : float32[]) (K : Kernel<'X>) (parameters : C_SVR) (options : OptimizationOptions) =
         let N = Array.length X
         let N' = 2 * N
         let Y' = Array.init N' (fun i -> if i < N then +1.0f else -1.0f)
@@ -576,9 +567,8 @@ module SMO =
         let p' = Array.init N' (fun i -> parameters.eta - (if i < N then Y.[i] else -Y.[i-N]))
         let A' = Array.zeroCreate N'
 
-        let Q = new Q_R(LRU.capacity parameters.options.cacheSize (2*N), N, (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]))
-        let (X',_,A',b) = C_SMO X' Y' Q { epsilon = parameters.epsilon; A = A'; C = C'; p = p';
-                                          options = parameters.options }
+        let Q = new Q_R(LRU.capacity options.cacheSize (2*N), N, (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]))
+        let (X',_,A',b) = C_SMO X' Y' Q { A = A'; C = C'; p = p' } options
 
         // Compute -A.[i] + A.[i+N]
         let A = Array.zeroCreate N
