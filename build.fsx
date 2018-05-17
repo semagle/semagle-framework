@@ -45,6 +45,10 @@ Target "BuildTests" (fun _ ->
     |> Log "TestsBuild-Output: ")
 
 Target "BuildSamples" ( fun _ ->
+    // copy FSharp.Core development files
+    !!"packages/FSharp.Core/lib/net45/FSharp.Core.optdata" |> Copy buildDir
+    !!"packages/FSharp.Core/lib/net45/FSharp.Core.sigdata" |> Copy buildDir
+
     !!"Semagle.*/samples/*.fsx"
     |> Seq.map (fun (s : string) ->
         let output = buildDir + (s.[s.LastIndexOfAny([| '/'; '\\' |])+1..s.Length - 4] + "exe")
