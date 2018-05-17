@@ -200,18 +200,18 @@ module SMO =
                 let diff = A.[i] - A.[j]
                 match (A.[i] + delta, A.[j] + delta) with
                     | _, a_j when diff > 0.0f && a_j < 0.0f -> (diff, 0.0f)
-                    | a_i, _ when (* diff <= 0.0f && *) a_i < 0.0f -> (0.0f, diff)
-                    | _, a_j when diff <= C.[i] - C.[j] && a_j > C.[j] -> (C.[j]+diff, C.[j])
-                    | a_i, _ when (* diff > C.[i] - C.[j] && *) a_i > C.[i] -> (C.[i], C.[i] - diff)
+                    | a_i, _ when diff <= 0.0f && a_i < 0.0f -> (0.0f, diff)
+                    | _, a_j when diff <= C.[i] - C.[j] && a_j > C.[j] -> (C.[j] + diff, C.[j])
+                    | a_i, _ when diff > C.[i] - C.[j] && a_i > C.[i] -> (C.[i], C.[i] - diff)
                     | a_i, a_j -> a_i, a_j
             else
                 let delta = (G.[i]-G.[j])/(if a_ij < 0.0f then tau else a_ij)
                 let sum = A.[i] + A.[j]
                 match (A.[i] - delta, A.[j] + delta) with
                     | a_i, _ when sum > C.[i] && a_i > C.[i] -> (C.[i], sum - C.[i])
-                    | _, a_j when (* sum <= C.[i] && *) a_j < 0.0f -> (sum, 0.0f)
+                    | _, a_j when sum <= C.[i] && a_j < 0.0f -> (sum, 0.0f)
                     | _, a_j when sum > C.[j] && a_j > C.[j] -> (sum - C.[j], C.[j])
-                    | a_i, _ when (* sum <= C.[j] && *) a_i < 0.0f -> (0.0f, sum)
+                    | a_i, _ when sum <= C.[j] && a_i < 0.0f -> (0.0f, sum)
                     | a_i, a_j -> a_i, a_j
 
         /// update gradient
