@@ -59,12 +59,16 @@ module LRU =
                 let column = columns.[index]
                 let length = lengths.[index]
                 if length < L then
-                    Parallel.For(length, L, fun i -> column.[i] <- Q i j) |> ignore
+                    // Parallel.For(length, L, fun i -> column.[i] <- Q i j) |> ignore
+                    for i = length to L-1 do
+                        column.[i] <- Q i j
                     lengths.[index] <- L
                 column
             else 
                 let column = Array.zeroCreate N
-                Parallel.For(0, L, fun i -> column.[i] <- Q i j) |> ignore
+                // Parallel.For(0, L, fun i -> column.[i] <- Q i j) |> ignore
+                for i = 0 to L-1 do
+                    column.[i] <- Q i j
                 lru.insert j column L
                 column
 

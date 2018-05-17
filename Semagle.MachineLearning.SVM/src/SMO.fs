@@ -15,11 +15,8 @@
 namespace Semagle.MachineLearning.SVM
 
 open LanguagePrimitives
-open System.Threading.Tasks
 
 open Logary
-open Logary.Logger
-open Hopac
 
 open Semagle.MachineLearning.SVM.LRU
 
@@ -121,6 +118,7 @@ module SMO =
         let G = Array.copy p
         let G' = Array.zeroCreate<float32> N 
 
+        // initialize gradient
         for i = 0 to N-1 do
             if not (isLowerBound i) then
                 let Q_i = Q.C i N
@@ -213,7 +211,7 @@ module SMO =
                     | a_i, _ when (* sum <= C.[j] && *) a_i < 0.0f -> (0.0f, sum)
                     | a_i, a_j -> a_i, a_j
 
-        /// Update gradient
+        /// update gradient
         let inline updateG i j a_i a_j L =
             let Q_i = Q.C i L
             let Q_j = Q.C j L
@@ -233,7 +231,7 @@ module SMO =
                 for t = 0 to N-1 do
                     G'.[t] <- G'.[t] + sign * C_i*Q_i.[t]
 
-        /// Reconstruct gradient
+        /// reconstruct gradient
         let inline reconstructG L = 
             info "reconstruct gradient"
             for t = L to N-1 do
@@ -339,7 +337,7 @@ module SMO =
                     true
                 | None -> false
 
-        /// Optimize with shrinking every 1000 iterations
+        /// optimize with shrinking every 1000 iterations
         let rec optimize_shrinking k s L =
             let inline optimize_shrink m M L =
                 if s = 0 then
@@ -376,7 +374,7 @@ module SMO =
              else
                 failwith "Exceeded iterations limit"
 
-        /// Optimize without shrinking every 1000 iterations
+        /// optimize without shrinking every 1000 iterations
         let rec optimize_non_shrinking k =
             if k < options.maxIterations then
                 let m_k = m N

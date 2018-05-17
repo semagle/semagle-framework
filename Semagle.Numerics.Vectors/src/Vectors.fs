@@ -218,13 +218,13 @@ and SparseVector(indices : int[], values : float32[]) =
 
     /// Scalar product
     static member inline (.*) (a : SparseVector, b : SparseVector) =
+        let mutable sum = 0.0f
         if System.Object.ReferenceEquals(a, b) then
             // optimization for x .* x cases
-            Array.sumBy (fun v -> v*v) a.Values 
+            for i = 0 to a.Values.Length-1 do
+                sum <- sum + a.Values.[i]*a.Values.[i]
         else
             // general case
-            let mutable sum = 0.0f
-
             let mutable i = 0
             let mutable j = 0
 
@@ -234,7 +234,7 @@ and SparseVector(indices : int[], values : float32[]) =
                 | _ when a.Indices.[i] > b.Indices.[j] -> j <- j + 1
                 | _ -> sum <- sum + a.Values.[i]*b.Values.[j]; i <- i + 1; j <- j + 1
 
-            sum
+        sum
 
     /// Negation of vector
     static member inline (~-)(a : SparseVector) = SparseVector.map (~-) a
