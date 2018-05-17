@@ -79,7 +79,6 @@
     <Compile Include="src\MultiClass.fs" />
     <None Include="samples\MultiClass.fsx" />
     <None Include="samples\Sequence.fsx" />
-    <None Include="experiments.txt" />
   </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" />
 </Project>
