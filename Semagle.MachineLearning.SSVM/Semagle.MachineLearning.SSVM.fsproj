@@ -78,7 +78,6 @@
     <Compile Include="src\OneSlack.fs" />
     <Compile Include="src\MultiClass.fs" />
     <None Include="samples\MultiClass.fsx" />
-    <None Include="samples\Sequence.fsx" />
   </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" />
 </Project>
