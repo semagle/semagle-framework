@@ -340,38 +340,37 @@ module SMO =
                 | None -> false
 
         /// Optimize with shrinking every 1000 iterations
-        let rec optimize_shrinking k s L reconstructed =
+        let rec optimize_shrinking k s L =
             let inline optimize_shrink m M L =
-                let mutable reconstructed = reconstructed
-                if not reconstructed && isOptimal m M (10.0f*epsilon) then
-                    reconstructG L
-                    reconstructed <- true
-                reconstructed, shrink m M L
+                if s = 0 then
+                    let reconstructed = isOptimal m M (10.0f*epsilon)
+                    if reconstructed then
+                        reconstructG L
+                    reconstructed, shrink m M L
+                else
+                    false, L
 
             if k < options.maxIterations then
                 let m_k = m L
                 let M_k = M L
 
                 // shrink active set
-                let reconstructed, L = 
-                    if s = 0 then 
-                        optimize_shrink m_k M_k L 
-                    else 
-                        reconstructed, L
+                let reconstructed, L = optimize_shrink m_k M_k L
 
                 // check optimality for active set
                 if isOptimal m_k M_k epsilon then
-                    reconstructG L
+                    if not reconstructed then
+                        reconstructG L
 
                     // check optimality for full set
                     if not(isOptimal (m L) (M L) epsilon) && optimize_solve N then
                         // shrink on next iteration
-                        optimize_shrinking k 1 N reconstructed
+                        optimize_shrinking k 1 N
                     else
                         k 
                 else
                     if optimize_solve L then 
-                        optimize_shrinking (k + 1) (if s > 0 then (s - 1) else shrinking_iterations) L reconstructed
+                        optimize_shrinking (k + 1) (if s > 0 then (s - 1) else shrinking_iterations) L
                     else 
                         k
              else
@@ -392,7 +391,7 @@ module SMO =
 
         let iterations = 
             if options.shrinking then 
-                optimize_shrinking 0 shrinking_iterations N false
+                optimize_shrinking 0 shrinking_iterations N
             else
                 optimize_non_shrinking 0
         info "#iterations = %d" iterations
