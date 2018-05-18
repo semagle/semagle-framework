@@ -31,15 +31,6 @@ module SMO =
     [<Literal>]
     let private shrinking_iterations = 1000
 
-    [<Literal>]
-    let private LowerBound = -1y
-
-    [<Literal>]
-    let private Unbound = 0y
-
-    [<Literal>]
-    let private UpperBound = +1y
-
     /// Interface of Q matrix
     type Q =
         /// Swap column elements
@@ -104,62 +95,54 @@ module SMO =
         let N = Array.length X
         let A = parameters.A
 
-        let inline status i = 
-            if 0.0f < A.[i] && A.[i] < C.[i] then
-                Unbound
-            else if Y.[i] = +1.0f && A.[i] = C.[i] || Y.[i] = -1.0f && A.[i] = 0.0f then
-                UpperBound
-            else
-                LowerBound
-
-        let S = Array.init N status
-
-        let inline isUpperBound i = S.[i] = UpperBound
-        let inline isUnbound i = S.[i] = Unbound
-        let inline isLowerBound i = S.[i] = LowerBound
-
         let G = Array.copy p
         let G' = Array.zeroCreate<float32> N 
 
-        // initialize gradient
-        for i = 0 to N-1 do
-            if not (isLowerBound i) then
-                let Q_i = Q.C i N
-                let inline updateG (a_i : float32) (G : float32[]) = 
-                    for j = 0 to N-1 do
-                        G.[j] <- G.[j] + a_i*Q_i.[j]
-                
-                updateG A.[i] G
+        let initialize_gradient =
+            for i = 0 to N-1 do
+                if A.[i] > 0.0f then
+                    let Q_i = Q.C i N
+                    let inline updateG (a_i : float32) (G : float32[]) = 
+                        for j = 0 to N-1 do
+                            G.[j] <- G.[j] + a_i*Q_i.[j]
 
-                if isUpperBound i then updateG C.[i] G'
+                    updateG A.[i] G
+
+                    if A.[i] >= C.[i] then updateG C.[i] G'
 
         // working set selection helper functions
         let inline _y_gf i = -G.[i]*Y.[i]
 
-        let inline maxUp L =
+        let inline isFree i = 0.0f < A.[i] && A.[i] < C.[i]
+
+        let inline isUp i = (Y.[i] = +1.0f && A.[i] < C.[i]) || (Y.[i] = -1.0f && A.[i] > 0.0f)
+
+        let inline isLow i = (Y.[i] = +1.0f && A.[i] > 0.0f) || (Y.[i] = -1.0f && A.[i] < C.[i])
+
+        let inline maxUp n =
             let mutable max_i = not_found
             let mutable max_v = System.Single.NegativeInfinity
-            for i = 0 to L-1 do
-                if not (isUpperBound i) then
+            for i = 0 to n-1 do
+                if isUp i then
                     let v = _y_gf i
                     if v > max_v then
                         max_i <- i
                         max_v <- v
             max_i
 
-        let inline minLow L =
+        let inline minLow n =
             let mutable min_i = not_found
             let mutable min_v = System.Single.PositiveInfinity
-            for i = 0 to L-1 do
-                if not (isLowerBound i) then
+            for i = 0 to n-1 do
+                if isLow i then
                     let v = _y_gf i
                     if v < min_v then
                         min_i <- i
                         min_v <- v
             min_i
 
-        let inline minLowTo s L =
-            let Q_s = Q.C s L
+        let inline minLowTo s n =
+            let Q_s = Q.C s n
             let inline objective t = 
                 let a_ts = Q.D.[t] + (Q_s.[s]) - 2.0f*(Q_s.[t])*Y.[t]*Y.[s]
                 let b_ts = _y_gf t - _y_gf s
@@ -167,23 +150,37 @@ module SMO =
 
             let mutable min_i = not_found
             let mutable min_v = System.Single.PositiveInfinity
-            for i = 0 to L-1 do
-                if not (isLowerBound i) && (_y_gf i < _y_gf s) then
-                    let v =objective i
+            for i = 0 to n-1 do
+                if (isLow i) && (_y_gf i < _y_gf s) then
+                    let v = objective i
                     if v < min_v then
                         min_i <- i
                         min_v <- v
             min_i
         
         /// Maximal violating pair working set selection strategy
-        let maximalViolatingPair L =
-            let i = maxUp L
-            if i = not_found then None else Some (i, minLow L)
+        let maximalViolatingPair n =
+            let i = maxUp n
+            if i <> not_found then
+                let j = minLow n
+                if j <> not_found && _y_gf(i) > _y_gf(j) then
+                    Some(i, j)
+                else
+                    None
+            else
+                None
 
         /// Second order information working set selection strategy 
-        let secondOrderInformation L = 
-            let i = maxUp L
-            if i = not_found then None else Some (i, minLowTo i L)
+        let secondOrderInformation n = 
+            let i = maxUp n
+            if i <> not_found then
+                let j = minLowTo i n
+                if j <> not_found && _y_gf(i) > _y_gf(j) then
+                    Some(i, j)
+                else
+                    None
+            else
+                None
 
         let selectWorkingSet =
             match options.strategy with
@@ -191,12 +188,13 @@ module SMO =
                 | SecondOrderInformation -> secondOrderInformation       
 
         /// Solve an optimization sub-problem
-        let inline solve i j L = 
-            let Q_i = Q.C i L
-            let Q_j = Q.C j L
-            let a_ij = (Q_i.[i]) + (Q_j.[j]) - 2.0f*(Q_i.[j])*Y.[i]*Y.[j]
+        let inline solve i j n = 
+            let Q_i = Q.C i n
+            let Q_j = Q.C j n
+            let a = (Q_i.[i]) + (Q_j.[j]) - 2.0f*(Q_i.[j])*Y.[i]*Y.[j]
+            let a' = if a > 0.0f then a else tau
             if Y.[i] <> Y.[j] then
-                let delta = (-G.[i]-G.[j])/(if a_ij < 0.0f then tau else a_ij)
+                let delta = (-G.[i]-G.[j]) / a'
                 let diff = A.[i] - A.[j]
                 match (A.[i] + delta, A.[j] + delta) with
                     | _, a_j when diff > 0.0f && a_j < 0.0f -> (diff, 0.0f)
@@ -205,7 +203,7 @@ module SMO =
                     | a_i, _ when diff > C.[i] - C.[j] && a_i > C.[i] -> (C.[i], C.[i] - diff)
                     | a_i, a_j -> a_i, a_j
             else
-                let delta = (G.[i]-G.[j])/(if a_ij < 0.0f then tau else a_ij)
+                let delta = (G.[i]-G.[j]) / a'
                 let sum = A.[i] + A.[j]
                 match (A.[i] - delta, A.[j] + delta) with
                     | a_i, _ when sum > C.[i] && a_i > C.[i] -> (C.[i], sum - C.[i])
@@ -215,11 +213,11 @@ module SMO =
                     | a_i, a_j -> a_i, a_j
 
         /// update gradient
-        let inline updateG i j a_i a_j L =
-            let Q_i = Q.C i L
-            let Q_j = Q.C j L
+        let inline updateG i j a_i a_j n =
+            let Q_i = Q.C i n
+            let Q_j = Q.C j n
 
-            for t = 0 to L-1 do
+            for t = 0 to n-1 do
                 G.[t] <- G.[t] + (Q_i.[t])*(a_i - A.[i]) + (Q_j.[t])*(a_j - A.[j])
 
         let inline updateG' i a =
@@ -235,143 +233,133 @@ module SMO =
                     G'.[t] <- G'.[t] + sign * C_i*Q_i.[t]
 
         /// reconstruct gradient
-        let inline reconstructG L = 
-            info "reconstruct gradient"
-            for t = L to N-1 do
+        let inline reconstructG n = 
+            for t = n to N-1 do
                 G.[t] <- G'.[t] + p.[t]
 
-            let mutable unbound = 0
-            for i = 0 to L-1 do
-                if isUnbound i then unbound <- unbound + 1
+            let mutable free = 0
+            for i = 0 to n-1 do
+                if isFree i then free <- free + 1
 
-            let inline passive2active () =
-                for i = L to N-1 do
-                    let Q_i = Q.C i L
-                    for j = 0 to L-1 do
-                        if isUnbound j then 
+            let inline passive_active () =
+                for i = n to N-1 do
+                    let Q_i = Q.C i n
+                    for j = 0 to n-1 do
+                        if isFree j then 
                             G.[i] <- G.[i] + A.[j]*Q_i.[j]
 
-            let inline active2passive () =
-                for i = 0 to L-1 do
-                    if isUnbound i then
+            let inline active_passive () =
+                for i = 0 to n-1 do
+                    if isFree i then
                         let Q_i = Q.C i N
-                        for j = L to N-1 do
+                        for j = n to N-1 do
                             G.[j] <- G.[j] + A.[i]*Q_i.[j]
 
-            if unbound*L > 2*L*(N-L) then
-                passive2active ()
+            if free*n > 2*n*(N-n) then
+                passive_active ()
             else
-                active2passive ()
+                active_passive ()
 
-        let inline m L = 
+        let inline m n = 
             let mutable max_v = System.Single.NegativeInfinity
-            for i = 0 to L-1 do
-                if not (isUpperBound i) then
+            for i = 0 to n-1 do
+                if isUp i then
                     let v = _y_gf i
                     if v > max_v then
                         max_v <- v
             max_v
 
-        let inline M L =
+        let inline M n =
             let mutable min_v = System.Single.PositiveInfinity
-            for i = 0 to L-1 do
-                if not (isLowerBound i) then
+            for i = 0 to n-1 do
+                if isLow i then
                     let v = _y_gf i
                     if v < min_v then
                         min_v <- v
             min_v
 
         /// shrink active set
-        let inline shrink m M L = 
-            let inline isShrinked i = (isUpperBound i) && (_y_gf i) > m || (isLowerBound i) && (_y_gf i) < M
+        let inline shrink m M n = 
+            let inline isShrinked i = 
+                (_y_gf i) > m && A.[i] = C.[i] && Y.[i] = +1.0f || A.[i] = 0.0f && Y.[i] = -1.0f ||
+                (_y_gf i) < M && A.[i] = 0.0f && Y.[i] = +1.0f || A.[i] = C.[i] && Y.[i] = -1.0f
 
             let inline swapAll i j =
                 swap X i j; swap Y i j
                 swap C i j; swap p i j;
-                swap A i j; swap G i j; swap G' i j
-                swap S i j; Q.Swap i j
+                swap A i j; swap G i j; 
+                swap G' i j; Q.Swap i j
 
-            let mutable swaps = 0
             let mutable i = 0
-            let mutable j = L - 1
-            let mutable k = L - 1
+            let mutable n' = n
 
-            let mutable shrinked = 0
-
-            while i <= j do
-                match (isShrinked i), (isShrinked j) with
-                | false, false -> i <- i + 1; j <- j - 1
-                | true, false -> j <- j - 1
-                | false, true -> i <- i + 1
-                | _ ->
-                    if j = k then
-                        j <- j - 1
-                    else
-                        swaps <- swaps + 1
-                        swapAll i k
-                        i <- i + 1     
-                    shrinked <- shrinked + 1
-                    k <- k - 1
-
-            if shrinked > 0 then                
-                info "shrinked = %d, active = %d, swaps = %d" shrinked (L - shrinked) swaps
-
-            L - shrinked
+            while i < n' do
+                if isShrinked i then
+                    n' <- n' - 1 
+                    while i < n' && isShrinked n' do
+                        n' <- n' - 1
+                    swapAll i n'
+                i <- i + 1    
+            n'
 
         let inline isOptimal m M epsilon = 
             let diff = abs (m - M)
             diff <= epsilon || diff <= epsilon * (min (abs m) (abs M))
 
         /// Sequential Minimal Optimization (SMO) Algorithm
-        let inline optimize_solve L =
+        let inline optimize_solve n =
             // Find a pair of elements that violate the optimality condition
-            match selectWorkingSet L with
+            match selectWorkingSet n with
                 | Some (i, j) -> 
                     // Solve the optimization sub-problem
-                    let a_i, a_j = solve i j L
+                    let a_i, a_j = solve i j n
                     // Update the gradient
-                    updateG i j a_i a_j L
+                    updateG i j a_i a_j n
                     if options.shrinking then
                         updateG' i a_i
                         updateG' j a_j
                     // Update the solution
                     A.[i] <- a_i; A.[j] <- a_j
-                    S.[i] <- status i; S.[j] <- status j
                     true
                 | None -> false
 
         /// optimize with shrinking every 1000 iterations
-        let rec optimize_shrinking k s L =
-            let inline optimize_shrink m M L =
+        let rec optimize_shrinking k s n unshrinked =
+            let inline optimize_shrink m M n =
                 if s = 0 then
-                    let reconstructed = isOptimal m M (10.0f*epsilon)
-                    if reconstructed then
-                        reconstructG L
-                    reconstructed, shrink m M L
+                    // time to shrink
+                    if not(unshrinked) && isOptimal m M (10.0f*epsilon) then
+                       // reconstruct G if (M - m) <= 10*epsilon for the first time
+                       reconstructG n
+                       // shrink the full set
+                       true, shrink m M N
+                    else
+                        // shrink a subset
+                        unshrinked, shrink m M n
                 else
-                    false, L
+                    // no time to shrink
+                    unshrinked, n
 
             if k < options.maxIterations then
-                let m_k = m L
-                let M_k = M L
+                let m_k = m n
+                let M_k = M n
 
                 // shrink active set
-                let reconstructed, L = optimize_shrink m_k M_k L
+                let unshrinked, n = optimize_shrink m_k M_k n
 
                 // check optimality for active set
                 if isOptimal m_k M_k epsilon then
-                    if not reconstructed then
-                        reconstructG L
+                    reconstructG n
 
                     // check optimality for full set
-                    if not(isOptimal (m L) (M L) epsilon) && optimize_solve N then
+                    if not(isOptimal (m N) (M N) epsilon) && optimize_solve N then
                         // shrink on next iteration
-                        optimize_shrinking k 1 N
+                        optimize_shrinking (k + 1) 1 N unshrinked
                     else
-                        k 
+                        k
                 else
-                    if optimize_solve L then 
-                        optimize_shrinking (k + 1) (if s > 0 then (s - 1) else shrinking_iterations) L
+                    if optimize_solve n then 
+                        optimize_shrinking (k + 1) (if s > 0 then (s - 1) else shrinking_iterations) n unshrinked
                     else 
                         k
              else
@@ -390,9 +378,11 @@ module SMO =
             else
                 failwith "Exceeded iterations limit"
 
+        initialize_gradient
+
         let iterations = 
             if options.shrinking then 
-                optimize_shrinking 0 shrinking_iterations N
+                optimize_shrinking 0 shrinking_iterations N false
             else
                 optimize_non_shrinking 0
         info "#iterations = %d" iterations
@@ -402,7 +392,7 @@ module SMO =
             let mutable b = 0.0f
             let mutable M = 0
             for i = 0 to N-1 do
-                if isUnbound i then
+                if isFree i then
                     b <- b + _y_gf i
                     M <- M + 1
             DivideByInt b M
