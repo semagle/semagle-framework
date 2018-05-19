@@ -49,6 +49,11 @@ Target "BuildTests" (fun _ ->
     |> Log "TestsBuild-Output: ")
 
 Target "BuildSamples" ( fun _ ->
+    // fix System.Reflection.Metadata issue
+    [|  @"packages/System.Reflection.Metadata/lib/portable-net45+win8/System.Reflection.Metadata.dll";
+        @"packages/System.Reflection.Metadata/lib/portable-net45+win8/System.Reflection.Metadata.xml" |] 
+    |> FileHelper.Copy @"packages/build/FAKE/tools"
+
     // copy FSharp.Core development files
     !!"packages/FSharp.Core/lib/net45/FSharp.Core.optdata" |> Copy buildDir
     !!"packages/FSharp.Core/lib/net45/FSharp.Core.sigdata" |> Copy buildDir
