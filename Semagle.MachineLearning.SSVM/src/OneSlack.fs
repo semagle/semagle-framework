@@ -16,9 +16,6 @@ namespace Semagle.MachineLearning.SSVM
 
 open System.Threading.Tasks
 
-open Logary
-open Hopac
-
 open Semagle.Numerics.Vectors
 open Semagle.MachineLearning.SVM
 open Semagle.MachineLearning.SVM.LRU
@@ -121,10 +118,6 @@ module OneSlack =
         if Array.length X <> Array.length Y then
             invalidArg "X and Y" "have different lengths"
 
-        let logger = Logging.getCurrentLogger()
-        let log msg = msg |> Logger.logSimple logger
-        let info fmt = Printf.kprintf (fun s -> s |> Logary.Message.eventInfo |> log) fmt
-
         let N = Array.length X
 
         let mutable X' = Array.zeroCreate<(* Y *) 'Y[] * (* L *) float32[]> 0
@@ -202,11 +195,11 @@ module OneSlack =
 
         let inline isOptimal xi h = 
             let h = (Array.sum h) / (float32 N)
-            info "xi=%f, h=%f" xi h
+            // info "xi=%f, h=%f" xi h
             h - xi <= options.epsilon
 
         let rec optimize k =
-            info "iteration=%d, size=%d" k (Array.length X')
+            // info "iteration=%d, size=%d" k (Array.length X')
 
             let xi = solve ()
             let x', h = findNewConstraint ()
@@ -224,6 +217,6 @@ module OneSlack =
                 optimize (k+1)
 
         let iterations = optimize 1
-        info "iterations = %d" iterations
+        // info "iterations = %d" iterations
 
         OneSlack(W)

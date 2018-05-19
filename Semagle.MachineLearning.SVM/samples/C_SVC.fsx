@@ -15,11 +15,7 @@
 #if INTERACTIVE
 #I @"../../build"
 
-#r "Hopac.dll"
-#r "Hopac.Core.dll"
-#r "Logary.dll"
-#r "NodaTime.dll"
-
+#r "Semagle.Logging.dll"
 #r "Semagle.Numerics.Vectors.dll"
 #r "Semagle.Numerics.Vectors.IO.dll"
 #r "Semagle.MachineLearning.Metrics.dll"
@@ -27,16 +23,8 @@
 #r "Semagle.MachineLearning.SVM.dll"
 #endif // INTERACTIVE
 
-open LanguagePrimitives
-open System
-
-open Hopac
-open Logary
-open Logary.Targets
-open Logary.Configuration
-
+open Semagle.Logging
 open Semagle.MachineLearning.Metrics
-open Semagle.Numerics.Vectors
 open Semagle.Numerics.Vectors.IO
 open Semagle.MachineLearning.SVM
 
@@ -63,9 +51,7 @@ let main(args) =
         printfn "Usage: [fsi C_SVC.fsx | C_SVC.exe] <train.data> <test.data>"
         exit 1
 
-    withLogaryManager "C_SVC" (
-        withTargets [Console.create (Console.ConsoleConf.create Formatting.StringFormatter.verbatim) "console"] >> 
-        withRules [Rule.createForTarget "console"]) |> Job.Ignore |> Hopac.run
+    Global.initialise { Global.defaultConfig with getLogger = (fun name -> Targets.create Info name) }
 
     // load train and test data
     let readData file = LibSVM.read file |> Seq.toArray |> Array.unzip

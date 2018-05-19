@@ -1,8 +1,8 @@
 source https://api.nuget.org/v3/index.json
 
 nuget FSharp.Core
-nuget Logary
-nuget NodaTime ~> 1
+
+github logary/logary src/Logary.Facade/Facade.fs
 
 group Build
     source https://api.nuget.org/v3/index.json

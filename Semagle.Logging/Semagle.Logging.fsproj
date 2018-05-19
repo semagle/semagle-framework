@@ -1,17 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{10265A1D-B610-4685-B18C-0DC028AA3CB0}</ProjectGuid>
+    <ProjectGuid>{D4545DA3-3766-4D9E-814C-E043C87D0FED}</ProjectGuid>
+    <UseStandardResourceNames>true</UseStandardResourceNames>
     <OutputType>Library</OutputType>
-    <RootNamespace>Semagle.Algorithms</RootNamespace>
-    <AssemblyName>Semagle.Algorithms</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>Semagle.Logging</RootNamespace>
+    <AssemblyName>Semagle.Logging</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
@@ -21,7 +21,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>..\build</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -45,9 +45,11 @@
     <Folder Include="src\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\paket-files\logary\logary\src\Logary.Facade\Facade.fs">
+      <Paket>True</Paket>
+      <Link>src/Facade.fs</Link>
+    </Compile>
     <Compile Include="src\AssemblyInfo.fs" />
-    <Compile Include="src\Array.fs" />
-    <Compile Include="src\Sequence.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" />

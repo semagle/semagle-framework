@@ -34,6 +34,10 @@ Target "TestAll" (fun _ ->
             OutputFile = "TestResults.xml";
             WorkingDir = buildDir }))
 
+Target "LoggingFile" (fun _ -> 
+    ReplaceInFiles [ "namespace Logary.Facade", "namespace Semagle.Logging" ]
+                   [ "paket-files/logary/logary/src/Logary.Facade/Facade.fs" ])
+
 Target "BuildLibraries" (fun _ -> 
     !!"Semagle.*/*.fsproj"
     |> MSBuildRelease buildDir "Build" 
@@ -130,6 +134,7 @@ Target "ReleaseDocumentation" (fun _ ->
 Target "BuildAll" DoNothing
 
 "Clean" ==> "BuildLibraries"
+"LoggingFile" ==> "BuildLibraries"
 
 "BuildLibraries" ==> "BuildTests"
 "BuildLibraries" ==> "BuildSamples"

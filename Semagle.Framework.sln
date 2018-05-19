@@ -21,6 +21,8 @@ Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.MachineLearning.Met
 EndProject
 Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.MachineLearning.Metrics.Tests", "Semagle.MachineLearning.Metrics\tests\Semagle.MachineLearning.Metrics.Tests.fsproj", "{FE057914-6208-4DEB-AB5E-1D933F15AA86}"
 EndProject
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "Semagle.Logging", "Semagle.Logging\Semagle.Logging.fsproj", "{D4545DA3-3766-4D9E-814C-E043C87D0FED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{FE057914-6208-4DEB-AB5E-1D933F15AA86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE057914-6208-4DEB-AB5E-1D933F15AA86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE057914-6208-4DEB-AB5E-1D933F15AA86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4545DA3-3766-4D9E-814C-E043C87D0FED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4545DA3-3766-4D9E-814C-E043C87D0FED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4545DA3-3766-4D9E-814C-E043C87D0FED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4545DA3-3766-4D9E-814C-E043C87D0FED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
