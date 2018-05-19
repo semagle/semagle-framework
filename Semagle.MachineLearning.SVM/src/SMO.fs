@@ -254,7 +254,7 @@ module SMO =
 
             if free*n > 2*n*(N-n) then
                 // passive/active
-                debug "reconstruct gradient passive = %d / active = %d" (N - n) n
+                debug "reconstruct gradient: passive = %d / active = %d" (N - n) n
                 for i = n to N-1 do
                     let Q_i = Q.C i n
                     for j = 0 to n-1 do
@@ -262,7 +262,7 @@ module SMO =
                             G.[i] <- G.[i] + A.[j]*Q_i.[j]
             else
                 // active/passive
-                debug "reconstruct gradient active = %d / passive = %d" n (N - n)
+                debug "reconstruct gradient: active = %d / passive = %d" n (N - n)
                 for j = 0 to n-1 do
                     if isFree j then
                         let Q_j = Q.C j N
