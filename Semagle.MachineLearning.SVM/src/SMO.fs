@@ -28,9 +28,6 @@ module SMO =
     [<Literal>]
     let private not_found = -1
 
-    [<Literal>]
-    let private shrinking_iterations = 1000
-
     /// Interface of Q matrix
     type Q =
         /// Swap column elements
@@ -55,18 +52,21 @@ module SMO =
         strategy : WSSStrategy; 
         /// Enable/disable working set shrinking
         shrinking : bool; 
+        /// Maximum number of iterations before shrinking
+        shrinkingIterations : int;
         /// Kernel cache size
         cacheSize : int<MB>;
         /// Parallelize kernel evaluations
         parallelize : bool;
-        /// Logger
+        /// Logger instance
         logger : Logger;
     }
 
     // default optimization options
     let defaultOptimizationOptions : OptimizationOptions =
         { epsilon = 0.001f; maxIterations = 1000000;
-          strategy = SecondOrderInformation;  shrinking = true; 
+          strategy = SecondOrderInformation;  
+          shrinking = true; shrinkingIterations = 1000;
           cacheSize = 200<MB>; parallelize = true; 
           logger = Logging.getCurrentLogger() }
 
@@ -387,7 +387,8 @@ module SMO =
                         info "iteration = %d, objective = %f" k (objective N)
                 else
                     if optimize_solve n then 
-                        optimize_shrinking (k + 1) (if s > 0 then (s - 1) else shrinking_iterations) n unshrinked
+                        let s = if s > 0 then (s - 1) else options.shrinkingIterations
+                        optimize_shrinking (k + 1) s n unshrinked
                     else 
                         info "iteration = %d, objective = %f" k (objective n)
              else
@@ -412,7 +413,7 @@ module SMO =
         initialize_gradient ()
 
         if options.shrinking then 
-            optimize_shrinking 1 shrinking_iterations N false
+            optimize_shrinking 1 options.shrinkingIterations N false
         else
             optimize_non_shrinking 1
 
