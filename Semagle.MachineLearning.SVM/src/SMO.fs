@@ -66,7 +66,7 @@ module SMO =
         { epsilon = 0.001f; maxIterations = 1000000;
           strategy = SecondOrderInformation;  
           shrinking = true; shrinkingIterations = 1000;
-          cacheSize = 200<MB>; parallelize = true }
+          cacheSize = 100<MB>; parallelize = true }
 
     /// General parameters for C_SMO problem
     type C_SMO = { 
