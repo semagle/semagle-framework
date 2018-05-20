@@ -8,7 +8,7 @@ and SVM training/prediction.
 
     #r "Semagle.Numerics.Vectors.dll"
     #r "Semagle.Numerics.Vectors.IO.dll"
-    #r "Semagle.MachineLearning.SVM.dll"
+    #r "Semagle.MachineLearning.Metrics.dll"
     #r "Semagle.MachineLearning.SVM.dll"
 
     open LanguagePrimitives
@@ -16,6 +16,7 @@ and SVM training/prediction.
 
     open Semagle.Numerics.Vectors
     open Semagle.Numerics.Vectors.IO
+    open Semagle.MachineLearning.Metrics
     open Semagle.MachineLearning.SVM
 
 ## Reading LIBSVM Data
@@ -41,25 +42,20 @@ parameters specific to the particular optimization problem.
 Two class classification problem requires separate penalties for positive `C_p` and negative `C_n` samples:
 
     let svm = SMO.C_SVC train_x train_y (Kernel.rbf 0.1f) 
-                        { C_p = 1.0f; C_n = 1.0f; epsilon = 0.001f;
-                          options = { strategy = SMO.SecondOrderInformation; maxIterations = 1000000; 
-                                      shrinking = true; cacheSize = 200<MB> } }
+                        { C_p = 1.0f; C_n = 1.0f } SMO.defaultOptimizationOptions }
 
 ### One Class
 One class classification problem requires the fraction of support vectors `nu`:
 
     let svm = SMO.OneClass train_x (Kernel.rbf 0.1f) 
-                          { nu = 0.5f; epsilon = 0.001f;
-                            options = { strategy = SMO.SecondOrderInformation; maxIterations = 1000000; 
-                                        shrinking = true; cacheSize = 200<MB> } }
+                          { nu = 0.5f } SMO.defaultOptimizationOptions
 
 ### Regression
 Regression problem requires the boundary `eta` and the penalty `C`:
 
     let svm = SMO.C_SVR train_x train_y (Kernel.rbf 0.1f) 
-                        { eta = 0.1f; C = 1.0f; epsilon = 0.001f;
-                          options = { strategy = SMO.SecondOrderInformation; maxIterations = 1000000; 
-                                      shrinking = true; cacheSize = 200<MB> } }
+                        (Kernel.rbf 0.1f) { eta = 0.1f; C = 1.0f }
+            SMO.defaultOptimizationOptions
 
 ## Predicting
 
@@ -89,9 +85,7 @@ There are two widely used metrics for the evaluation of the performace:
 
  * Accuracy (two and one class classification)
 
-        let accuracy = 
-            let correct (Array.zip test_y predict_y) |> Array.sumBy (fun (t, p) -> if t = float32 p then 1 else 0) in
-                100.0 * (DivideByInt (float correct) (Array.length test_y))
+        let accuracy = Classification.accuracy test_y predict_y
 
  * Mean Squared Error (regression)
         
