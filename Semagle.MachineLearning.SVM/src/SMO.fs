@@ -423,6 +423,18 @@ module SMO =
         else
             optimize_non_shrinking 1
 
+        logger.infoWithBP 
+            (fun level -> 
+                let mutable support = 0
+                let mutable bounded = 0
+                for i = 0 to N-1 do
+                    if A.[i] <> 0.0f then
+                        support <- support + 1
+                        if A.[i] >= C.[i] then
+                            bounded <- bounded + 1 
+                event level (sprintf "support vectors = %d, bounded = %d" support bounded))
+            |> Async.RunSynchronously
+
         /// Reconstruction of hyperplane bias
         let bias =
             let mutable b = 0.0f
