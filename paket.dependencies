@@ -4,12 +4,11 @@ nuget FSharp.Core
 
 github logary/logary src/Logary.Facade/Facade.fs
     
-nuget System.Reflection.Metadata
-
 group Build
     source https://api.nuget.org/v3/index.json
     nuget FAKE
     nuget FSharp.Formatting
+    nuget System.Reflection.Metadata
 
 group Test
     source https://api.nuget.org/v3/index.json

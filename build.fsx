@@ -50,8 +50,8 @@ Target "BuildTests" (fun _ ->
 
 Target "BuildSamples" ( fun _ ->
     // fix System.Reflection.Metadata issue
-    [|  @"packages/System.Reflection.Metadata/lib/portable-net45+win8/System.Reflection.Metadata.dll";
-        @"packages/System.Reflection.Metadata/lib/portable-net45+win8/System.Reflection.Metadata.xml" |] 
+    [|  @"packages/build/System.Reflection.Metadata/lib/portable-net45+win8/System.Reflection.Metadata.dll";
+        @"packages/build/System.Reflection.Metadata/lib/portable-net45+win8/System.Reflection.Metadata.xml" |] 
     |> FileHelper.Copy @"packages/build/FAKE/tools"
 
     // copy FSharp.Core development files
