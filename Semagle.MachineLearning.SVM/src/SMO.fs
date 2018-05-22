@@ -17,7 +17,6 @@ namespace Semagle.MachineLearning.SVM
 open LanguagePrimitives
 
 open Semagle.Logging
-open Semagle.Logging.Message
 
 open Semagle.MachineLearning.SVM.LRU
 
@@ -83,7 +82,7 @@ module SMO =
         if Array.length X <> Array.length Y then
             invalidArg "X and Y" "have different lengths"
 
-        let logger = Log.create "C_SMO"
+        let logger = LoggerBuilder(Log.create "C_SMO")
 
         let epsilon = options.epsilon
         let C = parameters.C
@@ -250,7 +249,7 @@ module SMO =
 
             if free*n > 2*n*(N-n) then
                 // passive/active
-                logger.verbose (fun level -> event level (sprintf "reconstruct gradient: passive = %d / active = %d" (N - n) n))
+                logger { verbose (sprintf "reconstruct gradient: passive = %d / active = %d" (N - n) n) }
                 for i = n to N-1 do
                     let Q_i = Q.C i n
                     for j = 0 to n-1 do
@@ -258,7 +257,7 @@ module SMO =
                             G.[i] <- G.[i] + A.[j]*Q_i.[j]
             else
                 // active/passive
-                logger.verbose (fun level -> event level (sprintf "reconstruct gradient: active = %d / passive = %d" n (N - n)))
+                logger { verbose (sprintf "reconstruct gradient: active = %d / passive = %d" n (N - n)) }
                 for j = 0 to n-1 do
                     if isFree j then
                         let Q_j = Q.C j N
@@ -308,7 +307,7 @@ module SMO =
                     swapAll i n'
                 i <- i + 1    
 
-            logger.verbose (fun level -> event level (sprintf "shrink active set: shrinked = %d, active = %d, swaps = %d" (n - n') n' swaps))
+            logger { verbose (sprintf "shrink active set: shrinked = %d, active = %d, swaps = %d" (n - n') n' swaps) }
 
             n'
 
@@ -331,6 +330,7 @@ module SMO =
                 | None -> false
 
         let objective n =
+            printfn "objective"
             let G = 
                 if n < N then
                     let G = Array.copy G
@@ -363,9 +363,8 @@ module SMO =
 
             if k <= options.maxIterations then
                 if k % 1000 = 0 then
-                    logger.debugWithBP 
-                        (fun level -> event level (sprintf "iteration = %d, objective = %f" k (objective n)))
-                        |> Async.RunSynchronously
+                    // logger { debug (sprintf "iteration = %d, objective = %f" k (objective n)) }
+                    logger { debug (sprintf "iteration = %d" k) }
 
                 let m_k = m n
                 let M_k = M n
@@ -382,17 +381,13 @@ module SMO =
                         // shrink on next iteration
                         optimize_shrinking (k + 1) 1 N unshrinked
                     else
-                        logger.infoWithBP 
-                            (fun level -> event level (sprintf "iteration = %d, objective = %f" k (objective N)))
-                            |> Async.RunSynchronously
+                        logger { info (sprintf "iteration = %d, objective = %f" k (objective N)) }
                 else
                     if optimize_solve n then 
                         let s = if s > 0 then (s - 1) else options.shrinkingIterations
                         optimize_shrinking (k + 1) s n unshrinked
                     else
-                        logger.infoWithBP 
-                            (fun level -> event level (sprintf "iteration = %d, objective = %f" k (objective n))) 
-                            |> Async.RunSynchronously
+                        logger { info ((sprintf "iteration = %d, objective = %f" k (objective n))) }
              else
                 failwith "Exceeded iterations limit"
 
@@ -400,9 +395,8 @@ module SMO =
         let rec optimize_non_shrinking k =
             if k <= options.maxIterations then
                 if k % 1000 = 0 then
-                    logger.debugWithBP 
-                        (fun level -> event level (sprintf "iteration = %d, objective = %f" k (objective N))) 
-                        |> Async.RunSynchronously
+                    // logger { debug (sprintf "iteration = %d, objective = %f" k (objective N)) }
+                    logger { debug (sprintf "iteration = %d" k) }
 
                 let m_k = m N
                 let M_k = M N
@@ -410,9 +404,7 @@ module SMO =
                 if not (isOptimal m_k M_k epsilon) && optimize_solve N then
                     optimize_non_shrinking (k + 1)
                 else
-                    logger.infoWithBP 
-                        (fun level -> event level (sprintf "iteration = %d, objective = %f" k (objective N)))
-                        |> Async.RunSynchronously
+                    logger { info (sprintf "iteration = %d, objective = %f" k (objective N)) }
             else
                 failwith "Exceeded iterations limit"
 
@@ -423,17 +415,15 @@ module SMO =
         else
             optimize_non_shrinking 1
 
-        logger.infoWithBP 
-            (fun level -> 
-                let mutable support = 0
-                let mutable bounded = 0
-                for i = 0 to N-1 do
-                    if A.[i] <> 0.0f then
-                        support <- support + 1
-                        if A.[i] >= C.[i] then
-                            bounded <- bounded + 1 
-                event level (sprintf "support vectors = %d, bounded = %d" support bounded))
-            |> Async.RunSynchronously
+        let mutable support = 0
+        let mutable bounded = 0
+        for i = 0 to N-1 do
+            if A.[i] <> 0.0f then
+                support <- support + 1
+                if A.[i] >= C.[i] then
+                    bounded <- bounded + 1
+
+        logger { info (sprintf "support vectors = %d, bounded = %d" support bounded) }
 
         /// Reconstruction of hyperplane bias
         let bias =

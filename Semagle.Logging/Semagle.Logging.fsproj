@@ -50,6 +50,7 @@
       <Link>src/Facade.fs</Link>
     </Compile>
     <Compile Include="src\AssemblyInfo.fs" />
+    <Compile Include="src\Builder.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" />
