@@ -18,7 +18,6 @@
 #r "Semagle.Numerics.Vectors.dll"
 #r "Semagle.Numerics.Vectors.IO.dll"
 #r "Semagle.MachineLearning.SVM.dll"
-#r "Semagle.MachineLearning.SVM.dll"
 #endif // INTERACTIVE
 
 open LanguagePrimitives

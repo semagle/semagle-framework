@@ -20,7 +20,6 @@
 #r "Semagle.Numerics.Vectors.IO.dll"
 #r "Semagle.MachineLearning.Metrics.dll"
 #r "Semagle.MachineLearning.SVM.dll"
-#r "Semagle.MachineLearning.SVM.dll"
 #endif // INTERACTIVE
 
 open Semagle.Logging
