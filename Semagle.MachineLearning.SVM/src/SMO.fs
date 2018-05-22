@@ -330,7 +330,6 @@ module SMO =
                 | None -> false
 
         let objective n =
-            printfn "objective"
             let G = 
                 if n < N then
                     let G = Array.copy G
