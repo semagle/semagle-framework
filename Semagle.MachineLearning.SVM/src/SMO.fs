@@ -362,8 +362,7 @@ module SMO =
 
             if k <= options.maxIterations then
                 if k % 1000 = 0 then
-                    // logger { debug (sprintf "iteration = %d, objective = %f" k (objective n)) }
-                    logger { debug (sprintf "iteration = %d" k) }
+                    logger { debug (sprintf "iteration = %d, objective = %f" k (objective n)) }
 
                 let m_k = m n
                 let M_k = M n
@@ -394,8 +393,7 @@ module SMO =
         let rec optimize_non_shrinking k =
             if k <= options.maxIterations then
                 if k % 1000 = 0 then
-                    // logger { debug (sprintf "iteration = %d, objective = %f" k (objective N)) }
-                    logger { debug (sprintf "iteration = %d" k) }
+                    logger { debug (sprintf "iteration = %d, objective = %f" k (objective N)) }
 
                 let m_k = m N
                 let M_k = M N

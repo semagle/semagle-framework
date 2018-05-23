@@ -18,7 +18,7 @@ open Semagle.Logging.Message
 
 type LoggerBuilder(logger : Logger) =
     let log (level : LogLevel) (message : unit -> string) =
-        logger.log level (message() |> eventX) |> Async.RunSynchronously
+        logger.log level (fun level -> message() |> event level) |> Async.RunSynchronously
 
     member builder.Yield (()) = ()
 
