@@ -41,6 +41,11 @@ type ``DenseVector tests``() =
         a.[2..] |> should equal <| DenseVector([|0.0f; 4.0f; 5.0f|])
 
     [<Test>]
+    member test.``SumBy should be correct.``() =
+        let a = DenseVector([| 1.0f; 2.0f; 0.0f; 4.0f; 5.0f |])
+        a.SumBy (fun i v -> float32(i)*v) |> should equal (0.0f + 1.0f*2.0f + 3.0f*4.0f + 5.0f*6.0f)
+
+    [<Test>]
     member test.``Element-wise addition should be correct.``() =
         let a = DenseVector([| 1.0f; 2.0f; 3.0f; 4.0f; 5.0f |])
         let b = DenseVector([| 2.0f; 3.0f; 4.0f; 5.0f; 6.0f |])

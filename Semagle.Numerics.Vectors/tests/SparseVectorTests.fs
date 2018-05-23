@@ -36,6 +36,11 @@ type ``SparseVector tests``() =
         a.[2..] |> should equal <| SparseVector([|3; 5|], [|4.0f; 6.0f|])
 
     [<Test>]
+    member test.``SumBy should be correct.``() =
+        let a = SparseVector([|0; 1; 3; 5|], [|1.0f; 2.0f; 4.0f; 6.0f|])
+        a.SumBy (fun i v -> float32(i)*v) |> should equal (0.0f + 1.0f*2.0f + 3.0f*4.0f + 5.0f*6.0f)
+
+    [<Test>]
     member test.``Element-wise addition should be correct.``() =
         let a = SparseVector([|0; 1; 3|], [|1.0f; 2.0f; 4.0f|])
         let b = SparseVector([|2; 3|], [|3.0f; 4.0f|])
