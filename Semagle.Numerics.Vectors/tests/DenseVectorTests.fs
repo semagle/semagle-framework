@@ -22,6 +22,16 @@ open Semagle.Numerics.Vectors
 [<TestFixture>]
 type ``DenseVector tests``() = 
     [<Test>]
+    member test.``Dimensions should be correct.``() =
+        let a = DenseVector([| 1.0f; 2.0f; 0.0f; 4.0f; 5.0f |])
+        a.Dimensions |> should equal 5
+
+    [<Test>]
+    member test.``SumBy should be correct.``() =
+        let a = DenseVector([| 1.0f; 2.0f; 0.0f; 4.0f; 5.0f |])
+        a.SumBy (fun i v -> float32(i)*v) |> should equal (0.0f + 1.0f*2.0f + 3.0f*4.0f + 4.0f*5.0f)
+
+    [<Test>]
     member test.``Length should be correct.``() =
         let a = DenseVector([| 1.0f; 2.0f; 0.0f; 4.0f; 5.0f |])
         a.Length |> should equal 5
@@ -39,11 +49,6 @@ type ``DenseVector tests``() =
         a.[1..3] |> should equal <| DenseVector([|2.0f; 0.0f; 4.0f|])
         a.[..3] |> should equal <| DenseVector([|1.0f; 2.0f; 0.0f; 4.0f|])
         a.[2..] |> should equal <| DenseVector([|0.0f; 4.0f; 5.0f|])
-
-    [<Test>]
-    member test.``SumBy should be correct.``() =
-        let a = DenseVector([| 1.0f; 2.0f; 0.0f; 4.0f; 5.0f |])
-        a.SumBy (fun i v -> float32(i)*v) |> should equal (0.0f + 1.0f*2.0f + 3.0f*4.0f + 4.0f*5.0f)
 
     [<Test>]
     member test.``Element-wise addition should be correct.``() =
