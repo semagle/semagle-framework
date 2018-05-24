@@ -26,9 +26,9 @@ module LRU =
         a.[j] <- tmp
 
     /// LRU list of computed columns
-    type LRU(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
+    type LRU<'A>(capacity : int, N : int, Q : int -> int -> 'A, parallelize : bool) =
         let indices = Array.zeroCreate<int> capacity
-        let columns = Array.zeroCreate<float32[]> capacity
+        let columns = Array.zeroCreate<'A[]> capacity
         let lengths = Array.zeroCreate<int> capacity
 
         let mutable N = N
