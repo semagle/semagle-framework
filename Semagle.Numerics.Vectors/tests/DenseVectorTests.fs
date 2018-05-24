@@ -32,6 +32,16 @@ type ``DenseVector tests``() =
         a.SumBy (fun i v -> float32(i)*v) |> should equal (0.0f + 1.0f*2.0f + 3.0f*4.0f + 4.0f*5.0f)
 
     [<Test>]
+    member test.``AsDense should be correct.``() =
+        let a = DenseVector([| 1.0f; 2.0f; 0.0f; 4.0f; 5.0f |])
+        a.AsDense |> should equal <| DenseVector([| 1.0f; 2.0f; 0.0f; 4.0f; 5.0f |])
+
+    [<Test>]
+    member test.``AsSparse should be correct.``() =
+        let a = DenseVector([| 1.0f; 2.0f; 0.0f; 4.0f; 5.0f |])
+        a.AsSparse |> should equal <| SparseVector([|0; 1; 3; 4|], [| 1.0f; 2.0f; 4.0f; 5.0f |])
+
+    [<Test>]
     member test.``Length should be correct.``() =
         let a = DenseVector([| 1.0f; 2.0f; 0.0f; 4.0f; 5.0f |])
         a.Length |> should equal 5
