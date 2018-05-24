@@ -17,8 +17,10 @@ namespace Semagle.MachineLearning.SVM
 open LanguagePrimitives
 
 open Semagle.Logging
-
 open Semagle.MachineLearning.SVM.LRU
+
+/// Unit of measure for cache size
+[<Measure>] type MB
 
 /// Implementation of Sequential Minimal Optimization (SMO) algorithm
 module SMO =
@@ -60,12 +62,17 @@ module SMO =
         parallelize : bool
     }
 
-    // default optimization options
+    /// Default optimization options
     let defaultOptimizationOptions : OptimizationOptions =
         { epsilon = 0.001f; maxIterations = 1000000;
           strategy = SecondOrderInformation;  
           shrinking = true; shrinkingIterations = 1000;
           cacheSize = 100<MB>; parallelize = true }
+
+    /// Returns the required capacity for the specified cache size and column length
+    let private capacity (cacheSize : int<MB>) (length : int) =
+       let columnSize = sizeof<float32>*length + sizeof<int> + sizeof<float32[]>
+       max 2 ((int cacheSize)*1024*1024 / columnSize)
 
     /// General parameters for C_SMO problem
     type C_SMO = { 
@@ -468,7 +475,7 @@ module SMO =
         let p = Array.create N -1.0f
         let A = Array.zeroCreate N
 
-        let Q = new Q_C(LRU.capacity options.cacheSize N, N, 
+        let Q = new Q_C(capacity options.cacheSize N, N, 
                         (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]), options.parallelize)
         let (X',Y',A',b) = C_SMO X' Y' Q { A = A; C = C; p = p } options
 
@@ -526,7 +533,7 @@ module SMO =
             | _ when i > n -> 0.0f
             | _ -> parameters.nu * (float32 N) - (float32 n))
 
-        let Q = new Q_C(LRU.capacity options.cacheSize N, N, 
+        let Q = new Q_C(capacity options.cacheSize N, N, 
                         (fun i j -> K X'.[i] X'.[j]), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y Q { A = A; C = C; p = p } options
 
@@ -594,7 +601,7 @@ module SMO =
         let p' = Array.init N' (fun i -> parameters.eta - (if i < N then Y.[i] else -Y.[i-N]))
         let A' = Array.zeroCreate N'
 
-        let Q = new Q_R(LRU.capacity options.cacheSize (2*N), N, 
+        let Q = new Q_R(capacity options.cacheSize (2*N), N, 
                         (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y' Q { A = A'; C = C'; p = p' } options
 

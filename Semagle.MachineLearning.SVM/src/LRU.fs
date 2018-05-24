@@ -16,9 +16,6 @@ namespace Semagle.MachineLearning.SVM
 
 open System.Threading.Tasks
 
-/// Unit of measure for cache size
-[<Measure>] type MB
-
 module LRU = 
     [<Literal>]
     let private not_found = -1
@@ -110,8 +107,3 @@ module LRU =
             last <- (last + 1) % capacity
 
             if first = last then first <- (first + 1) % capacity
-
-        /// Returns required capacity for the specified cache size and column length
-        static member capacity (cacheSize : int<MB>) (length : int) =
-           let columnSize = sizeof<float32>*length + sizeof<int> + sizeof<float32[]>
-           max 2 ((int cacheSize)*1024*1024 / columnSize)
