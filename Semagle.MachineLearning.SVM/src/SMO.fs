@@ -70,7 +70,7 @@ module SMO =
           cacheSize = 100<MB>; parallelize = true }
 
     /// Returns the required capacity for the specified cache size and column length
-    let private capacity (cacheSize : int<MB>) (length : int) =
+    let capacity (cacheSize : int<MB>) (length : int) =
        let columnSize = sizeof<float32>*length + sizeof<int> + sizeof<float32[]>
        max 2 ((int cacheSize)*1024*1024 / columnSize)
 
