@@ -1,0 +1,67 @@
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{425F5926-BB09-4663-A1B6-BFD6EE104103}</ProjectGuid>
+    <UseStandardResourceNames>true</UseStandardResourceNames>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Semagle.MachineLearning.SSVM</RootNamespace>
+    <AssemblyName>Semagle.MachineLearning.SSVM</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <GenerateTailCalls>true</GenerateTailCalls>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>..\build</OutputPath>
+    <DefineConstants></DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <GenerateTailCalls>true</GenerateTailCalls>
+  </PropertyGroup>
+  <PropertyGroup>
+    <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '10.0' OR '$(VisualStudioVersion)' == '11.0'">
+    <FSharpTargetsPath>$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="FSharp.Core">
+      <HintPath>..\packages\FSharp.Core.4.3.3\lib\net45\FSharp.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\" />
+    <Folder Include="samples\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="paket.references" />
+    <Compile Include="src\AssemblyInfo.fs" />
+    <Compile Include="src\SSVM.fs" />
+    <Compile Include="src\OneSlack.fs" />
+    <Compile Include="src\MultiClass.fs" />
+    <None Include="samples\MultiClass.fsx" />
+    <ProjectReference Include="..\Semagle.MachineLearning.SVM\Semagle.MachineLearning.SVM.fsproj">
+      <Project>{0A2DB641-DAF5-4C43-B92C-808FFF505DDD}</Project>
+      <Name>Semagle.MachineLearning.SVM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Semagle.Numerics.Vectors\Semagle.Numerics.Vectors.fsproj">
+      <Project>{6CAE413B-B3B7-45B1-935F-926237E2A5AD}</Project>
+      <Name>Semagle.Numerics.Vectors</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Semagle.Logging\Semagle.Logging.fsproj">
+      <Project>{D4545DA3-3766-4D9E-814C-E043C87D0FED}</Project>
+      <Name>Semagle.Logging</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(FSharpTargetsPath)" />
+</Project>
