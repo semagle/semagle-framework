@@ -422,15 +422,14 @@ module SMO =
         else
             optimize_non_shrinking 1
 
-        let mutable support = 0
-        let mutable bounded = 0
-        for i = 0 to N-1 do
-            if A.[i] <> 0.0f then
-                support <- support + 1
-                if A.[i] >= C.[i] then
-                    bounded <- bounded + 1
-
-        logger { info (sprintf "support vectors = %d, bounded = %d" support bounded) }
+        logger { info (let mutable support = 0 in
+                       let mutable bounded = 0 in
+                       for i = 0 to N-1 do
+                           if A.[i] <> 0.0f then
+                               support <- support + 1
+                               if A.[i] >= C.[i] then
+                                   bounded <- bounded + 1
+                       sprintf "support vectors = %d, bounded = %d" support bounded) }
 
         /// Reconstruction of hyperplane bias
         let bias =
