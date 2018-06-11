@@ -27,16 +27,16 @@ type ``LibSVM tests``() =
         let tmp = Path.GetTempFileName() + ".data"
 
         use w = new StreamWriter(tmp)
-        fprintfn w "1 0:1.0 3:2.0 7:5.0"
-        fprintfn w "1 0:3.0 2:2.0 9:5.0"
+        fprintfn w "1 1:1.0 3:2.0 7:5.0"
+        fprintfn w "1 1:3.0 2:2.0 9:5.0"
         fprintfn w "-1 4:0.1 8:0.5"
 
         tmp
 
     let expectedData = 
-        [(+1.0f, SparseVector([|0; 3; 7|], [|1.0f; 2.0f; 5.0f|])); 
-         (+1.0f, SparseVector([|0; 2; 9|], [|3.0f; 2.0f; 5.0f|]));
-         (-1.0f, SparseVector([|4; 8|], [|0.1f; 0.5f|]))] |> List.toSeq
+        [(+1.0f, SparseVector([|0; 2; 6|], [|1.0f; 2.0f; 5.0f|])); 
+         (+1.0f, SparseVector([|0; 1; 8|], [|3.0f; 2.0f; 5.0f|]));
+         (-1.0f, SparseVector([|3; 7|], [|0.1f; 0.5f|]))] |> List.toSeq
 
     [<Test>]
     member x.``Test LibSVM file read.``() =

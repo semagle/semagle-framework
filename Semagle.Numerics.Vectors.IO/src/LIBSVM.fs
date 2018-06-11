@@ -28,7 +28,7 @@ module LibSVM =
             let y = float32 fields.[0]
             let indices, values = fields.[1..]
                                   |> Array.map (fun field -> 
-                                    let x_i = field.Split [|':'|] in int x_i.[0], float32 x_i.[1])
+                                    let x_i = field.Split [|':'|] in (int x_i.[0])-1, float32 x_i.[1])
                                   |> Array.unzip
             yield y, SparseVector(indices, values)
     }
@@ -38,6 +38,6 @@ module LibSVM =
         use w = new StreamWriter(file)
         let str (x : SparseVector) =
             Seq.zip (Array.toSeq x.Indices) (Array.toSeq x.Values)
-            |> Seq.map (fun (index, value) -> sprintf "%d:%f" index value)
+            |> Seq.map (fun (index, value) -> sprintf "%d:%f" (index + 1) value)
             |> String.concat " "
         samples |> Seq.iter (fun (y, x) -> fprintfn w "%f %s" y (str x))
