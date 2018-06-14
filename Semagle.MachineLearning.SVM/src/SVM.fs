@@ -31,6 +31,10 @@ type SVM<'X,'Y> =
     /// SVM model for multi-class classification
     | MultiClass of Kernel<'X> * (('Y * 'Y * ('X[]) * (float32[]) * float32)[])
 
+module SVM =
+    let inline predict (x : 'X) (K : Kernel<'X>) (X : 'X[]) (A : float32[]) (b : float32) =
+        Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) b X A
+
 /// Two class classification
 module TwoClass =
     /// <summary>Predict {+1,0,-1} class of the sample x using the specified SVM model.</summary>
@@ -39,7 +43,7 @@ module TwoClass =
     /// <returns>The class of the sample.</returns>
     let inline predict (model : SVM<'X,'Y>) (x : 'X) =
         match model with 
-        | TwoClass (K,X,A,b) -> sign (b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A)
+        | TwoClass (K,X,A,b) -> sign (SVM.predict x K X A b)
         | _ -> invalidArg "svm" "type is invalid"
 
 /// One class classification (distribution estimation)
@@ -50,7 +54,7 @@ module OneClass =
     /// <returns>The class of the sample.</returns>
     let inline predict (model : SVM<'X,'Y>) (x : 'X) =
         match model with
-        | OneClass (K,X,A,b) -> sign (b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A)
+        | OneClass (K,X,A,b) -> sign (SVM.predict x K X A b)
         | _ -> invalidArg "svm" "type is invalid"
 
 /// Regression
@@ -61,7 +65,7 @@ module Regression =
     /// <returns>The predicted value.</returns>
     let inline predict (model : SVM<'X,'Y>) (x : 'X) =
         match model with
-        | Regression (K,X,A,b) -> b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A
+        | Regression (K,X,A,b) -> SVM.predict x K X A b
         | _ -> invalidArg "svm" "type is invalid"
 
 /// Multi-class classification
@@ -75,8 +79,7 @@ module MultiClass =
         | MultiClass (K, models) -> 
             models
             |> Array.Parallel.map (fun (y', y'', X, A, b) ->
-                let y = sign (b + Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) 0.0f X A) in
-                if y > 0 then y' else y'')
+                 if sign (SVM.predict x K X A b) > 0 then y' else y'')
             |> Array.countBy id
             |> Array.maxBy snd
             |> fst
