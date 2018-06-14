@@ -37,7 +37,7 @@ and DenseVector(values : float32[]) =
 
     override vector.SumBy (f : int -> float32 -> float32) =
         let mutable sum = 0.0f
-        for i=1 to values.Length-1 do
+        for i=0 to values.Length-1 do
             sum <- sum + (f i values.[i])
         sum
 
@@ -145,7 +145,7 @@ and SparseVector(indices : int[], values : float32[]) =
 
     override vector.SumBy (f : int -> float32 -> float32) =
         let mutable sum = 0.0f
-        for i=1 to indices.Length-1 do
+        for i=0 to indices.Length-1 do
             sum <- sum + (f indices.[i] values.[i])
         sum
 
