@@ -14,6 +14,7 @@
 
 namespace Semagle.MachineLearning.Metrics
 
+/// Classification metrics
 module Classification =
     /// Returns classification accuracy score
     let accuracy (expected : 'Y[]) (predicted : 'Y[]) = 

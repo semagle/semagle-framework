@@ -16,6 +16,7 @@ namespace Semagle.MachineLearning.Metrics
 
 open LanguagePrimitives
 
+/// Regression metrics
 module Regression =
     /// Returns Mean Square Error
     let mse (expected : float32[]) (predicted : float32[]) =
