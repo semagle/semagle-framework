@@ -2,7 +2,13 @@
 
 Semagle.MachineLearning.SVM implements training and prediction functions for two class classification, 
 one class classification and regression. The library is based on generalization of Sequential Minimal 
-Optimization algorithm.
+Optimization (SMO) algorithm.
+
+## Performance
+
+The main idea of the library was to create an extensible SVM implementation for solving many machine learning
+problems. However, high-level abstractions and .Net runtime take their toll on performance. Check
+[the performance tables](performance.html) for details.
 
 ## Kernels
 

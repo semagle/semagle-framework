@@ -16,7 +16,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
 * Kernel: RBF $\gamma=1$
 * Cost: C=1
 
- <table>
+ <table cellpadding="5">
     <thead>
         <tr>
             <th rowspan="3">Dataset</th>
@@ -41,7 +41,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
     </thead>
     <tbody>
         <tr>
-            <td>a1a&nbsp;(1,605/30,956)</td>
+            <td>a1a (1,605/30,956)</td>
             <!-- LIBSVM -->
             <td>1584</td>
             <td>0.24</td>
@@ -55,7 +55,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>76.29%</td>
         </tr>
         <tr>
-            <td>a2a&nbsp;(2,265/30,296)</td>
+            <td>a2a (2,265/30,296)</td>
             <!-- LIBSVM -->
             <td>2233</td>
             <td>0.47</td>
@@ -69,7 +69,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>76.52%</td>
         </tr>
         <tr>
-            <td>a3a&nbsp;(3,185/29,376)</td>
+            <td>a3a (3,185/29,376)</td>
             <!-- LIBSVM -->
             <td>3103</td>
             <td>0.91</td>
@@ -83,7 +83,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>76.73%</td>
         </tr>
         <tr>
-            <td>a4a&nbsp;(4,781/27,780)</td>
+            <td>a4a (4,781/27,780)</td>
             <!-- LIBSVM -->
             <td>4595</td>
             <td>1.99</td>
@@ -97,7 +97,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>77.72%</td>
         </tr>
         <tr>
-            <td>a5a&nbsp;(6,414/26,147)</td>
+            <td>a5a (6,414/26,147)</td>
             <!-- LIBSVM -->
             <td>6072</td>
             <td>5.84</td>
@@ -111,7 +111,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>77.89%</td>
         </tr>
         <tr>
-            <td>a6a&nbsp;(11,220/21,341)</td>
+            <td>a6a (11,220/21,341)</td>
             <!-- LIBSVM -->
             <td>10235</td>
             <td>27.58</td>
@@ -125,7 +125,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>78.53%</td>
         </tr>
         <tr>
-            <td>a7a&nbsp;(16,100/16,461)</td>
+            <td>a7a (16,100/16,461)</td>
             <!-- LIBSVM -->
             <td>14275</td>
             <td>56.98</td>
@@ -139,7 +139,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>79.66%</td>
         </tr>
         <tr>
-            <td>a8a&nbsp;(22,696/9,865)</td>
+            <td>a8a (22,696/9,865)</td>
             <!-- LIBSVM -->
             <td>19487</td>
             <td>116.17</td>
@@ -153,7 +153,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>80.31%</td>
         </tr>
         <tr>
-            <td>a9a&nbsp;(32,561/16,281)</td>
+            <td>a9a (32,561/16,281)</td>
             <!-- LIBSVM -->
             <td>26975</td>
             <td>229.35</td>
@@ -174,7 +174,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
 * Kernel: RBF $\gamma=1$
 * Cost: C=1
 
- <table>
+ <table cellpadding="5">
     <thead>
         <tr>
             <th rowspan="3">Dataset</th>
@@ -199,7 +199,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
     </thead>
     <tbody>
         <tr>
-            <td>w1a&nbsp;(2,477/47,272)</td>
+            <td>w1a (2,477/47,272)</td>
             <!-- LIBSVM -->
             <td>2080</td>
             <td>0.49</td>
@@ -213,7 +213,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>97.30%</td>
         </tr>
         <tr>
-            <td>w2a&nbsp;(3,470/46,279)</td>
+            <td>w2a (3,470/46,279)</td>
             <!-- LIBSVM -->
             <td>2892</td>
             <td>0.97</td>
@@ -227,7 +227,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>97.35%</td>
         </tr>
         <tr>
-            <td>w3a&nbsp;(4,912/44,837)</td>
+            <td>w3a (4,912/44,837)</td>
             <!-- LIBSVM -->
             <td>4018</td>
             <td>1.89</td>
@@ -241,7 +241,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>97.37%</td>
         </tr>
         <tr>
-            <td>w4a&nbsp;(7,366/42,383)</td>
+            <td>w4a (7,366/42,383)</td>
             <!-- LIBSVM -->
             <td>5886</td>
             <td>6.57</td>
@@ -255,7 +255,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>97.43%</td>
         </tr>
         <tr>
-            <td>w5a&nbsp;(9,888/39,861)</td>
+            <td>w5a (9,888/39,861)</td>
             <!-- LIBSVM -->
             <td>7715</td>
             <td>13.69</td>
@@ -269,7 +269,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>97.45%</td>
         </tr>
         <tr>
-            <td>w6a&nbsp;(17,188/32,561)</td>
+            <td>w6a (17,188/32,561)</td>
             <!-- LIBSVM -->
             <td>12864</td>
             <td>56.68</td>
@@ -283,7 +283,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>97.60%</td>
         </tr>
         <tr>
-            <td>w7a&nbsp;(24,692/25,057)</td>
+            <td>w7a (24,692/25,057)</td>
             <!-- LIBSVM -->
             <td>17786</td>
             <td>97.58</td>
@@ -297,7 +297,7 @@ implementation (LIBSVM 3.20) is optimized for specific kernel types and demonstr
             <td>97.61%</td>
         </tr>
         <tr>
-            <td>w8a&nbsp;(49,749/14,951)</td>
+            <td>w8a (49,749/14,951)</td>
             <!-- LIBSVM -->
             <td>32705</td>
             <td>375.60</td>
