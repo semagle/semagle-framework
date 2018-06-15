@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>OneClass - Semagle.Framework</title>
+    <title>SVM - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
@@ -33,13 +33,11 @@
 
 
 
-<h1>OneClass</h1>
+<h1>SVM</h1>
 <p>
   <span>Namespace: Semagle.MachineLearning.SVM</span><br />
 </p>
 <div class="xmldoc">
-<p>One class classification (distribution estimation)</p>
-
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -53,21 +51,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
-            predict model x
+          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
+            predict x K X A b
           </code>
-          <div class="tip" id="7">
-            <strong>Signature:</strong> model:SVM&lt;&#39;X,&#39;Y&gt; -&gt; x:&#39;X -&gt; int<br />
-                          <strong>Type parameters:</strong> 'X, 'Y          </div>
+          <div class="tip" id="16">
+            <strong>Signature:</strong> x:&#39;X -&gt; K:Kernel&lt;&#39;X&gt; -&gt; X:&#39;X [] -&gt; A:float32 [] -&gt; b:float32 -&gt; float32<br />
+                          <strong>Type parameters:</strong> 'X          </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SVM.fs#L55-55" class="github-link">
+            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SVM.fs#L35-35" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Predict {+1, 0, -1} class of the sample usung the specified SVM model.</p>
-
-
+          
         </td>
       </tr>
     </tbody>

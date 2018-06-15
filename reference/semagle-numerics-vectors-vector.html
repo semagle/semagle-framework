@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>OptimizationOptions - Semagle.Framework</title>
+    <title>Vector - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
@@ -33,157 +33,130 @@
 
 
 
-<h1>OptimizationOptions</h1>
+<h1>Vector</h1>
 <p>
-  <span>Namespace: Semagle.MachineLearning.SVM</span><br />
-  <span>Parent Module: <a href="semagle-machinelearning-svm-smo.html">SMO</a></span>
+  <span>Namespace: Semagle.Numerics.Vectors</span><br />
 </p>
 <div class="xmldoc">
-<p>Optimization options of SMO algorithm</p>
+<p>Vector abstract class</p>
 
 </div>
-  <h3>Record Fields</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Record Field</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
-            cacheSize
+          <code onmouseout="hideTip(event, '80', 80)" onmouseover="showTip(event, '80', 80)">
+            new()
           </code>
-          <div class="tip" id="32">
-            <strong>Signature:</strong> int&lt;MeasureProduct&lt;MB,MeasureOne&gt;&gt;<br />
+          <div class="tip" id="80">
+            <strong>Signature:</strong> unit -&gt; Vector<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L60-60" class="github-link">
+            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L19-19" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Kernel cache size</p>
+          
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '81', 81)" onmouseover="showTip(event, '81', 81)">
+            AsDense
+          </code>
+          <div class="tip" id="81">
+            <strong>Signature:</strong> DenseVector<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L27-27" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Returns dense vector representation</p>
 
 
+              <p>CompiledName: <code>get_AsDense</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
-            epsilon
+          <code onmouseout="hideTip(event, '82', 82)" onmouseover="showTip(event, '82', 82)">
+            AsSparse
           </code>
-          <div class="tip" id="33">
-            <strong>Signature:</strong> float32<br />
+          <div class="tip" id="82">
+            <strong>Signature:</strong> SparseVector<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L50-50" class="github-link">
+            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L30-30" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The maximum optimization error</p>
+          <p>Returns sparse vector representation</p>
 
 
+              <p>CompiledName: <code>get_AsSparse</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
-            maxIterations
+          <code onmouseout="hideTip(event, '83', 83)" onmouseover="showTip(event, '83', 83)">
+            Dimensions
           </code>
-          <div class="tip" id="34">
+          <div class="tip" id="83">
             <strong>Signature:</strong> int<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L52-52" class="github-link">
+            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L21-21" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The maximum number of SMO algorithm iterations</p>
+          <p>Returns the number of the vector dimensions</p>
 
 
+              <p>CompiledName: <code>get_Dimensions</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
-            parallelize
+          <code onmouseout="hideTip(event, '84', 84)" onmouseover="showTip(event, '84', 84)">
+            SumBy(arg1)
           </code>
-          <div class="tip" id="35">
-            <strong>Signature:</strong> bool<br />
+          <div class="tip" id="84">
+            <strong>Signature:</strong> ((int -&gt; float32 -&gt; float32)) -&gt; float32<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L62-62" class="github-link">
+            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L24-24" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Parallelize kernel evaluations</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
-            shrinking
-          </code>
-          <div class="tip" id="36">
-            <strong>Signature:</strong> bool<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L56-56" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Enable/disable working set shrinking</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
-            shrinkingIterations
-          </code>
-          <div class="tip" id="37">
-            <strong>Signature:</strong> int<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L58-58" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Maximum number of iterations before shrinking</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
-            strategy
-          </code>
-          <div class="tip" id="38">
-            <strong>Signature:</strong> WSSStrategy<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L54-54" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>The working set selection strategy</p>
+          <p>Returns the sum of the results generated by applying the function to each element index and value</p>
 
 
         </td>
