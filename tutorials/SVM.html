@@ -178,7 +178,7 @@ and return the label <code>y</code>. The prediction function can be curried</p>
 <p>Mean Squared Error (regression)</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"> <span class="k">let</span> <span class="i">mse</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs21', 38)" onmouseover="showTip(event, 'fs21', 38)" class="i">DivideByInt</span> (<span onmouseout="hideTip(event, 'fs9', 39)" onmouseover="showTip(event, 'fs9', 39)" class="i">Array</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 40)" onmouseover="showTip(event, 'fs22', 40)" class="i">fold2</span> (<span class="k">fun</span> <span class="i">sum</span> <span class="i">t</span> <span class="i">p</span> <span class="k">-&gt;</span> <span class="i">sum</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs23', 41)" onmouseover="showTip(event, 'fs23', 41)" class="i">pown</span> (<span class="i">t</span> <span class="o">-</span> <span class="i">p</span>) <span class="n">2</span>)) <span class="n">0.0f</span> <span onmouseout="hideTip(event, 'fs15', 42)" onmouseover="showTip(event, 'fs15', 42)" class="i">test_y</span> <span class="i">predict_y</span>) (<span onmouseout="hideTip(event, 'fs9', 43)" onmouseover="showTip(event, 'fs9', 43)" class="i">Array</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs24', 44)" onmouseover="showTip(event, 'fs24', 44)" class="i">length</span> <span onmouseout="hideTip(event, 'fs15', 45)" onmouseover="showTip(event, 'fs15', 45)" class="i">test_y</span>)
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"> <span class="k">let</span> <span class="i">mse</span> <span class="o">=</span> <span class="i">Regression</span><span class="o">.</span><span class="i">mse</span> <span onmouseout="hideTip(event, 'fs15', 38)" onmouseover="showTip(event, 'fs15', 38)" class="i">test_y</span> <span class="i">predict_y</span>
 </code></pre></td>
 </tr>
 </table>
@@ -205,10 +205,6 @@ and return the label <code>y</code>. The prediction function can be curried</p>
 <div class="tip" id="fs18">val svm : obj<br /><br />Full name: SVM.svm</div>
 <div class="tip" id="fs19">val svm : obj</div>
 <div class="tip" id="fs20">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; array:&#39;T [] -&gt; &#39;U []<br /><br />Full name: Microsoft.FSharp.Collections.Array.map</div>
-<div class="tip" id="fs21">val DivideByInt : x:&#39;T -&gt; y:int -&gt; &#39;T (requires member DivideByInt)<br /><br />Full name: Microsoft.FSharp.Core.LanguagePrimitives.DivideByInt</div>
-<div class="tip" id="fs22">val fold2 : folder:(&#39;State -&gt; &#39;T1 -&gt; &#39;T2 -&gt; &#39;State) -&gt; state:&#39;State -&gt; array1:&#39;T1 [] -&gt; array2:&#39;T2 [] -&gt; &#39;State<br /><br />Full name: Microsoft.FSharp.Collections.Array.fold2</div>
-<div class="tip" id="fs23">val pown : x:&#39;T -&gt; n:int -&gt; &#39;T (requires member get_One and member ( * ) and member ( / ))<br /><br />Full name: Microsoft.FSharp.Core.Operators.pown</div>
-<div class="tip" id="fs24">val length : array:&#39;T [] -&gt; int<br /><br />Full name: Microsoft.FSharp.Collections.Array.length</div>
 
         </div>
         <div class="span3">
@@ -229,9 +225,10 @@ and return the label <code>y</code>. The prediction function can be curried</p>
 
             <li class="nav-header">Libraries</li>
 
+            <li><a href="/semagle-framework/Semagle.MachineLearning.Metrics/index.html">Metrics Library</a></li>
+            <li><a href="/semagle-framework/Semagle.MachineLearning.SVM/index.html">SVM Library</a></li>            
             <li><a href="/semagle-framework/Semagle.Numerics.Vectors/index.html">Vectors Library</a></li>
             <li><a href="/semagle-framework/Semagle.Numerics.Vectors.IO/index.html">Vectors I/O Library</a></li>
-            <li><a href="/semagle-framework/Semagle.MachineLearning.SVM/index.html">SVM Library</a></li>
 
             <li class="nav-header">Tutorials</li>
 

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>MultiClass - Semagle.Framework</title>
+    <title>Classification - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
@@ -33,12 +33,12 @@
 
 
 
-<h1>MultiClass</h1>
+<h1>Classification</h1>
 <p>
-  <span>Namespace: Semagle.MachineLearning.SVM</span><br />
+  <span>Namespace: Semagle.MachineLearning.Metrics</span><br />
 </p>
 <div class="xmldoc">
-<p>Multi-class classification</p>
+<p>Classification metrics</p>
 
 </div>
 
@@ -53,19 +53,19 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
-            predict model x
+          <code onmouseout="hideTip(event, '1', 1)" onmouseover="showTip(event, '1', 1)">
+            accuracy expected predicted
           </code>
-          <div class="tip" id="8">
-            <strong>Signature:</strong> model:SVM&lt;&#39;X,&#39;Y&gt; -&gt; x:&#39;X -&gt; &#39;Y<br />
-                          <strong>Type parameters:</strong> 'X, 'Y          </div>
+          <div class="tip" id="1">
+            <strong>Signature:</strong> expected:&#39;Y [] -&gt; predicted:&#39;Y [] -&gt; float<br />
+                          <strong>Type parameters:</strong> 'Y          </div>
         </td>
         <td class="xmldoc">
-            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SVM.fs#L77-77" class="github-link">
+            <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.Metrics/src/Classification.fs#L20-20" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Predict <span class="math">\(y \in Y\)</span> class of the sample x using the specified SVM model.</p>
+          <p>Returns classification accuracy score</p>
 
 
         </td>
