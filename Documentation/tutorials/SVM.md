@@ -89,4 +89,4 @@ There are two widely used metrics for the evaluation of the performace:
 
  * Mean Squared Error (regression)
         
-        let mse = DivideByInt (Array.fold2 (fun sum t p -> sum + (pown (t - p) 2)) 0.0f test_y predict_y) (Array.length test_y)
+        let mse = Regression.mse test_y predict_y

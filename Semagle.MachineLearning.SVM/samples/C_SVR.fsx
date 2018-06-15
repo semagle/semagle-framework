@@ -17,12 +17,14 @@
 
 #r "Semagle.Numerics.Vectors.dll"
 #r "Semagle.Numerics.Vectors.IO.dll"
+#r "Semagle.MachineLearning.Metrics.dll"
 #r "Semagle.MachineLearning.SVM.dll"
 #endif // INTERACTIVE
 
 open LanguagePrimitives
 
 open Semagle.Numerics.Vectors.IO
+open Semagle.MachineLearning.Metrics
 open Semagle.MachineLearning.SVM
 
 type DurationBuilder() =
@@ -69,8 +71,7 @@ let main(args) =
     let predict_y = duration { return test_x |> Array.map (fun x -> predict x) }
 
     // compute statistics
-    let mse = DivideByInt (Array.fold2 (fun sum t p -> sum + (pown (t - p) 2)) 0.0f test_y predict_y) (Array.length test_y)
-    printfn "MSE = %f" mse
+    printfn "MSE = %f" (Regression.mse test_y predict_y)
     0
 
 #if INTERACTIVE

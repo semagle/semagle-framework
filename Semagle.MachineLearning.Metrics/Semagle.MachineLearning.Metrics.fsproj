@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="src\AssemblyInfo.fs" />
     <Compile Include="src\Classification.fs" />
+    <Compile Include="src\Regression.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" />

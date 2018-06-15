@@ -47,6 +47,7 @@
       <Project>{EB957FBE-3AFC-464E-957D-B2B94A566FBB}</Project>
       <Name>Semagle.MachineLearning.Metrics</Name>
     </ProjectReference>
+    <Compile Include="MseTests.fs" />
   </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" />
   <Choose>
