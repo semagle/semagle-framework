@@ -27,7 +27,7 @@ let projectInfo =
   [ "project-name", "Semagle.Framework"
     "project-author", "Serge Slipchenko"
     "project-summary", "Semagle: F# Framework for Machine Learning and Natural Language Processing"
-    "project-github", "https://github.com/sslipchenko/semagle-framework"
+    "project-github", "https://github.com/semagle/semagle-framework"
     "project-nuget", "" ]
 
 #if RELEASE

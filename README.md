@@ -15,7 +15,7 @@ that the performance will improve over the time.
 
 ## Documentation
 
-See [Semagle.Framework](https://sslipchenko.github.io/semagle-framework/) documentation pages. 
+See [Semagle.Framework](https://semagle.github.io/semagle-framework/) documentation pages. 
 
 ## License
 
@@ -25,4 +25,4 @@ The library is available under Apache 2.0. For more information see the [License
 
 The maintainer of this project is [Serge Slipchenko](http://github.com/sslipchenko)
 
- [1]: https://github.com/sslipchenko/semagle-framework/blob/master/LICENSE.md
+ [1]: https://github.com/semagle/semagle-framework/blob/master/LICENSE.md
