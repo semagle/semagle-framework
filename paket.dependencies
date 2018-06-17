@@ -2,6 +2,7 @@ source https://api.nuget.org/v3/index.json
 
 nuget FSharp.Core
 
+nuget Hopac
 github logary/logary src/Logary.Facade/Facade.fs
     
 group Build
