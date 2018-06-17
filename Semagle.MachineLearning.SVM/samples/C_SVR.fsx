@@ -42,18 +42,18 @@ let main(args) =
     // load train and test data
     let readData file = LibSVM.read file |> Seq.toArray |> Array.unzip
 
-    printfn "Loading train data..." 
+    logger { info ("Loading train data...") }
     let train_y, train_x = logger { time(readData args.[0]) }
 
-    printfn "Loading test data..."
+    logger { info("Loading test data...") }
     let test_y, test_x = logger { time(readData args.[1]) }
 
     // create SVM model
-    printfn "Training SVM model..."
+    logger { info("Training SVM model...") }
     let svm = logger { time(SMO.C_SVR train_x train_y (Kernel.rbf 0.1f) { eta = 0.1f; C = 1.0f } SMO.defaultOptimizationOptions) }
 
     // predict and compute correct count
-    printfn "Predicting SVM model..."
+    logger { info("Predicting SVM model...") }
     let predict = Regression.predict svm
     let predict_y = logger { time(test_x |> Array.map (fun x -> predict x)) }
 

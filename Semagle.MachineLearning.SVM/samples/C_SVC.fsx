@@ -44,21 +44,21 @@ let main(args) =
     // load train and test data
     let readData file = LibSVM.read file |> Seq.toArray |> Array.unzip
 
-    printfn "Loading train data..." 
+    logger { info ("Loading train data...") }
     let train_y, train_x = logger { time(readData args.[0]) }
     let multiclass = (train_y |> Array.distinct |> Array.length) <> 2
 
-    printfn "Loading test data..."
+    logger { info("Loading test data...") }
     let test_y, test_x = logger { time(readData args.[1]) }
 
     // create SVM model
-    printfn "Training SVM model..."
+    logger { info("Training SVM model...") }
     let svm = logger { 
         time(let C_SVC = if multiclass then SMO.C_SVC_M else SMO.C_SVC in
              C_SVC train_x train_y (Kernel.rbf 1.0f) { C_p = 1.0f; C_n = 1.0f } SMO.defaultOptimizationOptions) }
 
     // predict and compute correct count
-    printfn "Predicting SVM model..."
+    logger { info("Predicting SVM model...") }
     let predict x = 
         if multiclass then 
             MultiClass.predict svm x

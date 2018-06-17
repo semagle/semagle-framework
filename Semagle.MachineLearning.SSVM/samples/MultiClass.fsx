@@ -53,21 +53,21 @@ let main(args) =
         let percents = 
             y |> Array.countBy id |> Array.sortBy snd 
               |> Array.map (fun (_, c) -> sprintf "%0.2f%%" (100.0 * (float c) / (float N)))
-        printfn "[%s]" (String.Join("; ", percents))
+        logger { info(sprintf "[%s]" (String.Join("; ", percents))) }
         y, x
 
-    printfn "Loading train data..." 
+    logger { info ("Loading train data...") }
     let train_y, train_x = logger { time(readData args.[0]) }
 
-    printfn "Loading test data..."
+    logger { info ("Loading test data...") }
     let test_y, test_x = logger { time(readData args.[1]) }
 
-    printfn "Training..."
+    logger { info ("Training...") }
     let multiclass = logger { time(MultiClass.learn train_x train_y (fun v -> v :> Vector) 
                                                     { MultiClass.defaultMultiClass with C = 100.0f }
                                                     OneSlack.defaultOptimizationOptions) }
 
-    printfn "Predicting..."
+    logger { info ("Predicting...") }
     let predict = MultiClass.predict multiclass
 
     let predict_y = logger { time(test_x |> Array.map(predict)) }
