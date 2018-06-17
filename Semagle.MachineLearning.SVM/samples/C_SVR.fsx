@@ -15,30 +15,19 @@
 #if INTERACTIVE
 #I @"../../build"
 
+#r "Semagle.Logging.dll"
 #r "Semagle.Numerics.Vectors.dll"
 #r "Semagle.Numerics.Vectors.IO.dll"
 #r "Semagle.MachineLearning.Metrics.dll"
 #r "Semagle.MachineLearning.SVM.dll"
 #endif // INTERACTIVE
 
-open LanguagePrimitives
-
+open Semagle.Logging
 open Semagle.Numerics.Vectors.IO
 open Semagle.MachineLearning.Metrics
 open Semagle.MachineLearning.SVM
 
-type DurationBuilder() =
-    member duration.Delay(f) =
-        let timer = new System.Diagnostics.Stopwatch()
-        timer.Start()
-        let returnValue = f()
-        printfn "Elapsed Time: %f" ((float timer.ElapsedMilliseconds) / 1000.0)
-        returnValue
-
-    member duration.Return(x) =
-        x
-
-let duration = DurationBuilder()
+let logger = LoggerBuilder(Log.create "C_SVR")
 
 #if INTERACTIVE
 let main (args : string[]) =
@@ -54,21 +43,19 @@ let main(args) =
     let readData file = LibSVM.read file |> Seq.toArray |> Array.unzip
 
     printfn "Loading train data..." 
-    let train_y, train_x = duration { return readData args.[0] }
+    let train_y, train_x = logger { time(readData args.[0]) }
 
     printfn "Loading test data..."
-    let test_y, test_x = duration { return readData args.[1] }
+    let test_y, test_x = logger { time(readData args.[1]) }
 
     // create SVM model
     printfn "Training SVM model..."
-    let svm = duration { 
-        return SMO.C_SVR train_x train_y (Kernel.rbf 0.1f) { eta = 0.1f; C = 1.0f }
-            SMO.defaultOptimizationOptions }
+    let svm = logger { time(SMO.C_SVR train_x train_y (Kernel.rbf 0.1f) { eta = 0.1f; C = 1.0f } SMO.defaultOptimizationOptions) }
 
     // predict and compute correct count
     printfn "Predicting SVM model..."
     let predict = Regression.predict svm
-    let predict_y = duration { return test_x |> Array.map (fun x -> predict x) }
+    let predict_y = logger { time(test_x |> Array.map (fun x -> predict x)) }
 
     // compute statistics
     printfn "MSE = %f" (Regression.mse test_y predict_y)

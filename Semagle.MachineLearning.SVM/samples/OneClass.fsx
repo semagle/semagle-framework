@@ -15,28 +15,19 @@
 #if INTERACTIVE
 #I @"../../build"
 
+#r "Semagle.Logging.dll"
+#r "Semagle.MachineLearning.Metrics.dll"
 #r "Semagle.Numerics.Vectors.dll"
 #r "Semagle.Numerics.Vectors.IO.dll"
 #r "Semagle.MachineLearning.SVM.dll"
 #endif // INTERACTIVE
 
-open LanguagePrimitives
-
+open Semagle.Logging
 open Semagle.Numerics.Vectors.IO
+open Semagle.MachineLearning.Metrics;
 open Semagle.MachineLearning.SVM
 
-type DurationBuilder() =
-    member duration.Delay(f) =
-        let timer = new System.Diagnostics.Stopwatch()
-        timer.Start()
-        let returnValue = f()
-        printfn "Elapsed Time: %f" ((float timer.ElapsedMilliseconds) / 1000.0)
-        returnValue
-
-    member duration.Return(x) =
-        x
-
-let duration = DurationBuilder()
+let logger = LoggerBuilder(Log.create "OneClass")
 
 #if INTERACTIVE
 let main (args : string[]) =
@@ -52,29 +43,26 @@ let main (args) =
     let readData file = LibSVM.read file |> Seq.toArray |> Array.unzip
 
     printfn "Loading train data..." 
-    let _, train_x = duration { return readData args.[0] }
+    let _, train_x = logger { time(readData args.[0]) }
 
     printfn "Loading test data..."
-    let test_y, test_x = duration { return readData args.[1] }
+    let test_y, test_x = logger { time(readData args.[1]) }
 
     // create SVM model
     printfn "Training SVM model..."
-    let svm = duration { return SMO.OneClass train_x (Kernel.rbf 0.1f) { nu = 0.5f } SMO.defaultOptimizationOptions }
+    let svm = logger { time(SMO.OneClass train_x (Kernel.rbf 0.1f) { nu = 0.5f } SMO.defaultOptimizationOptions) }
 
     // predict and compute correct count
     printfn "Predicting SVM model..."
     let predict = OneClass.predict svm
-    let predict_y = duration { return test_x |> Array.map (fun x -> predict x) }
+    let predict_y = logger { time(test_x |> Array.map (fun x -> float32 (predict x))) }
 
     // compute statistics
     let total = Array.length test_y
-    let correct = 
-        let counts = (Array.zip test_y predict_y) |> Array.countBy (fun (t, p) -> t = float32 p) |> Map.ofArray in
-        match Map.tryFind true counts with
-        | None -> 0
-        | Some(count) -> count
+    let accuracy = Classification.accuracy test_y predict_y
+    let correct = int (accuracy * (float total))
 
-    printfn "Accuracy = %f%%(%d/%d)" ((DivideByInt (float correct) total) * 100.0) correct total
+    printfn "Accuracy = %f%%(%d/%d)" (accuracy * 100.0) correct total
     0
 
 #if INTERACTIVE

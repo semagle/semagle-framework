@@ -46,3 +46,11 @@ type LoggerBuilder(logger : Logger) =
     [<CustomOperation("fatal")>]
     member builder.fatal (_ : unit, [<ProjectionParameter>] message : unit -> string) =
         log Fatal message
+
+    [<CustomOperation("time")>]
+    member builder.time (_ : unit, [<ProjectionParameter>] f: unit -> 'result) =
+        let watch = System.Diagnostics.Stopwatch.StartNew()
+        let result = f ()
+        watch.Stop()
+        log Info (fun () -> sprintf "Elapsed Time: %f" ((float watch.ElapsedMilliseconds) / 1000.0))
+        result

@@ -23,28 +23,15 @@
 #r "Semagle.MachineLearning.SSVM.dll"
 #endif // INTERACTIVE
 
-open LanguagePrimitives
 open System
 
 open Semagle.Logging
 open Semagle.Numerics.Vectors
 open Semagle.Numerics.Vectors.IO
 open Semagle.MachineLearning.Metrics
-open Semagle.MachineLearning.SVM
 open Semagle.MachineLearning.SSVM
 
-type DurationBuilder() =
-    member duration.Delay(f) =
-        let timer = new System.Diagnostics.Stopwatch()
-        timer.Start()
-        let returnValue = f()
-        printfn "Elapsed Time: %f" ((float timer.ElapsedMilliseconds) / 1000.0)
-        returnValue
-
-    member duration.Return(x) =
-        x
-
-let duration = DurationBuilder()
+let logger = LoggerBuilder(Log.create "MultiClass")
 
 #if INTERACTIVE
 let main (args : string[]) =
@@ -70,20 +57,20 @@ let main(args) =
         y, x
 
     printfn "Loading train data..." 
-    let train_y, train_x = duration { return readData args.[0] }
+    let train_y, train_x = logger { time(readData args.[0]) }
 
     printfn "Loading test data..."
-    let test_y, test_x = duration { return readData args.[1] }
+    let test_y, test_x = logger { time(readData args.[1]) }
 
     printfn "Training..."
-    let multiclass = duration { return MultiClass.learn train_x train_y (fun v -> v :> Vector) 
-                                                        { MultiClass.defaultMultiClass with C = 100.0f }
-                                                        OneSlack.defaultOptimizationOptions }
+    let multiclass = logger { time(MultiClass.learn train_x train_y (fun v -> v :> Vector) 
+                                                    { MultiClass.defaultMultiClass with C = 100.0f }
+                                                    OneSlack.defaultOptimizationOptions) }
 
     printfn "Predicting..."
     let predict = MultiClass.predict multiclass
 
-    let predict_y = duration { return test_x |> Array.map(predict) }
+    let predict_y = logger { time(test_x |> Array.map(predict)) }
 
     let total = Array.length test_y
     let accuracy = Classification.accuracy test_y predict_y
