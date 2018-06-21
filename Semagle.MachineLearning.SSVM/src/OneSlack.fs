@@ -20,6 +20,7 @@ open System.Threading.Tasks
 open Semagle.Logging
 open Semagle.MachineLearning.SVM
 open Semagle.MachineLearning.SVM.LRU
+open Semagle.MachineLearning.SSVM.LRF
 open Semagle.Numerics.Vectors
 
 module OneSlack =
@@ -50,7 +51,7 @@ module OneSlack =
     }
 
     /// Q matrix for structured problems
-    type private Q_S(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
+    type private Q_S(capacity : int, N : int, Q : int -> int -> float32, dJF : LRF, parallelize : bool) =
         let mutable N = N
         let mutable D = Array.init N (fun i -> Q i i)
         let lru = LRU(capacity, N, Q, parallelize)
@@ -75,6 +76,7 @@ module OneSlack =
             member q.Swap (i : int) (j : int) = 
                 lru.Swap i j
                 swap D i j
+                dJF.Swap i j
 
             /// Returns N elements of the main diagonal of Q matrix
             member q.D = D
@@ -97,10 +99,7 @@ module OneSlack =
 
         let mutable X' = Array.empty<(* Y *) 'Y[] * (* L *) float32[]>
 
-        // TODO: Add dJF caching
-        let dJF k = 
-            let Y' = fst X'.[k]
-            Array.init N (fun i -> (JF X.[i] Y.[i]) - (JF X.[i] Y'.[i]))
+        let dJF = LRF(100, N, (fun k i -> let Y' = fst X'.[k] in (JF X.[i] Y.[i]) - (JF X.[i] Y'.[i])), options.parallelize)
 
         let mu L = match options.rescaling with | Slack -> L | Margin -> 1.0f
 
@@ -108,7 +107,7 @@ module OneSlack =
             if a <> 0.0f then
                 let a = DivideByInt a N
                 let L_k = snd X'.[k]
-                let dJF_k = dJF k
+                let dJF_k = dJF.[k]
                 Array.iter2 (fun L (dJF : SparseVector) -> 
                              let m = mu L
                              Array.iter2 (fun i v -> W.[i] <- W.[i] + a * m * v) dJF.Indices dJF.Values) L_k dJF_k
@@ -125,7 +124,7 @@ module OneSlack =
             Array.fold2 (fun sum w_k w_k' -> sum + w_k * w_k') 0.0f W_k W_k'
 
         let M = int (1.0f / options.epsilon)
-        let Q = Q_S(SMO.capacity options.smoOptimizationOptions.cacheSize M, 0, H,
+        let Q = Q_S(SMO.capacity options.smoOptimizationOptions.cacheSize M, 0, H, dJF,
                     options.smoOptimizationOptions.parallelize)
 
         let inline xi X' =
@@ -134,7 +133,7 @@ module OneSlack =
                     X' 
                     |> Seq.mapi (fun k x' -> 
                         let L_k = snd x'
-                        let dJF_k = dJF k
+                        let dJF_k = dJF.[k]
                         Seq.map2 (fun L (dJF : SparseVector) -> 
                             let m = mu L
                             let WxdJF = dJF.SumBy(fun i v -> W.[i]*v)
