@@ -50,16 +50,20 @@ module MultiClass =
             SparseVector(Array.map index_k F_x.Indices, F_x.Values)
 
         let argmax (W : float32[]) (i : int) =
-            let JF_i = JF X.[i] Y.[i]
+            let x = X.[i]
+            let y = Y.[i]
+            let F = (F x).AsSparse
+            let k = Array.findIndex ((=) y) Y'
+            let WxJF = F.SumBy(fun i v -> W.[index D k i]*v)
             let y_max, loss_max, cost_max = 
                 Y' 
-                |> Array.map (fun y ->
-                    let dJF_i = JF_i - (JF X.[i] y)
-                    let WxdJF_i = dJF_i.SumBy(fun i v -> W.[i]*v)
-                    let loss = loss Y.[i] y
+                |> Array.map (fun y' ->
+                    let k' = Array.findIndex ((=) y') Y'
+                    let WxdJF = WxJF - F.SumBy(fun i v -> W.[index D k' i]*v)
+                    let loss = loss y y'
                     let m = match options.rescaling with | Slack -> loss | Margin -> 1.0f
-                    let cost = loss - m*WxdJF_i
-                    (y, loss, cost))
+                    let cost = loss - m*WxdJF
+                    (y', loss, cost))
                 |> Array.maxBy (fun (_, _, cost) -> cost)
             y_max, loss_max, cost_max
 
