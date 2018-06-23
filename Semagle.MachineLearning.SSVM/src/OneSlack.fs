@@ -149,6 +149,11 @@ module OneSlack =
             Array.iteri (add_by_N W) A
 
         let inline solve X' Y' A C p = 
+            logger { verbose(sprintf "A=%A" A) }
+            logger { verbose(sprintf "C=%A" C) }
+            logger { verbose(sprintf "p=%A" p) }
+            logger { verbose(sprintf "H=%A" (Array2D.init (Array.length A) (Array.length A) H)) }
+
             if not (Array.isEmpty X') then
                 SMO.C_SMO X' Y' Q { A = A; C = C; p = p } 
                           { options.smoOptimizationOptions with epsilon = options.epsilon * 2.0f } |> ignore
