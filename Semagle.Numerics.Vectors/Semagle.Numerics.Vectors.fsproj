@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Semagle.Numerics.Vectors</RootNamespace>
     <AssemblyName>Semagle.Numerics.Vectors</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
