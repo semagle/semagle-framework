@@ -1,4 +1,4 @@
-// Copyright 2016 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+// Copyright 2020 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,148 +12,205 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#r "packages/build/FAKE/tools/FakeLib.dll"
-
-open Fake.FscHelper
-open Fake
-open Fake.Git
-open System
+#r "paket: groupref build //"
+#load "./.fake/build.fsx/intellisense.fsx"
+open Fake.Core
+open Fake.DotNet
+open Fake.IO
+open Fake.IO.FileSystemOperators
+open Fake.IO.Globbing.Operators
+open Fake.Core.TargetOperators
 open System.IO
 
-let buildDir = "./build/"
+Target.initEnvironment ()
 
-MSBuildDefaults <- { MSBuildDefaults with Verbosity = Some MSBuildVerbosity.Quiet } 
+Target.create "Clean" (fun _ ->
+    !! "**/bin"
+    ++ "**/obj"
+    |> Shell.cleanDirs 
+)
 
-Target "Clean" (fun _ -> CleanDir buildDir)
+Target.create "Patch" (fun _ ->
+    Shell.replaceInFiles
+        [ "namespace Logary.Facade", "namespace Semagle.Logging" ]
+        [ "paket-files/logary/logary/src/Logary.Facade/Facade.fs" ]
+)
 
-Target "TestAll" (fun _ -> 
-    !!(buildDir + "*.Tests.dll") 
-    |> NUnit (fun p ->
-        {p with
-            DisableShadowCopy = true;
-            OutputFile = "TestResults.xml";
-            WorkingDir = buildDir }))
+let setBuildOptions (defaults : DotNet.BuildOptions) = {
+    defaults with 
+        MSBuildParams = { 
+            defaults.MSBuildParams with
+                Verbosity = Some(Quiet)
+        }
+}
 
-Target "LoggingFile" (fun _ -> 
-    ReplaceInFiles [ "namespace Logary.Facade", "namespace Semagle.Logging" ]
-                   [ "paket-files/logary/logary/src/Logary.Facade/Facade.fs" ])
+Target.create "BuildLibraries" (fun _ ->
+    !! "**/*.*proj"
+    -- "**/*.Tests.*proj"
+    |> Seq.iter (DotNet.build setBuildOptions)
+)
 
-Target "BuildLibraries" (fun _ -> 
-    !!"Semagle.*/*.fsproj"
-    |> MSBuildRelease buildDir "Build" 
-    |> Log "LibrariesBuild-Output: ")
+Target.create "BuildTests" (fun _ ->
+    !! "**/*.Tests.*proj"
+    |> Seq.iter (DotNet.build setBuildOptions)
+)
 
-Target "BuildTests" (fun _ -> 
-    !!"Semagle.*/tests/*.fsproj"
-    |> MSBuildRelease buildDir "Build"
-    |> Log "TestsBuild-Output: ")
+Target.create "Build" ignore
 
-Target "BuildSamples" ( fun _ ->
-    // fix System.Reflection.Metadata issue
-    [|  @"packages/build/System.Reflection.Metadata/lib/portable-net45+win8/System.Reflection.Metadata.dll";
-        @"packages/build/System.Reflection.Metadata/lib/portable-net45+win8/System.Reflection.Metadata.xml" |] 
-    |> FileHelper.Copy @"packages/build/FAKE/tools"
+Target.create "Publish" (fun _ -> 
+    let buildDir = __SOURCE_DIRECTORY__ @@ "build"
+    Shell.cleanDir buildDir
 
-    // copy FSharp.Core development files
-    !!"packages/FSharp.Core/lib/net45/FSharp.Core.optdata" |> Copy buildDir
-    !!"packages/FSharp.Core/lib/net45/FSharp.Core.sigdata" |> Copy buildDir
+    !! "**/*.*proj"
+    -- "**/*.Tests.*proj"
+    |> Seq.iter (DotNet.publish (fun defaults -> {
+        defaults with 
+            OutputPath = Some(buildDir)
+    }))
+)
 
-    !!"Semagle.*/samples/*.fsx"
-    |> Seq.map (fun (s : string) ->
-        let output = buildDir + (s.[s.LastIndexOfAny([| '/'; '\\' |])+1..s.Length - 4] + "exe")
+Target.create "BuildSamples" (fun _ -> 
+    let buildDir = __SOURCE_DIRECTORY__ @@ "build"
+
+    !!"**/samples/*.fsx"
+    |> Seq.iter (fun s -> 
+        let output = buildDir @@ (s.[s.LastIndexOfAny([| '/'; '\\' |])+1..s.Length - 4] + "exe")
         let references = 
             seq {
                 use r = new StreamReader(s)
                 while not r.EndOfStream do
                     let line = r.ReadLine()
                     if line.StartsWith ("#r") then
-                        yield (Path.GetFullPath buildDir) + line.[line.IndexOf("\"") + 1..line.LastIndexOf("\"")-1]} 
+                        yield buildDir @@ (line.[line.IndexOf("\"") + 1..line.LastIndexOf("\"")-1])} 
             |> Seq.toList
-        compileFiles [s] (List.append [ "--target:exe"; "--out:" + output; "--lib:" + buildDir] 
-            (List.map (fun r -> "--reference:" + r) references)) |> ignore
-        output)
-    |> Log "Sample: "
+
+        [s]
+        |> Fsc.compileExternal "fsharpc"
+            ([Fsc.Target Fsc.Exe; Fsc.TargetProfile Fsc.Netcore; Fsc.Out output; Fsc.Lib [buildDir]] 
+                @ (List.map Fsc.Reference references))
+    )
 )
 
-// Generate the documentation
-let fakePath = "packages" </> "build" </> "FAKE" </> "tools" </> "FAKE.exe"
-let fakeStartInfo script workingDirectory args fsiargs environmentVars =
-    (fun (info: System.Diagnostics.ProcessStartInfo) ->
-        info.FileName <- System.IO.Path.GetFullPath fakePath
-        info.Arguments <- sprintf "%s --fsiargs -d:FAKE %s \"%s\"" args fsiargs script
-        info.WorkingDirectory <- workingDirectory
-        let setVar k v =
-            info.EnvironmentVariables.[k] <- v
-        for (k, v) in environmentVars do
-            setVar k v
-        setVar "MSBuild" msBuildExe
-        setVar "GIT" Git.CommandHelper.gitPath
-        setVar "FSI" fsiPath)
-
-/// Run the given buildscript with FAKE.exe
-let executeFAKEWithOutput workingDirectory script fsiargs envArgs =
-    let exitCode =
-        ExecProcessWithLambdas
-            (fakeStartInfo script workingDirectory "" fsiargs envArgs)
-            TimeSpan.MaxValue false ignore ignore
-    System.Threading.Thread.Sleep 1000
-    exitCode
-
-// Documentation
-let buildDocumentationTarget fsiargs target =
-    trace (sprintf "Building documentation (%s), this could take some time, please wait..." target)
-    let exit = executeFAKEWithOutput "Documentation" "generate.fsx" fsiargs ["target", target]
-    if exit <> 0 then
-        failwith "generating reference documentation failed"
-    ()  
-
-Target "GenerateReference" (fun _ ->
-    buildDocumentationTarget "-d:RELEASE -d:REFERENCE" "Default"
-)      
-
-Target "GenerateHelp" (fun _ ->
-    buildDocumentationTarget "-d:RELEASE -d:HELP" "Default"
+Target.create "Test" (fun _ -> 
+  !! "**/*.Tests.*proj"
+  |> Seq.iter (DotNet.test id)
 )
 
-Target "BuildDocumentation" DoNothing
+let documentation = {|
+    ProjectInfo =
+      [ "project-name", "Semagle.Framework"
+        "project-author", "Serge Slipchenko"
+        "project-summary", "Semagle: F# Framework for Machine Learning and Natural Language Processing"
+        "project-github", "https://github.com/semagle/semagle-framework"
+        "project-nuget", "" ]
 
-Target "ReleaseDocumentation" (fun _ ->
-    let url = CommandHelper.runSimpleGitCommand __SOURCE_DIRECTORY__ "remote get-url origin"
-    let ghPages = buildDir + "gh-pages"
-    CleanDir ghPages
-    Repository.cloneSingleBranch "" url "gh-pages" ghPages
+    SourceDirectory = __SOURCE_DIRECTORY__ @@ "Documentation"
+    OutputDirectory = __SOURCE_DIRECTORY__ @@ "Documentation"
+    LayoutRoots = [
+        __SOURCE_DIRECTORY__ @@ "Documentation/templates"
+        __SOURCE_DIRECTORY__ @@ "packages/build/FSharp.Formatting/templates"
+        __SOURCE_DIRECTORY__ @@ "packages/build/FSharp.Formatting/templates/reference";
+    ]
+    DocumentTemplate = "docpage.cshtml"
 
-    Directory.GetDirectories(ghPages) 
-    |> Seq.filter (fun dir -> Path.GetFileName(dir) <> ".git") 
-    |> Seq.iter (fun dir -> Directory.Delete(dir, true))
-    Directory.GetFiles(ghPages) |> Seq.iter File.Delete
+#if RELEASE
+    WebsiteRoot = "/semagle-framework"
+#else
+    WebsiteRoot = "file://" + __SOURCE_DIRECTORY__ @@ "Documentation"
+#endif
+|}
 
-    !! "Documentation/**/*.html" ++ "Documentation/**/*.css" ++ "Documentation/**/*.js" ++ "Documentation/**/*.png"
-    |> Seq.iter (fun file -> CopyFileWithSubfolder "Documentation" ghPages file)
+let cleanHelp =
+    DirectoryInfo.getSubDirectories (DirectoryInfo.ofPath documentation.SourceDirectory)
+    |> Array.filter (fun d -> d.Name.Contains("Semagle."))
+    |> Seq.iter (fun d -> Shell.rm_rf d.FullName)
 
-    StageAll ghPages
-    Git.Commit.Commit ghPages (sprintf "Update generated documentation")
-    Branches.push ghPages
+    !! (documentation.SourceDirectory @@ "**/*.html")
+    -- (documentation.SourceDirectory @@ "**/reference/*.html")
+    |> (Seq.iter Shell.rm)
+
+Target.create "CleanDocumentation" (fun _ ->
+    Shell.rm_rf (documentation.OutputDirectory @@ "reference")
+    cleanHelp
 )
 
-Target "BuildAll" DoNothing
+Target.create "GenerateReference" (fun _ ->
+    let referenceDir = documentation.OutputDirectory @@ "reference" 
+    Directory.ensure referenceDir
+    Shell.cleanDir referenceDir
+    
+    !! "**/*.*proj"
+    -- "**/*.Tests.*proj"
+    |> Seq.map (fun projectFile -> 
+        let projectDir = Path.getDirectory(projectFile)
+        let projectName = DirectoryInfo.ofPath(projectDir).Name
+        projectDir @@ "bin" @@ "Release" @@ "netstandard2.0" @@ (projectName + ".dll"))
+    |> FSFormatting.createDocsForDlls (fun args -> {
+        args with 
+            OutputDirectory = referenceDir
+            LayoutRoots = documentation.LayoutRoots 
+            ProjectParameters = ("root", documentation.WebsiteRoot)::documentation.ProjectInfo
+            SourceRepository = 
+                (snd (List.find (fun (p, _) -> p = "project-github") documentation.ProjectInfo))
+                @@ "tree/master"
+    })
+)
 
-"Clean" ==> "BuildLibraries"
-"LoggingFile" ==> "BuildLibraries"
+Target.create "GenerateHelp" (fun _ ->
+    cleanHelp
 
-"BuildLibraries" ==> "BuildTests"
-"BuildLibraries" ==> "BuildSamples"
+    // generate project documentaion
+    FSFormatting.createDocs (fun args -> {
+        args with
+            Source = documentation.SourceDirectory
+            OutputDirectory = documentation.OutputDirectory
+            LayoutRoots = documentation.LayoutRoots
+            ProjectParameters = ("root", documentation.WebsiteRoot)::documentation.ProjectInfo
+            Template = documentation.DocumentTemplate
+    })
 
-"BuildTests" ==> "TestAll"
+    // generate library documentaion
+    !! "**/doc"
+    |> Seq.iter (fun docDir -> 
+        let projectDir = Path.getDirectory(docDir)
+        let projectName = DirectoryInfo.ofPath(projectDir).Name
 
-"BuildLibraries" ==> "GenerateReference"
+        FSFormatting.createDocs (fun args -> {
+            args with
+                Source = docDir
+                OutputDirectory = documentation.OutputDirectory @@ projectName
+                LayoutRoots = documentation.LayoutRoots
+                ProjectParameters = ("root", documentation.WebsiteRoot)::documentation.ProjectInfo
+                Template = documentation.DocumentTemplate
+        })  
+    )
+)
+
+Target.create "BuildDocumentation" ignore
+
+Target.create "All" ignore
+
+"BuildLibraries" 
+    ==> "GenerateReference" 
+    ==> "BuildDocumentation"
 "GenerateHelp" ==> "BuildDocumentation"
-"GenerateReference" ==> "BuildDocumentation"
 
-"TestAll" ==> "BuildAll"
-"BuildDocumentation" ==> "BuildAll"
-"BuildSamples" ==> "BuildAll" 
+"BuildLibraries" ==> "Build"
+"BuildTests" ==> "Build"
+"BuildSamples" ==> "Build"
+"BuildDocumentation" ==> "Build"
 
-"BuildDocumentation" ==> "ReleaseDocumentation"
+"BuildLibraries" 
+    ==> "Publish" 
+    ==> "BuildSamples"
 
-RunTargetOrDefault "TestAll"
+"Clean"
+  ==> "Patch"
+  ==> "BuildLibraries"
+  ==> "BuildTests"
+  ==> "Test"
+  ==> "BuildSamples"
+  ==> "BuildDocumentation"
+  ==> "All"
+
+Target.runOrDefault "All"

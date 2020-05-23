@@ -4,7 +4,17 @@ nuget FSharp.Core
 
 nuget Hopac
 github logary/logary src/Logary.Facade/Facade.fs
-    
+
+group Build
+    source https://api.nuget.org/v3/index.json
+    nuget Fake.DotNet.Cli
+    nuget Fake.DotNet.Fsc
+    nuget Fake.DotNet.FSFormatting
+    nuget Fake.IO.FileSystem
+    nuget Fake.Core.Target
+    nuget FSharp.Formatting
+    nuget FSharp.Formatting.CommandTool
+
 group Test
     source https://api.nuget.org/v3/index.json
     nuget FsUnit
