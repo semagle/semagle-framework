@@ -22,6 +22,8 @@ open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
 open System.IO
 
+let configuration = Environment.environVarOrDefault "configuration" "Release"
+
 Target.initEnvironment ()
 
 Target.create "Clean" (fun _ ->
@@ -38,9 +40,15 @@ Target.create "Patch" (fun _ ->
 
 let setBuildOptions (defaults : DotNet.BuildOptions) = {
     defaults with 
+        Configuration = DotNet.Custom configuration
         MSBuildParams = { 
             defaults.MSBuildParams with
                 Verbosity = Some(Quiet)
+                Properties = [
+                    "Optimize", "True"
+                    "DebugSymbols", "True"
+                    "Configuration", configuration
+                ]
         }
 }
 
@@ -64,7 +72,8 @@ Target.create "Publish" (fun _ ->
     !! "**/*.*proj"
     -- "**/*.Tests.*proj"
     |> Seq.iter (DotNet.publish (fun defaults -> {
-        defaults with 
+        defaults with
+            Configuration = DotNet.Custom configuration 
             OutputPath = Some(buildDir)
     }))
 )
@@ -93,7 +102,10 @@ Target.create "BuildSamples" (fun _ ->
 
 Target.create "Test" (fun _ -> 
   !! "**/*.Tests.*proj"
-  |> Seq.iter (DotNet.test id)
+  |> Seq.iter (DotNet.test (fun defaults -> {
+      defaults with
+        Configuration = DotNet.Custom configuration
+  }))
 )
 
 let documentation = {|
@@ -113,11 +125,11 @@ let documentation = {|
     ]
     DocumentTemplate = "docpage.cshtml"
 
-#if RELEASE
-    WebsiteRoot = "/semagle-framework"
-#else
-    WebsiteRoot = "file://" + __SOURCE_DIRECTORY__ @@ "Documentation"
-#endif
+    WebsiteRoot = 
+        if configuration = "Release" then 
+            "/semagle-framework" 
+        else 
+            "file://" + __SOURCE_DIRECTORY__ @@ "Documentation"
 |}
 
 let cleanHelp =
