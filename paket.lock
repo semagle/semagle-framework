@@ -1,11 +1,12 @@
+RESTRICTION: == netstandard2.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
     FSharp.Core (4.7.2)
     Hopac (0.4.1)
-      FSharp.Core (>= 4.5 < 5.0) - restriction: >= netstandard2.0
+      FSharp.Core (>= 4.5 < 5.0)
 GITHUB
   remote: logary/logary
-    src/Logary.Facade/Facade.fs (62ace7a0996232376ec7f8ed26ab4c63d9d7fe0a)
+    src/Logary.Facade/Facade.fs (44efedd1a81a0a036bd278b47040a14e11fc97ed)
 GROUP Build
 NUGET
   remote: https://api.nuget.org/v3/index.json
