@@ -20,6 +20,7 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
+open Fake.Tools.Git
 open System.IO
 
 let configuration = Environment.environVarOrDefault "configuration" "Release"
@@ -200,12 +201,33 @@ Target.create "GenerateHelp" (fun _ ->
 
 Target.create "BuildDocumentation" ignore
 
+Target.create "ReleaseDocumentation" (fun _ -> 
+    let url = CommandHelper.runSimpleGitCommand __SOURCE_DIRECTORY__ "remote get-url origin"
+    let ghPages = __SOURCE_DIRECTORY__ @@ "build" @@ "gh-pages"
+    Shell.cleanDir ghPages
+
+    Repository.cloneSingleBranch "" url "gh-pages" ghPages
+
+    Directory.GetDirectories(ghPages) 
+    |> Seq.filter (fun dir -> Path.GetFileName(dir) <> ".git") 
+    |> Seq.iter (fun dir -> Directory.Delete(dir, true))
+    Directory.GetFiles(ghPages) |> Seq.iter File.Delete
+
+    !! "Documentation/**/*.html" ++ "Documentation/**/*.css" ++ "Documentation/**/*.js" ++ "Documentation/**/*.png"
+    |> Seq.iter (fun file -> Shell.copyFileWithSubfolder "Documentation" ghPages file)
+
+    Staging.stageAll ghPages
+    Commit.exec ghPages (sprintf "Update generated documentation")
+    Branches.push ghPages
+)
+
 Target.create "All" ignore
 
 "BuildLibraries" 
     ==> "GenerateReference" 
     ==> "BuildDocumentation"
 "GenerateHelp" ==> "BuildDocumentation"
+"BuildDocumentation" ==> "ReleaseDocumentation"
 
 "BuildLibraries" ==> "Build"
 "BuildTests" ==> "Build"
@@ -218,11 +240,8 @@ Target.create "All" ignore
 
 "Clean"
   ==> "Patch"
-  ==> "BuildLibraries"
-  ==> "BuildTests"
+  ==> "Build"
   ==> "Test"
-  ==> "BuildSamples"
-  ==> "BuildDocumentation"
   ==> "All"
 
 Target.runOrDefault "All"
