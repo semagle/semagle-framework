@@ -15,6 +15,7 @@
 #if INTERACTIVE
 #I @"../../build"
 
+#r "Hopac.dll"
 #r "Semagle.Logging.dll"
 #r "Semagle.Numerics.Vectors.dll"
 #r "Semagle.Numerics.Vectors.IO.dll"
@@ -22,6 +23,7 @@
 #r "Semagle.MachineLearning.SVM.dll"
 #endif // INTERACTIVE
 
+open Hopac
 open Semagle.Logging
 open Semagle.MachineLearning.Metrics
 open Semagle.Numerics.Vectors.IO
@@ -39,6 +41,7 @@ let main(args) =
         printfn "Usage: [fsi C_SVC.fsx | C_SVC.exe] <train.data> <test.data>"
         exit 1
 
+    Scheduler.Global.setCreate { Scheduler.Create.Def with NumWorkers = Some(1) }
     Global.initialise { Global.defaultConfig with getLogger = (fun name -> Targets.create Info name) }
 
     // load train and test data

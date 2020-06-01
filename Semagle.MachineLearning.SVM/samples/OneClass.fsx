@@ -15,6 +15,7 @@
 #if INTERACTIVE
 #I @"../../build"
 
+#r "Hopac.dll"
 #r "Semagle.Logging.dll"
 #r "Semagle.MachineLearning.Metrics.dll"
 #r "Semagle.Numerics.Vectors.dll"
@@ -22,6 +23,7 @@
 #r "Semagle.MachineLearning.SVM.dll"
 #endif // INTERACTIVE
 
+open Hopac
 open Semagle.Logging
 open Semagle.Numerics.Vectors.IO
 open Semagle.MachineLearning.Metrics;
@@ -38,6 +40,9 @@ let main (args) =
     if args.Length < 2 then
         printfn "Usage: [fsi OneClass.fsx | OneClass.exe] <train.data> <test.data>"
         exit 1
+
+    Scheduler.Global.setCreate { Scheduler.Create.Def with NumWorkers = Some(1) }
+    Global.initialise { Global.defaultConfig with getLogger = (fun name -> Targets.create Info name) }
 
     // load train and test data
     let readData file = LibSVM.read file |> Seq.toArray |> Array.unzip
