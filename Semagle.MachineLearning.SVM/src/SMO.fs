@@ -49,11 +49,11 @@ module SMO =
         /// The maximum optimization error
         epsilon : float32;
         /// The maximum number of SMO algorithm iterations
-        maxIterations : int; 
+        maxIterations : int;
         /// The working set selection strategy
-        strategy : WSSStrategy; 
+        strategy : WSSStrategy;
         /// Enable/disable working set shrinking
-        shrinking : bool; 
+        shrinking : bool;
         /// Maximum number of iterations before shrinking
         shrinkingIterations : int;
         /// Kernel cache size
@@ -65,7 +65,7 @@ module SMO =
     /// Default optimization options
     let defaultOptimizationOptions : OptimizationOptions =
         { epsilon = 0.001f; maxIterations = 1000000;
-          strategy = SecondOrderInformation;  
+          strategy = SecondOrderInformation;
           shrinking = true; shrinkingIterations = 1000;
           cacheSize = 100<MB>; parallelize = true }
 
@@ -75,17 +75,17 @@ module SMO =
        max 2 ((int cacheSize)*1024*1024 / columnSize)
 
     /// General parameters for C_SMO problem
-    type C_SMO = { 
+    type C_SMO = {
         /// Initial feasible values of optimization varibles
         A : float32[];
-        /// Per-sample penalties 
+        /// Per-sample penalties
         C : float32[];
-        /// The linear term of the optimized function 
-        p: float32[]; 
+        /// The linear term of the optimized function
+        p: float32[];
     }
 
     /// Sequential Minimal Optimization (SMO) problem solver
-    let C_SMO (X : 'X[]) (Y : float32[]) (Q : Q) (parameters : C_SMO) (options : OptimizationOptions) = 
+    let C_SMO (X : 'X[]) (Y : float32[]) (Q : Q) (parameters : C_SMO) (options : OptimizationOptions) =
         if Array.length X <> Array.length Y then
             invalidArg "X and Y" "have different lengths"
 
@@ -99,7 +99,7 @@ module SMO =
         let A = parameters.A
 
         let G = Array.copy p
-        let G' = Array.zeroCreate<float32> N 
+        let G' = Array.zeroCreate<float32> N
 
         // working set selection helper functions
         let inline _y_gf i = -G.[i]*Y.[i]
@@ -134,7 +134,7 @@ module SMO =
 
         let inline minLowTo i n =
             let Q_s = Q.C i n
-            let inline objective j = 
+            let inline objective j =
                 let a = Q.D.[j] + (Q_s.[i]) - 2.0f*(Q_s.[j])*Y.[j]*Y.[i]
                 let b = _y_gf j - _y_gf i
                 -b*b/(if a > 0.0f then a else tau)
@@ -148,7 +148,7 @@ module SMO =
                         min_j <- j
                         min_v <- v
             min_j
-        
+
         /// Maximal violating pair working set selection strategy
         let maximalViolatingPair n =
             let i = maxUp n
@@ -161,8 +161,8 @@ module SMO =
             else
                 None
 
-        /// Second order information working set selection strategy 
-        let secondOrderInformation n = 
+        /// Second order information working set selection strategy
+        let secondOrderInformation n =
             let i = maxUp n
             if i <> not_found then
                 let j = minLowTo i n
@@ -176,10 +176,10 @@ module SMO =
         let selectWorkingSet =
             match options.strategy with
                 | MaximalViolatingPair -> maximalViolatingPair
-                | SecondOrderInformation -> secondOrderInformation       
+                | SecondOrderInformation -> secondOrderInformation
 
         /// Solve an optimization sub-problem
-        let inline solve i j n = 
+        let inline solve i j n =
             let Q_i = Q.C i n
             let Q_j = Q.C j n
 
@@ -210,7 +210,7 @@ module SMO =
             for i = 0 to N-1 do
                 if A.[i] > 0.0f then
                     let Q_i = Q.C i N
-                    let inline updateG (a_i : float32) (G : float32[]) = 
+                    let inline updateG (a_i : float32) (G : float32[]) =
                         for j = 0 to N-1 do
                             G.[j] <- G.[j] + a_i*Q_i.[j]
 
@@ -229,9 +229,8 @@ module SMO =
 
             if options.shrinking then
                 let inline updateG' i a =
-                    let Q_i = Q.C i N
-
                     let inline updateG' C =
+                        let Q_i = Q.C i N
                         for t = 0 to N-1 do
                             G'.[t] <- G'.[t] + C*Q_i.[t]
 
@@ -246,7 +245,7 @@ module SMO =
                 updateG' j a_j
 
         /// reconstruct gradient
-        let inline reconstruct_gradient (G : float32[]) n = 
+        let inline reconstruct_gradient (G : float32[]) n =
             for t = n to N-1 do
                 G.[t] <- G'.[t] + p.[t]
 
@@ -260,7 +259,7 @@ module SMO =
                 for i = n to N-1 do
                     let Q_i = Q.C i n
                     for j = 0 to n-1 do
-                        if isFree j then 
+                        if isFree j then
                             G.[i] <- G.[i] + A.[j]*Q_i.[j]
             else
                 // active/passive
@@ -271,7 +270,7 @@ module SMO =
                         for i = n to N-1 do
                             G.[i] <- G.[i] + A.[j]*Q_j.[i]
 
-        let inline m n = 
+        let inline m n =
             let mutable max_v = System.Single.NegativeInfinity
             for i = 0 to n-1 do
                 if isUp i then
@@ -290,15 +289,15 @@ module SMO =
             min_v
 
         /// shrink active set
-        let inline shrink m M n = 
-            let inline isShrinked i = 
+        let inline shrink m M n =
+            let inline isShrinked i =
                 (_y_gf i) > m && (A.[i] >= C.[i] && Y.[i] = +1.0f || A.[i] <= 0.0f && Y.[i] = -1.0f) ||
                 (_y_gf i) < M && (A.[i] <= 0.0f && Y.[i] = +1.0f || A.[i] >= C.[i] && Y.[i] = -1.0f)
 
             let inline swapAll i j =
                 swap X i j; swap Y i j
                 swap C i j; swap p i j;
-                swap A i j; swap G i j; 
+                swap A i j; swap G i j;
                 swap G' i j; Q.Swap i j
 
             let mutable i = 0
@@ -307,18 +306,18 @@ module SMO =
             let mutable swaps = 0
             while i < n' do
                 if isShrinked i then
-                    n' <- n' - 1 
+                    n' <- n' - 1
                     while i < n' && isShrinked n' do
                         n' <- n' - 1
                     swaps <- swaps + 1
                     swapAll i n'
-                i <- i + 1    
+                i <- i + 1
 
             logger { verbose (sprintf "shrink active set: shrinked = %d, active = %d, swaps = %d" (n - n') n' swaps) }
 
             n'
 
-        let inline isOptimal m M epsilon = 
+        let inline isOptimal m M epsilon =
             let diff = abs (m - M)
             diff <= epsilon || diff <= epsilon * (min (abs m) (abs M))
 
@@ -326,7 +325,7 @@ module SMO =
         let inline optimize_solve n =
             // Find a pair of elements that violate the optimality condition
             match selectWorkingSet n with
-                | Some (i, j) -> 
+                | Some (i, j) ->
                     logger { verbose(sprintf "working set = {%d, %d}" i j) }
                     // Solve the optimization sub-problem
                     let a_i, a_j = solve i j n
@@ -340,7 +339,7 @@ module SMO =
                     false
 
         let objective n =
-            let G = 
+            let G =
                 if n < N then
                     let G = Array.copy G
                     reconstruct_gradient G n
@@ -391,7 +390,7 @@ module SMO =
                     else
                         logger { info (sprintf "iteration = %d, objective = %f" k (objective N)) }
                 else
-                    if optimize_solve n then 
+                    if optimize_solve n then
                         let s = if s > 0 then (s - 1) else options.shrinkingIterations
                         optimize_shrinking (k + 1) s n unshrinked
                     else
@@ -417,7 +416,7 @@ module SMO =
 
         initialize_gradient ()
 
-        if options.shrinking then 
+        if options.shrinking then
             optimize_shrinking 1 options.shrinkingIterations N false
         else
             optimize_non_shrinking 1
@@ -450,7 +449,7 @@ module SMO =
 
         interface Q with
             /// Swap column elements
-            member q.Swap (i : int) (j : int) = 
+            member q.Swap (i : int) (j : int) =
                 lru.Swap i j
                 swap diagonal i j
 
@@ -460,12 +459,12 @@ module SMO =
             /// Returns L elements of j-th column of Q matrix
             member q.C (j : int) (L : int) = lru.Get j L
 
-    /// Optimization parameters for C_SVC problem 
+    /// Optimization parameters for C_SVC problem
     type C_SVC = {
-        /// The penalty for +1 class instances 
+        /// The penalty for +1 class instances
         C_p : float32;
-        /// The penalty for -1 class instances 
-        C_n : float32; 
+        /// The penalty for -1 class instances
+        C_n : float32;
     }
 
     /// Two class C Support Vector Classification (SVC) problem solver
@@ -477,7 +476,7 @@ module SMO =
         let p = Array.create N -1.0f
         let A = Array.zeroCreate N
 
-        let Q = new Q_C(capacity options.cacheSize N, N, 
+        let Q = new Q_C(capacity options.cacheSize N, N,
                         (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]), options.parallelize)
         let (X',Y',A',b) = C_SMO X' Y' Q { A = A; C = C; p = p } options
 
@@ -497,16 +496,16 @@ module SMO =
 
     /// Multi-class C Support Vector Classification (SVC) problem solver
     let C_SVC_M (X : 'X[]) (Y : 'Y[]) (K : Kernel<'X>) (parameters : C_SVC) (options : OptimizationOptions) =
-        let models = 
-            seq { 
+        let models =
+            seq {
                 let S = Array.distinct Y
                 for i = 0 to (Array.length S)-2 do
                     for j = i+1 to (Array.length S)-1 do
                         yield (S.[i], S.[j]) }
             |> Seq.toArray
             |> (if options.parallelize then Array.Parallel.map else Array.map) (fun (y', y'') ->
-                let X',Y' = 
-                    Array.zip X Y 
+                let X',Y' =
+                    Array.zip X Y
                     |> Array.filter (fun (_, y) -> y = y' || y = y'')
                     |> Array.map (fun (x, y) -> (x, if y = y' then +1.0f else -1.0f))
                     |> Array.unzip
@@ -517,25 +516,25 @@ module SMO =
 
     /// Optimization parameters for One-Class problem
     type OneClass = {
-        /// The fraction of support vectors 
+        /// The fraction of support vectors
         nu : float32;
     }
 
     /// One-Class problem solver
-    let OneClass (X : 'X[]) (K : Kernel<'X>) (parameters : OneClass) (options : OptimizationOptions) = 
+    let OneClass (X : 'X[]) (K : Kernel<'X>) (parameters : OneClass) (options : OptimizationOptions) =
         let N = (Array.length X)
         let X' = Array.copy X
         let Y = Array.create N 1.0f
         let C = Array.create N 1.0f
         let p = Array.create N 0.0f
         let n = int (parameters.nu * (float32 N))
-        let A = Array.init N (fun i -> 
-            match i with 
+        let A = Array.init N (fun i ->
+            match i with
             | _ when i < n -> 1.0f
             | _ when i > n -> 0.0f
             | _ -> parameters.nu * (float32 N) - (float32 n))
 
-        let Q = new Q_C(capacity options.cacheSize N, N, 
+        let Q = new Q_C(capacity options.cacheSize N, N,
                         (fun i j -> K X'.[i] X'.[j]), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y Q { A = A; C = C; p = p } options
 
@@ -573,7 +572,7 @@ module SMO =
 
         interface Q with
             /// Swap column elements
-            member q.Swap (i : int) (j : int) = 
+            member q.Swap (i : int) (j : int) =
                 lru.Swap i j
                 swap diagonal i j
                 swap indices i j
@@ -582,14 +581,14 @@ module SMO =
             member q.D = diagonal
 
             /// Returns L elements of j-th column of Q matrix
-            member q.C (j : int) (L : int) = lru.Get j L 
+            member q.C (j : int) (L : int) = lru.Get j L
 
 
     /// Optimization parameters for C_SVR problem
     type C_SVR = {
         /// The boundary of the approximated function
         eta : float32;
-        /// The penalty 
+        /// The penalty
         C : float32;
     }
 
@@ -603,7 +602,7 @@ module SMO =
         let p' = Array.init N' (fun i -> parameters.eta - (if i < N then Y.[i] else -Y.[i-N]))
         let A' = Array.zeroCreate N'
 
-        let Q = new Q_R(capacity options.cacheSize (2*N), N, 
+        let Q = new Q_R(capacity options.cacheSize (2*N), N,
                         (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y' Q { A = A'; C = C'; p = p' } options
 
