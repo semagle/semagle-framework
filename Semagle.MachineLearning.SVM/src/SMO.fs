@@ -116,7 +116,7 @@ module SMO =
             for i = 0 to n-1 do
                 if isUp i then
                     let v = _y_gf i
-                    if v > max_v then
+                    if v >= max_v then
                         max_i <- i
                         max_v <- v
             max_i
@@ -127,7 +127,7 @@ module SMO =
             for j = 0 to n-1 do
                 if isLow j then
                     let v = _y_gf j
-                    if v < min_v then
+                    if v <= min_v then
                         min_j <- j
                         min_v <- v
             min_j
@@ -144,7 +144,7 @@ module SMO =
             for j = 0 to n-1 do
                 if (isLow j) && (_y_gf j < _y_gf i) then
                     let v = objective j
-                    if v < min_v then
+                    if v <= min_v then
                         min_j <- j
                         min_v <- v
             min_j
