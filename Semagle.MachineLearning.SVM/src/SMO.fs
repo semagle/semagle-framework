@@ -181,9 +181,8 @@ module SMO =
         /// Solve an optimization sub-problem
         let inline solve i j n =
             let Q_i = Q.C i n
-            let Q_j = Q.C j n
 
-            let a = (Q_i.[i]) + (Q_j.[j]) - 2.0f*(Q_i.[j])*Y.[i]*Y.[j]
+            let a = (Q.D.[i]) + (Q.D.[j]) - 2.0f*(Q_i.[j])*Y.[i]*Y.[j]
             let a' = if a > 0.0f then a else tau
 
             if Y.[i] <> Y.[j] then
