@@ -133,7 +133,7 @@ NUGET
     FSharp.Formatting (4.0.1)
       FSharp.Compiler.Service (>= 35.0) - restriction: >= netstandard2.0
     FSharp.Formatting.CommandTool (4.0.1)
-    Microsoft.Build (16.5) - restriction: >= netstandard2.0
+    Microsoft.Build (16.11) - restriction: >= netstandard2.0
       Microsoft.Build.Framework (>= 16.5) - restriction: || (>= net472) (>= netcoreapp2.1)
       Microsoft.VisualStudio.Setup.Configuration.Interop (>= 1.16.30) - restriction: >= net472
       Microsoft.Win32.Registry (>= 4.3) - restriction: >= netcoreapp2.1
@@ -146,10 +146,10 @@ NUGET
       System.Security.Principal.Windows (>= 4.3) - restriction: >= netcoreapp2.1
       System.Text.Encoding.CodePages (>= 4.0.1) - restriction: >= netcoreapp2.1
       System.Threading.Tasks.Dataflow (>= 4.9) - restriction: || (>= net472) (>= netcoreapp2.1)
-    Microsoft.Build.Framework (16.5) - restriction: >= netstandard2.0
+    Microsoft.Build.Framework (16.11) - restriction: >= netstandard2.0
       System.Runtime.Serialization.Primitives (>= 4.1.1) - restriction: && (< net472) (>= netstandard2.0)
       System.Threading.Thread (>= 4.0) - restriction: && (< net472) (>= netstandard2.0)
-    Microsoft.Build.Tasks.Core (16.5) - restriction: >= netstandard2.0
+    Microsoft.Build.Tasks.Core (16.11) - restriction: >= netstandard2.0
       Microsoft.Build.Framework (>= 16.5) - restriction: >= netstandard2.0
       Microsoft.Build.Utilities.Core (>= 16.5) - restriction: >= netstandard2.0
       Microsoft.VisualStudio.Setup.Configuration.Interop (>= 1.16.30) - restriction: >= net472
@@ -163,7 +163,7 @@ NUGET
       System.Resources.Extensions (>= 4.6) - restriction: >= netstandard2.0
       System.Resources.Writer (>= 4.0) - restriction: && (< net472) (>= netstandard2.0)
       System.Threading.Tasks.Dataflow (>= 4.9) - restriction: >= netstandard2.0
-    Microsoft.Build.Utilities.Core (16.5) - restriction: >= netstandard2.0
+    Microsoft.Build.Utilities.Core (16.11) - restriction: >= netstandard2.0
       Microsoft.Build.Framework (>= 16.5) - restriction: >= netstandard2.0
       Microsoft.VisualStudio.Setup.Configuration.Interop (>= 1.16.30) - restriction: >= net472
       Microsoft.Win32.Registry (>= 4.3) - restriction: && (< net472) (>= netstandard2.0)
@@ -180,7 +180,7 @@ NUGET
       System.Security.AccessControl (>= 4.7) - restriction: || (>= monoandroid) (>= monotouch) (&& (< net46) (>= netstandard2.0)) (>= net461) (>= netcoreapp2.0) (>= xamarinios) (>= xamarinmac) (>= xamarintvos) (>= xamarinwatchos)
       System.Security.Principal.Windows (>= 4.7) - restriction: || (>= monoandroid) (>= monotouch) (&& (< net46) (>= netstandard2.0)) (>= net461) (>= netcoreapp2.0) (>= xamarinios) (>= xamarinmac) (>= xamarintvos) (>= xamarinwatchos)
     Mono.Posix.NETStandard (1.0) - restriction: >= netstandard2.0
-    MSBuild.StructuredLogger (2.1.133) - restriction: >= netstandard2.0
+    MSBuild.StructuredLogger (2.1.545) - restriction: >= netstandard2.0
       Microsoft.Build (>= 16.4) - restriction: >= netstandard2.0
       Microsoft.Build.Framework (>= 16.4) - restriction: >= netstandard2.0
       Microsoft.Build.Tasks.Core (>= 16.4) - restriction: >= netstandard2.0
