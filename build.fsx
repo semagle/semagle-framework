@@ -55,6 +55,7 @@ let setBuildOptions (defaults : DotNet.BuildOptions) = {
 
 Target.create "BuildLibraries" (fun _ ->
     !! "**/*.*proj"
+    -- "**/samples/*.*proj"
     -- "**/*.Tests.*proj"
     |> Seq.iter (DotNet.build setBuildOptions)
 )
@@ -80,25 +81,8 @@ Target.create "Publish" (fun _ ->
 )
 
 Target.create "BuildSamples" (fun _ ->
-    let buildDir = __SOURCE_DIRECTORY__ @@ "build"
-
-    !!"**/samples/*.fsx"
-    |> Seq.iter (fun s ->
-        let output = buildDir @@ (s.[s.LastIndexOfAny([| '/'; '\\' |])+1..s.Length - 4] + "exe")
-        let references =
-            seq {
-                use r = new StreamReader(s)
-                while not r.EndOfStream do
-                    let line = r.ReadLine()
-                    if line.StartsWith ("#r") then
-                        yield buildDir @@ (line.[line.IndexOf("\"") + 1..line.LastIndexOf("\"")-1])}
-            |> Seq.toList
-
-        [s]
-        |> Fsc.compileExternal "fsharpc"
-            ([Fsc.Target Fsc.Exe; Fsc.TargetProfile Fsc.Netcore; Fsc.Out output; Fsc.Lib [buildDir]]
-                @ (List.map Fsc.Reference references))
-    )
+    !! "**/samples/*.*proj"
+    |> Seq.iter (DotNet.build setBuildOptions)
 )
 
 Target.create "Test" (fun _ ->
@@ -237,12 +221,13 @@ Target.create "All" ignore
 "BuildDocumentation" ==> "Build"
 
 "BuildLibraries"
-    ==> "Publish"
     ==> "BuildSamples"
+    ==> "Publish"
 
 "Clean"
   ==> "Build"
   ==> "Test"
+  ==> "Publish"
   ==> "All"
 
 Target.runOrDefault "All"

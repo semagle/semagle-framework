@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="C_SVC.fsx" />
+    <None Include="paket.references" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Semagle.Numerics.Vectors\Semagle.Numerics.Vectors.fsproj" />
+    <ProjectReference Include="..\..\Semagle.Numerics.Vectors.IO\Semagle.Numerics.Vectors.IO.fsproj" />
+    <ProjectReference Include="..\..\Semagle.MachineLearning.Metrics\Semagle.MachineLearning.Metrics.fsproj" />
+    <ProjectReference Include="..\Semagle.MachineLearning.SVM.fsproj" />
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>
