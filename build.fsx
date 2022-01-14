@@ -30,7 +30,7 @@ Target.initEnvironment ()
 Target.create "Clean" (fun _ ->
     !! "**/bin"
     ++ "**/obj"
-    |> Shell.cleanDirs 
+    |> Shell.cleanDirs
 )
 
 Target.create "Patch" (fun _ ->
@@ -40,9 +40,9 @@ Target.create "Patch" (fun _ ->
 )
 
 let setBuildOptions (defaults : DotNet.BuildOptions) = {
-    defaults with 
+    defaults with
         Configuration = DotNet.Custom configuration
-        MSBuildParams = { 
+        MSBuildParams = {
             defaults.MSBuildParams with
                 Verbosity = Some(Quiet)
                 Properties = [
@@ -66,7 +66,7 @@ Target.create "BuildTests" (fun _ ->
 
 Target.create "Build" ignore
 
-Target.create "Publish" (fun _ -> 
+Target.create "Publish" (fun _ ->
     let buildDir = __SOURCE_DIRECTORY__ @@ "build"
     Shell.cleanDir buildDir
 
@@ -74,34 +74,34 @@ Target.create "Publish" (fun _ ->
     -- "**/*.Tests.*proj"
     |> Seq.iter (DotNet.publish (fun defaults -> {
         defaults with
-            Configuration = DotNet.Custom configuration 
+            Configuration = DotNet.Custom configuration
             OutputPath = Some(buildDir)
     }))
 )
 
-Target.create "BuildSamples" (fun _ -> 
+Target.create "BuildSamples" (fun _ ->
     let buildDir = __SOURCE_DIRECTORY__ @@ "build"
 
     !!"**/samples/*.fsx"
-    |> Seq.iter (fun s -> 
+    |> Seq.iter (fun s ->
         let output = buildDir @@ (s.[s.LastIndexOfAny([| '/'; '\\' |])+1..s.Length - 4] + "exe")
-        let references = 
+        let references =
             seq {
                 use r = new StreamReader(s)
                 while not r.EndOfStream do
                     let line = r.ReadLine()
                     if line.StartsWith ("#r") then
-                        yield buildDir @@ (line.[line.IndexOf("\"") + 1..line.LastIndexOf("\"")-1])} 
+                        yield buildDir @@ (line.[line.IndexOf("\"") + 1..line.LastIndexOf("\"")-1])}
             |> Seq.toList
 
         [s]
         |> Fsc.compileExternal "fsharpc"
-            ([Fsc.Target Fsc.Exe; Fsc.TargetProfile Fsc.Netcore; Fsc.Out output; Fsc.Lib [buildDir]] 
+            ([Fsc.Target Fsc.Exe; Fsc.TargetProfile Fsc.Netcore; Fsc.Out output; Fsc.Lib [buildDir]]
                 @ (List.map Fsc.Reference references))
     )
 )
 
-Target.create "Test" (fun _ -> 
+Target.create "Test" (fun _ ->
   !! "**/*.Tests.*proj"
   |> Seq.iter (DotNet.test (fun defaults -> {
       defaults with
@@ -126,10 +126,10 @@ let documentation = {|
     ]
     DocumentTemplate = "docpage.cshtml"
 
-    WebsiteRoot = 
-        if configuration = "Release" then 
-            "/semagle-framework" 
-        else 
+    WebsiteRoot =
+        if configuration = "Release" then
+            "/semagle-framework"
+        else
             "file://" + __SOURCE_DIRECTORY__ @@ "Documentation"
 |}
 
@@ -148,22 +148,22 @@ Target.create "CleanDocumentation" (fun _ ->
 )
 
 Target.create "GenerateReference" (fun _ ->
-    let referenceDir = documentation.OutputDirectory @@ "reference" 
+    let referenceDir = documentation.OutputDirectory @@ "reference"
     Directory.ensure referenceDir
     Shell.cleanDir referenceDir
-    
+
     !! "**/*.*proj"
     -- "**/*.Tests.*proj"
-    |> Seq.map (fun projectFile -> 
+    |> Seq.map (fun projectFile ->
         let projectDir = Path.getDirectory(projectFile)
         let projectName = DirectoryInfo.ofPath(projectDir).Name
         projectDir @@ "bin" @@ "Release" @@ "netstandard2.0" @@ (projectName + ".dll"))
     |> FSFormatting.createDocsForDlls (fun args -> {
-        args with 
+        args with
             OutputDirectory = referenceDir
-            LayoutRoots = documentation.LayoutRoots 
+            LayoutRoots = documentation.LayoutRoots
             ProjectParameters = ("root", documentation.WebsiteRoot)::documentation.ProjectInfo
-            SourceRepository = 
+            SourceRepository =
                 (snd (List.find (fun (p, _) -> p = "project-github") documentation.ProjectInfo))
                 @@ "tree/master"
     })
@@ -184,7 +184,7 @@ Target.create "GenerateHelp" (fun _ ->
 
     // generate library documentaion
     !! "**/doc"
-    |> Seq.iter (fun docDir -> 
+    |> Seq.iter (fun docDir ->
         let projectDir = Path.getDirectory(docDir)
         let projectName = DirectoryInfo.ofPath(projectDir).Name
 
@@ -195,21 +195,21 @@ Target.create "GenerateHelp" (fun _ ->
                 LayoutRoots = documentation.LayoutRoots
                 ProjectParameters = ("root", documentation.WebsiteRoot)::documentation.ProjectInfo
                 Template = documentation.DocumentTemplate
-        })  
+        })
     )
 )
 
 Target.create "BuildDocumentation" ignore
 
-Target.create "ReleaseDocumentation" (fun _ -> 
+Target.create "ReleaseDocumentation" (fun _ ->
     let url = CommandHelper.runSimpleGitCommand __SOURCE_DIRECTORY__ "remote get-url origin"
     let ghPages = __SOURCE_DIRECTORY__ @@ "build" @@ "gh-pages"
     Shell.cleanDir ghPages
 
     Repository.cloneSingleBranch "" url "gh-pages" ghPages
 
-    Directory.GetDirectories(ghPages) 
-    |> Seq.filter (fun dir -> Path.GetFileName(dir) <> ".git") 
+    Directory.GetDirectories(ghPages)
+    |> Seq.filter (fun dir -> Path.GetFileName(dir) <> ".git")
     |> Seq.iter (fun dir -> Directory.Delete(dir, true))
     Directory.GetFiles(ghPages) |> Seq.iter File.Delete
 
@@ -223,8 +223,10 @@ Target.create "ReleaseDocumentation" (fun _ ->
 
 Target.create "All" ignore
 
-"BuildLibraries" 
-    ==> "GenerateReference" 
+"Patch" ==> "BuildLibraries"
+
+"BuildLibraries"
+    ==> "GenerateReference"
     ==> "BuildDocumentation"
 "GenerateHelp" ==> "BuildDocumentation"
 "BuildDocumentation" ==> "ReleaseDocumentation"
@@ -234,12 +236,11 @@ Target.create "All" ignore
 "BuildSamples" ==> "Build"
 "BuildDocumentation" ==> "Build"
 
-"BuildLibraries" 
-    ==> "Publish" 
+"BuildLibraries"
+    ==> "Publish"
     ==> "BuildSamples"
 
 "Clean"
-  ==> "Patch"
   ==> "Build"
   ==> "Test"
   ==> "All"
