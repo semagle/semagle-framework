@@ -135,9 +135,9 @@ module SMO =
         let inline minLowTo i n =
             let Q_s = Q.C i n
             let inline objective j =
-                let a = Q.D.[j] + (Q_s.[i]) - 2.0f*(Q_s.[j])*Y.[j]*Y.[i]
+                let a = max (Q.D.[j] + Q.D.[i] - 2.0f*Q_s.[j]*Y.[j]*Y.[i]) tau
                 let b = _y_gf j - _y_gf i
-                -b*b/(if a > 0.0f then a else tau)
+                -b*b/a
 
             let mutable min_j = not_found
             let mutable min_v = System.Single.PositiveInfinity
@@ -182,11 +182,10 @@ module SMO =
         let inline solve i j n =
             let Q_i = Q.C i n
 
-            let a = (Q.D.[i]) + (Q.D.[j]) - 2.0f*(Q_i.[j])*Y.[i]*Y.[j]
-            let a' = if a > 0.0f then a else tau
+            let a = max (Q.D.[i] + Q.D.[j] - 2.0f*Q_i.[j]*Y.[i]*Y.[j]) tau
 
             if Y.[i] <> Y.[j] then
-                let delta = (-G.[i]-G.[j]) / a'
+                let delta = (-G.[i]-G.[j]) / a
                 let diff = A.[i] - A.[j]
                 match (A.[i] + delta, A.[j] + delta) with
                     | _, a_j when diff > 0.0f && a_j < 0.0f -> (diff, 0.0f)
@@ -195,7 +194,7 @@ module SMO =
                     | _, a_j when diff <= C.[i] - C.[j] && a_j > C.[j] -> (C.[j] + diff, C.[j])
                     | a_i, a_j -> a_i, a_j
             else
-                let delta = (G.[i]-G.[j]) / a'
+                let delta = (G.[i]-G.[j]) / a
                 let sum = A.[i] + A.[j]
                 match (A.[i] - delta, A.[j] + delta) with
                     | a_i, _ when sum > C.[i] && a_i > C.[i] -> (C.[i], sum - C.[i])
