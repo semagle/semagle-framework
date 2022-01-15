@@ -47,7 +47,7 @@ module SMO =
     /// Optimization options of SMO algorithm
     type OptimizationOptions = {
         /// The maximum optimization error
-        epsilon : float32;
+        epsilon : float;
         /// The maximum number of SMO algorithm iterations
         maxIterations : int;
         /// The working set selection strategy
@@ -64,7 +64,7 @@ module SMO =
 
     /// Default optimization options
     let defaultOptimizationOptions : OptimizationOptions =
-        { epsilon = 0.001f; maxIterations = 1000000;
+        { epsilon = 0.001; maxIterations = 1000000;
           strategy = SecondOrderInformation;
           shrinking = true; shrinkingIterations = 1000;
           cacheSize = 100<MB>; parallelize = true }
@@ -77,11 +77,11 @@ module SMO =
     /// General parameters for C_SMO problem
     type C_SMO = {
         /// Initial feasible values of optimization varibles
-        A : float32[];
+        A : float[];
         /// Per-sample penalties
-        C : float32[];
+        C : float[];
         /// The linear term of the optimized function
-        p: float32[];
+        p: float[];
     }
 
     /// Sequential Minimal Optimization (SMO) problem solver
@@ -99,20 +99,20 @@ module SMO =
         let A = parameters.A
 
         let G = Array.copy p
-        let G' = Array.zeroCreate<float32> N
+        let G' = Array.zeroCreate<float> N
 
         // working set selection helper functions
-        let inline _y_gf i = -G.[i]*Y.[i]
+        let inline _y_gf i = -G.[i]*(float Y.[i])
 
-        let inline isFree i = 0.0f < A.[i] && A.[i] < C.[i]
+        let inline isFree i = 0.0 < A.[i] && A.[i] < C.[i]
 
-        let inline isUp i = (Y.[i] = +1.0f && A.[i] < C.[i]) || (Y.[i] = -1.0f && A.[i] > 0.0f)
+        let inline isUp i = (Y.[i] = +1.0f && A.[i] < C.[i]) || (Y.[i] = -1.0f && A.[i] > 0.0)
 
-        let inline isLow i = (Y.[i] = +1.0f && A.[i] > 0.0f) || (Y.[i] = -1.0f && A.[i] < C.[i])
+        let inline isLow i = (Y.[i] = +1.0f && A.[i] > 0.0) || (Y.[i] = -1.0f && A.[i] < C.[i])
 
         let inline maxUp n =
             let mutable max_i = not_found
-            let mutable max_v = System.Single.NegativeInfinity
+            let mutable max_v = System.Double.NegativeInfinity
             for i = 0 to n-1 do
                 if isUp i then
                     let v = _y_gf i
@@ -123,7 +123,7 @@ module SMO =
 
         let inline minLow n =
             let mutable min_j = not_found
-            let mutable min_v = System.Single.PositiveInfinity
+            let mutable min_v = System.Double.PositiveInfinity
             for j = 0 to n-1 do
                 if isLow j then
                     let v = _y_gf j
@@ -137,10 +137,10 @@ module SMO =
             let inline objective j =
                 let a = max (Q.D.[j] + Q.D.[i] - 2.0f*Q_s.[j]*Y.[j]*Y.[i]) tau
                 let b = _y_gf j - _y_gf i
-                -b*b/a
+                -b*b / (float a)
 
             let mutable min_j = not_found
-            let mutable min_v = System.Single.PositiveInfinity
+            let mutable min_v = System.Double.PositiveInfinity
             for j = 0 to n-1 do
                 if (isLow j) && (_y_gf j < _y_gf i) then
                     let v = objective j
@@ -185,32 +185,32 @@ module SMO =
             let a = max (Q.D.[i] + Q.D.[j] - 2.0f*Q_i.[j]*Y.[i]*Y.[j]) tau
 
             if Y.[i] <> Y.[j] then
-                let delta = (-G.[i]-G.[j]) / a
+                let delta = (-G.[i]-G.[j]) / (float a)
                 let diff = A.[i] - A.[j]
                 match (A.[i] + delta, A.[j] + delta) with
-                    | _, a_j when diff > 0.0f && a_j < 0.0f -> (diff, 0.0f)
-                    | a_i, _ when diff <= 0.0f && a_i < 0.0f -> (0.0f, -diff)
+                    | _, a_j when diff > 0.0 && a_j < 0.0 -> (diff, 0.0)
+                    | a_i, _ when diff <= 0.0 && a_i < 0.0 -> (0.0, -diff)
                     | a_i, _ when diff > C.[i] - C.[j] && a_i > C.[i] -> (C.[i], C.[i] - diff)
                     | _, a_j when diff <= C.[i] - C.[j] && a_j > C.[j] -> (C.[j] + diff, C.[j])
                     | a_i, a_j -> a_i, a_j
             else
-                let delta = (G.[i]-G.[j]) / a
+                let delta = (G.[i]-G.[j]) / (float a)
                 let sum = A.[i] + A.[j]
                 match (A.[i] - delta, A.[j] + delta) with
                     | a_i, _ when sum > C.[i] && a_i > C.[i] -> (C.[i], sum - C.[i])
-                    | _, a_j when sum <= C.[i] && a_j < 0.0f -> (sum, 0.0f)
+                    | _, a_j when sum <= C.[i] && a_j < 0.0 -> (sum, 0.0)
                     | _, a_j when sum > C.[j] && a_j > C.[j] -> (sum - C.[j], C.[j])
-                    | a_i, _ when sum <= C.[j] && a_i < 0.0f -> (0.0f, sum)
+                    | a_i, _ when sum <= C.[j] && a_i < 0.0 -> (0.0, sum)
                     | a_i, a_j -> a_i, a_j
 
         /// Initialize gradient
         let inline initialize_gradient () =
             for i = 0 to N-1 do
-                if A.[i] > 0.0f then
+                if A.[i] > 0.0 then
                     let Q_i = Q.C i N
-                    let inline updateG (a_i : float32) (G : float32[]) =
+                    let inline updateG (a_i : float) (G : float[]) =
                         for j = 0 to N-1 do
-                            G.[j] <- G.[j] + a_i*Q_i.[j]
+                            G.[j] <- G.[j] + a_i*(float Q_i.[j])
 
                     updateG A.[i] G
 
@@ -229,13 +229,13 @@ module SMO =
             let Q_i = Q.C i n'
 
             for t = 0 to n-1 do
-                let Q_i_t = Q_i.[t]
+                let Q_i_t = float Q_i.[t]
                 G.[t] <- G.[t] + Q_i_t*a_i - Q_i_t*A.[i]
 
             if options.shrinking then
                 let inline updateG' C =
                     for t = 0 to N-1 do
-                        G'.[t] <- G'.[t] + C*Q_i.[t]
+                        G'.[t] <- G'.[t] + C*(float Q_i.[t])
 
                 if isAddedBound then
                     updateG' C.[i]
@@ -243,7 +243,7 @@ module SMO =
                     updateG' -C.[i]
 
         /// reconstruct gradient
-        let inline reconstruct_gradient (G : float32[]) n =
+        let inline reconstruct_gradient (G : float[]) n =
             for t = n to N-1 do
                 G.[t] <- G'.[t] + p.[t]
 
@@ -258,7 +258,7 @@ module SMO =
                     let Q_i = Q.C i n
                     for j = 0 to n-1 do
                         if isFree j then
-                            G.[i] <- G.[i] + A.[j]*Q_i.[j]
+                            G.[i] <- G.[i] + A.[j]*(float Q_i.[j])
             else
                 // active/passive
                 logger { verbose (sprintf "reconstruct gradient: active = %d / passive = %d" n (N - n)) }
@@ -266,10 +266,10 @@ module SMO =
                     if isFree j then
                         let Q_j = Q.C j N
                         for i = n to N-1 do
-                            G.[i] <- G.[i] + A.[j]*Q_j.[i]
+                            G.[i] <- G.[i] + A.[j]*(float Q_j.[i])
 
         let inline m n =
-            let mutable max_v = System.Single.NegativeInfinity
+            let mutable max_v = System.Double.NegativeInfinity
             for i = 0 to n-1 do
                 if isUp i then
                     let v = _y_gf i
@@ -278,7 +278,7 @@ module SMO =
             max_v
 
         let inline M n =
-            let mutable min_v = System.Single.PositiveInfinity
+            let mutable min_v = System.Double.PositiveInfinity
             for i = 0 to n-1 do
                 if isLow i then
                     let v = _y_gf i
@@ -289,8 +289,8 @@ module SMO =
         /// shrink active set
         let inline shrink m M n =
             let inline isShrinked i =
-                (_y_gf i) > m && (A.[i] >= C.[i] && Y.[i] = +1.0f || A.[i] <= 0.0f && Y.[i] = -1.0f) ||
-                (_y_gf i) < M && (A.[i] <= 0.0f && Y.[i] = +1.0f || A.[i] >= C.[i] && Y.[i] = -1.0f)
+                (_y_gf i) > m && (A.[i] >= C.[i] && Y.[i] = +1.0f || A.[i] <= 0.0 && Y.[i] = -1.0f) ||
+                (_y_gf i) < M && (A.[i] <= 0.0 && Y.[i] = +1.0f || A.[i] >= C.[i] && Y.[i] = -1.0f)
 
             let inline swapAll i j =
                 swap X i j; swap Y i j
@@ -346,17 +346,17 @@ module SMO =
                 else
                     G
 
-            let mutable sum = 0.0f
+            let mutable sum = 0.0
             for i = 0 to N-1 do
                 sum <- sum + A.[i]*(G.[i] + p.[i])
-            sum / 2.0f
+            sum / 2.0
 
         /// optimize with shrinking every 1000 iterations
         let rec optimize_shrinking k s n unshrinked =
             let inline optimize_shrink m M n =
                 if s = 0 then
                     // time to shrink
-                    if not(unshrinked) && isOptimal m M (10.0f*epsilon) then
+                    if not(unshrinked) && isOptimal m M (10.0*epsilon) then
                        // reconstruct G if (M - m) <= 10*epsilon for the first time
                        reconstruct_gradient G n
                        // shrink the full set
@@ -423,7 +423,7 @@ module SMO =
         logger { info (let mutable support = 0 in
                        let mutable bounded = 0 in
                        for i = 0 to N-1 do
-                           if A.[i] <> 0.0f then
+                           if A.[i] <> 0.0 then
                                support <- support + 1
                                if A.[i] >= C.[i] then
                                    bounded <- bounded + 1
@@ -431,7 +431,7 @@ module SMO =
 
         /// Reconstruction of hyperplane bias
         let bias =
-            let mutable b = 0.0f
+            let mutable b = 0.0
             let mutable M = 0
             for i = 0 to N-1 do
                 if isFree i then
@@ -461,9 +461,9 @@ module SMO =
     /// Optimization parameters for C_SVC problem
     type C_SVC = {
         /// The penalty for +1 class instances
-        C_p : float32;
+        C_p : float;
         /// The penalty for -1 class instances
-        C_n : float32;
+        C_n : float;
     }
 
     /// Two class C Support Vector Classification (SVC) problem solver
@@ -472,7 +472,7 @@ module SMO =
         let X' = Array.copy X
         let Y' = Array.copy Y
         let C = Array.init N (fun i -> if Y.[i] = +1.0f then parameters.C_p else parameters.C_n )
-        let p = Array.create N -1.0f
+        let p = Array.create N -1.0
         let A = Array.zeroCreate N
 
         let Q = new Q_C(capacity options.cacheSize N, N,
@@ -480,15 +480,15 @@ module SMO =
         let (X',Y',A',b) = C_SMO X' Y' Q { A = A; C = C; p = p } options
 
         // Remove support vectors with A.[i] = 0.0 and compute Y.[i]*A.[i]
-        let N'' = Array.sumBy (fun a -> if a <> 0.0f then 1 else 0) A'
+        let N'' = Array.sumBy (fun a -> if a <> 0.0 then 1 else 0) A'
         let X'' = Array.zeroCreate N''
         let A'' = Array.zeroCreate N''
 
         let mutable k = 0
         for i = 0 to N-1 do
-            if A'.[i] <> 0.0f then
+            if A'.[i] <> 0.0 then
                 X''.[k] <- X'.[i]
-                A''.[k] <- Y'.[i]*A'.[i]
+                A''.[k] <- (float Y'.[i])*A'.[i]
                 k <- k + 1
 
         TwoClass(K,X'',A'',b)
@@ -516,7 +516,7 @@ module SMO =
     /// Optimization parameters for One-Class problem
     type OneClass = {
         /// The fraction of support vectors
-        nu : float32;
+        nu : float;
     }
 
     /// One-Class problem solver
@@ -524,27 +524,27 @@ module SMO =
         let N = (Array.length X)
         let X' = Array.copy X
         let Y = Array.create N 1.0f
-        let C = Array.create N 1.0f
-        let p = Array.create N 0.0f
-        let n = int (parameters.nu * (float32 N))
+        let C = Array.create N 1.0
+        let p = Array.create N 0.0
+        let n = int (parameters.nu * (float N))
         let A = Array.init N (fun i ->
             match i with
-            | _ when i < n -> 1.0f
-            | _ when i > n -> 0.0f
-            | _ -> parameters.nu * (float32 N) - (float32 n))
+            | _ when i < n -> 1.0
+            | _ when i > n -> 0.0
+            | _ -> parameters.nu * (float N) - (float n))
 
         let Q = new Q_C(capacity options.cacheSize N, N,
                         (fun i j -> K X'.[i] X'.[j]), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y Q { A = A; C = C; p = p } options
 
         // Remove support vectors with A.[i] = 0.0
-        let N'' = Array.sumBy (fun a -> if a <> 0.0f then 1 else 0) A'
+        let N'' = Array.sumBy (fun a -> if a <> 0.0 then 1 else 0) A'
         let X'' = Array.zeroCreate N''
         let A'' = Array.zeroCreate N''
 
         let mutable k = 0
         for i = 0 to N-1 do
-            if A'.[i] <> 0.0f then
+            if A'.[i] <> 0.0 then
                 X''.[k] <- X'.[i]
                 A''.[k] <- A'.[i]
                 k <- k + 1
@@ -586,9 +586,9 @@ module SMO =
     /// Optimization parameters for C_SVR problem
     type C_SVR = {
         /// The boundary of the approximated function
-        eta : float32;
+        eta : float;
         /// The penalty
-        C : float32;
+        C : float;
     }
 
     /// C Support Vector Regression (SVR) problem solver
@@ -598,7 +598,7 @@ module SMO =
         let Y' = Array.init N' (fun i -> if i < N then +1.0f else -1.0f)
         let X' = Array.init N' (fun i -> if i < N then X.[i] else X.[i-N])
         let C' = Array.create N' parameters.C
-        let p' = Array.init N' (fun i -> parameters.eta - (if i < N then Y.[i] else -Y.[i-N]))
+        let p' = Array.init N' (fun i -> parameters.eta - (if i < N then (float Y.[i]) else (float -Y.[i-N])))
         let A' = Array.zeroCreate N'
 
         let Q = new Q_R(capacity options.cacheSize (2*N), N,
@@ -615,13 +615,13 @@ module SMO =
                 A.[i-N] <- A.[i-N] - A'.[k]
 
         // Remove support vectors with A.[i] = 0.0
-        let N'' = Array.sumBy (fun a -> if a <> 0.0f then 1 else 0) A
+        let N'' = Array.sumBy (fun a -> if a <> 0.0 then 1 else 0) A
         let A'' = Array.zeroCreate N''
         let X'' = Array.zeroCreate N''
 
         let mutable k = 0
         for i = 0 to N - 1 do
-            if A.[i] <> 0.0f then
+            if A.[i] <> 0.0 then
                 A''.[k] <- A.[i]
                 X''.[k] <- X.[i]
                 k <- k + 1

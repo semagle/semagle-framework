@@ -18,22 +18,22 @@ namespace Semagle.MachineLearning.SVM
 /// <typeparam name="'X">Type of support vector</typeparam>
 type Kernel<'X> = 'X -> 'X -> float32
 
-/// <summary>SVM model definition includes kernel function, array of support vectors 
+/// <summary>SVM model definition includes kernel function, array of support vectors
 /// with respective weights and bias value.</summary>
 /// <typeparam name="'X">The type of support vector.</typeparam>
-type SVM<'X,'Y> = 
+type SVM<'X,'Y> =
     /// SVM model for two class classification
-    | TwoClass of Kernel<'X> * ('X[]) *  (float32[]) * float32
+    | TwoClass of Kernel<'X> * ('X[]) *  (float[]) * float
     /// SVM model for one class classification
-    | OneClass of Kernel<'X> * ('X[]) *  (float32[]) * float32
+    | OneClass of Kernel<'X> * ('X[]) *  (float[]) * float
     /// SVM model for regression
-    | Regression of Kernel<'X> * ('X[]) *  (float32[]) * float32
+    | Regression of Kernel<'X> * ('X[]) *  (float[]) * float
     /// SVM model for multi-class classification
-    | MultiClass of Kernel<'X> * (('Y * 'Y * ('X[]) * (float32[]) * float32)[])
+    | MultiClass of Kernel<'X> * (('Y * 'Y * ('X[]) * (float[]) * float)[])
 
 module SVM =
-    let inline predict (x : 'X) (K : Kernel<'X>) (X : 'X[]) (A : float32[]) (b : float32) =
-        Array.fold2 (fun sum x_i a_i -> sum + a_i * (K x_i x)) b X A
+    let inline predict (x : 'X) (K : Kernel<'X>) (X : 'X[]) (A : float[]) (b : float) =
+        Array.fold2 (fun sum x_i a_i -> sum + a_i * (float (K x_i x))) b X A
 
 /// Two class classification
 module TwoClass =
@@ -42,7 +42,7 @@ module TwoClass =
     /// <param name="x">The input sample.</param>
     /// <returns>The class of the sample.</returns>
     let inline predict (model : SVM<'X,'Y>) (x : 'X) =
-        match model with 
+        match model with
         | TwoClass (K,X,A,b) -> sign (SVM.predict x K X A b)
         | _ -> invalidArg "svm" "type is invalid"
 
@@ -65,7 +65,7 @@ module Regression =
     /// <returns>The predicted value.</returns>
     let inline predict (model : SVM<'X,'Y>) (x : 'X) =
         match model with
-        | Regression (K,X,A,b) -> SVM.predict x K X A b
+        | Regression (K,X,A,b) -> (float32 (SVM.predict x K X A b))
         | _ -> invalidArg "svm" "type is invalid"
 
 /// Multi-class classification
@@ -76,7 +76,7 @@ module MultiClass =
     /// <returns>The class of the sample.</returns>
     let inline predict(model : SVM<'X,'Y>) (x : 'X) =
         match model with
-        | MultiClass (K, models) -> 
+        | MultiClass (K, models) ->
             models
             |> Array.Parallel.map (fun (y', y'', X, A, b) ->
                  if sign (SVM.predict x K X A b) > 0 then y' else y'')

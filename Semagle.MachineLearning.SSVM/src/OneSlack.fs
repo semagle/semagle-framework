@@ -26,7 +26,7 @@ open Semagle.Numerics.Vectors
 module OneSlack =
     type OptimizationOptions = {
         /// Maximum optimization error
-        epsilon : float32
+        epsilon : float
         /// Rescaling type
         rescaling : Rescaling;
         /// Parellelize
@@ -36,12 +36,12 @@ module OneSlack =
     }
 
     let defaultOptimizationOptions : OptimizationOptions = {
-        epsilon = 0.001f; rescaling = Slack; parallelize = true; smoOptimizationOptions = SMO.defaultOptimizationOptions
+        epsilon = 0.001; rescaling = Slack; parallelize = true; smoOptimizationOptions = SMO.defaultOptimizationOptions
     }
 
     type OneSlack<'X,'Y> = {
         /// Penalty for slack variables
-        C : float32;
+        C : float;
         /// Solution dimensions
         dimensions : int;
         /// Loss function
@@ -95,35 +95,37 @@ module OneSlack =
         logger { info (sprintf "dimensons = %d" parameters.dimensions)}
 
         let N = Array.length X
-        let W = Array.zeroCreate<float32> parameters.dimensions
+        let W = Array.zeroCreate<float> parameters.dimensions
 
         let mutable X' = Array.empty<(* Y *) 'Y[] * (* L *) float32[]>
 
         let dJF = LRF(100, N, (fun k i -> let Y' = fst X'.[k] in (JF X.[i] Y.[i]) - (JF X.[i] Y'.[i])), options.parallelize)
 
-        let mu L = match options.rescaling with | Slack -> L | Margin -> 1.0f
+        let mu L = match options.rescaling with | Slack -> L | Margin -> 1.0
 
-        let inline add_by_N (W : float32[]) k a =
-            if a <> 0.0f then
+        let inline add_by_N (W : float[]) k a =
+            if a <> 0.0 then
                 let a = DivideByInt a N
                 let L_k = snd X'.[k]
                 let dJF_k = dJF.[k]
                 Array.iter2 (fun L (dJF : SparseVector) -> 
-                             let m = mu L
-                             Array.iter2 (fun i v -> W.[i] <- W.[i] + a * m * v) dJF.Indices dJF.Values) L_k dJF_k
+                             let m = mu (float L)
+                             Array.iter2 (fun i v -> W.[i] <- W.[i] + a * m * (float v))
+                                         dJF.Indices dJF.Values)
+                             L_k dJF_k
 
         let H k k' = 
             let inline updates k =
                 let W_k = Array.zeroCreate parameters.dimensions
-                add_by_N W_k k 1.0f
+                add_by_N W_k k 1.0
                 W_k
 
             let W_k = updates k
             let W_k' = if k <> k' then updates k' else W_k
 
-            Array.fold2 (fun sum w_k w_k' -> sum + w_k * w_k') 0.0f W_k W_k'
+            float32 (Array.fold2 (fun sum w_k w_k' -> sum + w_k * w_k') 0.0 W_k W_k')
 
-        let M = int (1.0f / options.epsilon)
+        let M = int (1.0 / options.epsilon)
         let Q = Q_S(SMO.capacity options.smoOptimizationOptions.cacheSize M, 0, H, dJF,
                     options.smoOptimizationOptions.parallelize)
 
@@ -135,17 +137,18 @@ module OneSlack =
                         let L_k = snd x'
                         let dJF_k = dJF.[k]
                         Seq.map2 (fun L (dJF : SparseVector) -> 
-                            let m = mu L
-                            let WxdJF = dJF.SumBy(fun i v -> W.[i]*v)
-                            L - m * WxdJF) L_k dJF_k
+                            let m = mu (float L)
+                            let WxdJF = dJF.SumBy(fun i v -> (float32 W.[i])*v)
+                            (float L) - m * (float WxdJF))
+                            L_k dJF_k
                         |> Seq.sum)
                     |> Seq.max
-                    |> max 0.0f
+                    |> max 0.0
                  else
-                    0.0f) N
+                    0.0) N
 
         let inline reconstructW A =
-            Array.fill W 0 W.Length 0.0f
+            Array.fill W 0 W.Length 0.0
             Array.iteri (add_by_N W) A
 
         let inline solve X' Y' A C p = 
@@ -156,7 +159,7 @@ module OneSlack =
 
             if not (Array.isEmpty X') then
                 SMO.C_SMO X' Y' Q { A = A; C = C; p = p } 
-                          { options.smoOptimizationOptions with epsilon = options.epsilon * 2.0f } |> ignore
+                          { options.smoOptimizationOptions with epsilon = options.epsilon * 2.0 } |> ignore
 
                 reconstructW A
 
@@ -180,7 +183,7 @@ module OneSlack =
             b.[M] <- e
             b
 
-        let rec optimize (k : int) (Y' : float32[]) (A : float32[]) (C : float32[]) (p : float32[]) =
+        let rec optimize (k : int) (Y' : float32[]) (A : float[]) (C : float[]) (p : float[]) =
             logger { debug (sprintf "iteration = %d" k) }
 
             let xi = solve X' Y' A C p
@@ -189,12 +192,12 @@ module OneSlack =
 
             let x',h = newConstraint ()
 
-            if not (isOptimal xi (DivideByInt (Array.sum h) N)) then
+            if not (isOptimal xi (DivideByInt (float (Array.sum h)) N)) then
                 X' <- append X' x'
                 let Y' = append Y' 1.0f
                 let C = append C parameters.C
                 let A = append A (parameters.C - Array.sum A)
-                let p = append p (DivideByInt -(Array.sum (snd x')) N)
+                let p = append p (DivideByInt (float -(Array.sum (snd x'))) N)
                 Q.Resize (Array.length X')
 
                 optimize (k+1) Y' A C p

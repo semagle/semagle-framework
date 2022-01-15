@@ -46,12 +46,12 @@ let main(args) =
     Global.initialise { Global.defaultConfig with getLogger = (fun name -> Targets.create Info name) }
 
     // load train and test data
-    let readData file = 
+    let readData file =
         let y, x = LibSVM.read file |> Seq.toArray |> Array.unzip
         let y = Array.map int y
         let N = Array.length y
-        let percents = 
-            y |> Array.countBy id |> Array.sortBy snd 
+        let percents =
+            y |> Array.countBy id |> Array.sortBy snd
               |> Array.map (fun (_, c) -> sprintf "%0.2f%%" (100.0 * (float c) / (float N)))
         logger { info(sprintf "[%s]" (String.Join("; ", percents))) }
         y, x
@@ -63,8 +63,8 @@ let main(args) =
     let test_y, test_x = logger { time(readData args.[1]) }
 
     logger { info ("Training...") }
-    let multiclass = logger { time(MultiClass.learn train_x train_y (fun v -> v :> Vector) 
-                                                    { MultiClass.defaultMultiClass with C = 100.0f }
+    let multiclass = logger { time(MultiClass.learn train_x train_y (fun v -> v :> Vector)
+                                                    { MultiClass.defaultMultiClass with C = 100.0 }
                                                     OneSlack.defaultOptimizationOptions) }
 
     logger { info ("Predicting...") }
@@ -78,4 +78,3 @@ let main(args) =
 
     printfn "Accuracy = %f%%(%d/%d)" (accuracy * 100.0) correct total
     0
-      

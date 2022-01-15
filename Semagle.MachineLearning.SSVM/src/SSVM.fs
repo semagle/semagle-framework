@@ -35,4 +35,4 @@ type LossFunction<'Y> = (* y *) 'Y -> (* y' *)'Y -> float32
 type Argmax<'Y> = (* y *) 'Y * (* loss *) float32 * (* cost *) float32
 
 /// Argmax function type
-type ArgmaxFunction<'Y> = (* W *) float32[] -> (* i *) int -> Argmax<'Y>
+type ArgmaxFunction<'Y> = (* W *) float[] -> (* i *) int -> Argmax<'Y>

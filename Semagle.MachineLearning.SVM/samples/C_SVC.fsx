@@ -56,14 +56,14 @@ let main(args) =
 
     // create SVM model
     logger { info("Training SVM model...") }
-    let svm = logger { 
+    let svm = logger {
         time(let C_SVC = if multiclass then SMO.C_SVC_M else SMO.C_SVC in
-             C_SVC train_x train_y (Kernel.rbf 1.0f) { C_p = 1.0f; C_n = 1.0f } SMO.defaultOptimizationOptions) }
+             C_SVC train_x train_y (Kernel.rbf 1.0f) { C_p = 1.0; C_n = 1.0 } SMO.defaultOptimizationOptions) }
 
     // predict and compute correct count
     logger { info("Predicting SVM model...") }
-    let predict x = 
-        if multiclass then 
+    let predict x =
+        if multiclass then
             MultiClass.predict svm x
         else
             float32 (TwoClass.predict svm x)

@@ -17,19 +17,19 @@ namespace Semagle.MachineLearning.SSVM
 open Semagle.Numerics.Vectors
 
 /// Structured SVM model for multi-class classification
-type MultiClass<'X,'Y> = MultiClass of FeatureFunction<'X> * (* W *) float32[] * 'Y[]
+type MultiClass<'X,'Y> = MultiClass of FeatureFunction<'X> * (* W *) float[] * 'Y[]
 
 module MultiClass =
     /// Optimization parameters for the multi-class structured SVM
     type MultiClass<'Y> = {
          /// Penalty for slack variables
-         C : float32;
+         C : float;
          /// Loss function
          loss : LossFunction<'Y>
     }
 
     let defaultMultiClass : MultiClass<'Y> = {
-        C = 1.0f; loss = (fun y y' -> if y = y' then 0.0f else 1.0f)
+        C = 1.0; loss = (fun y y' -> if y = y' then 0.0f else 1.0f)
     }
 
     /// Returns i-th feature index for k-th class
@@ -49,17 +49,17 @@ module MultiClass =
             let index_k = index D k
             SparseVector(Array.map index_k F_x.Indices, F_x.Values)
 
-        let argmax (W : float32[]) (i : int) =
+        let argmax (W : float[]) (i : int) =
             let x = X.[i]
             let y = Y.[i]
             let F = (F x).AsSparse
             let k = Array.findIndex ((=) y) Y'
-            let WxJF = F.SumBy(fun i v -> W.[index D k i]*v)
+            let WxJF = F.SumBy(fun i v -> (float32 W.[index D k i])*v)
             let y_max, loss_max, cost_max = 
                 Y' 
                 |> Array.map (fun y' ->
                     let k' = Array.findIndex ((=) y') Y'
-                    let WxdJF = WxJF - F.SumBy(fun i v -> W.[index D k' i]*v)
+                    let WxdJF = WxJF - F.SumBy(fun i v -> (float32 W.[index D k' i])*v)
                     let loss = loss y y'
                     let m = match options.rescaling with | Slack -> loss | Margin -> 1.0f
                     let cost = loss - m*WxdJF
@@ -81,7 +81,7 @@ module MultiClass =
             let inline index_k i = index D k i
             let WxJF = F.SumBy (fun i v -> 
                 if i < D then
-                    W.[index_k i]*v
+                    (float32 W.[index_k i])*v
                 else
                     0.0f)
             if WxJF > WxJF_max then

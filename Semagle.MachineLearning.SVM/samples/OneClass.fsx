@@ -55,7 +55,7 @@ let main (args) =
 
     // create SVM model
     logger { info("Training SVM model...") }
-    let svm = logger { time(SMO.OneClass train_x (Kernel.rbf 0.1f) { nu = 0.5f } SMO.defaultOptimizationOptions) }
+    let svm = logger { time(SMO.OneClass train_x (Kernel.rbf 0.1f) { nu = 0.5 } SMO.defaultOptimizationOptions) }
 
     // predict and compute correct count
     logger { info ("Predicting SVM model...") }
