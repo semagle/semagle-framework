@@ -219,7 +219,14 @@ module SMO =
 
         /// update gradient
         let inline update_gradient i a_i n =
-            let Q_i = Q.C i n
+            let isAddedBound = a_i >= C.[i] && A.[i] < C.[i]
+            let isRemovedBound = a_i < C.[i] && A.[i] >= C.[i]
+            let n' =
+                if options.shrinking && (isAddedBound || isRemovedBound) then
+                    N
+                else
+                    n
+            let Q_i = Q.C i n'
 
             for t = 0 to n-1 do
                 let Q_i_t = Q_i.[t]
@@ -227,15 +234,12 @@ module SMO =
 
             if options.shrinking then
                 let inline updateG' C =
-                    let Q_i = Q.C i N
                     for t = 0 to N-1 do
                         G'.[t] <- G'.[t] + C*Q_i.[t]
 
-                if a_i >= C.[i] && A.[i] < C.[i] then
-                    // added bound variable
+                if isAddedBound then
                     updateG' C.[i]
-                else if a_i < C.[i] && A.[i] >= C.[i] then
-                    // removed bound variable
+                else if isRemovedBound then
                     updateG' -C.[i]
 
         /// reconstruct gradient
