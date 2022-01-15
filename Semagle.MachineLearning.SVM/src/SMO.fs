@@ -218,29 +218,25 @@ module SMO =
                         updateG C.[i] G'
 
         /// update gradient
-        let inline update_gradient i j a_i a_j n =
+        let inline update_gradient i a_i n =
             let Q_i = Q.C i n
-            let Q_j = Q.C j n
 
             for t = 0 to n-1 do
-                G.[t] <- G.[t] + (Q_i.[t])*(a_i - A.[i]) + (Q_j.[t])*(a_j - A.[j])
+                let Q_i_t = Q_i.[t]
+                G.[t] <- G.[t] + Q_i_t*a_i - Q_i_t*A.[i]
 
             if options.shrinking then
-                let inline updateG' i a =
-                    let inline updateG' C =
-                        let Q_i = Q.C i N
-                        for t = 0 to N-1 do
-                            G'.[t] <- G'.[t] + C*Q_i.[t]
+                let inline updateG' C =
+                    let Q_i = Q.C i N
+                    for t = 0 to N-1 do
+                        G'.[t] <- G'.[t] + C*Q_i.[t]
 
-                    if a >= C.[i] && A.[i] < C.[i] then
-                        // added bound variable
-                        updateG' C.[i]
-                    else if a < C.[i] && A.[i] >= C.[i] then
-                        // removed bound variable
-                        updateG' -C.[i]
-
-                updateG' i a_i
-                updateG' j a_j
+                if a_i >= C.[i] && A.[i] < C.[i] then
+                    // added bound variable
+                    updateG' C.[i]
+                else if a_i < C.[i] && A.[i] >= C.[i] then
+                    // removed bound variable
+                    updateG' -C.[i]
 
         /// reconstruct gradient
         let inline reconstruct_gradient (G : float32[]) n =
@@ -328,7 +324,8 @@ module SMO =
                     // Solve the optimization sub-problem
                     let a_i, a_j = solve i j n
                     // Update the gradient
-                    update_gradient i j a_i a_j n
+                    update_gradient i a_i n
+                    update_gradient j a_j n
                     // Update the solution
                     A.[i] <- a_i; A.[j] <- a_j
                     true
