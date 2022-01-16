@@ -85,6 +85,12 @@ type ``DenseVector tests``() =
         (a .* b) |> should equal -41.0f
 
     [<Test>]
+    member test.``Squared Euclidean distance should be correct.``() =
+        let a = DenseVector([| 1.0f; 3.0f; -3.0f; 4.0f; 8.0f |])
+        let b = DenseVector([| 2.0f; 2.0f; 7.0f; 5.0f; -6.0f |])
+        (a ||-|| b) |> should equal 299.0f
+
+    [<Test>]
     member test.``Negation should be correct.``() =
         let a = DenseVector([| 1.0f; 3.0f; -3.0f; 4.0f; 8.0f |])
         -a |> should equal <| DenseVector([| -1.0f; -3.0f; 3.0f; -4.0f; -8.0f |])

@@ -117,6 +117,15 @@ and DenseVector(values : float32[]) =
             // general case
             Array.fold2 (fun sum va vb -> sum + va*vb) 0.0f a.Values b.Values
 
+    /// Squared Euclidean distance $||a-b||^2$
+    static member inline (||-||) (a : DenseVector, b : DenseVector) =
+        if System.Object.ReferenceEquals(a, b) then
+            // optimization for x .* x cases
+            0.0f
+        else
+            // general case
+            Array.fold2 (fun sum va vb -> let v = va - vb in sum + v*v) 0.0f a.Values b.Values
+
     /// Scalar product
     static member inline (.*) (a : DenseVector, b : SparseVector) =
         Array.fold2 (fun sum i v -> if i < a.Length then sum + a.[i]*v else sum) 0.0f b.Indices b.Values
@@ -296,6 +305,32 @@ and SparseVector(indices : int[], values : float32[]) =
                 | _ -> sum <- sum + a.Values.[i]*b.Values.[j]; i <- i + 1; j <- j + 1
 
         sum
+
+    /// Squared Euclidean distance $||a-b||^2$
+    static member inline (||-||) (a : SparseVector, b : SparseVector) =
+        if System.Object.ReferenceEquals(a, b) then
+            0.0f
+        else
+            let mutable sum = 0.0f
+            let mutable i = 0
+            let mutable j = 0
+
+            while i < a.Indices.Length && j < b.Indices.Length do
+                match (i, j) with
+                | _ when a.Indices.[i] < b.Indices.[j] ->
+                    let v = a.Values.[i]
+                    i <- i + 1
+                    sum <- sum + v*v
+                | _ when a.Indices.[i] > b.Indices.[j] ->
+                    let v = -b.Values.[j]
+                    j <- j + 1
+                    sum <- sum + v*v
+                | _ -> 
+                    let v = a.Values.[i] - b.Values.[j]
+                    i <- i + 1; j <- j + 1
+                    sum <- sum + v*v
+
+            sum
 
     /// Negation of vector
     static member inline (~-)(a : SparseVector) = SparseVector.map (~-) a

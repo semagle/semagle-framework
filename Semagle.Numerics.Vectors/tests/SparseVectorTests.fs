@@ -81,6 +81,12 @@ type ``SparseVector tests``() =
         (a .* b) |> should equal 17.0f
 
     [<Test>]
+    member test.``Squared Euclidean distance sould be correct.``() =
+        let a = SparseVector([|0; 1; 3|], [|1.0f; 2.0f; 4.0f|])
+        let b = SparseVector([|0; 2; 3|], [|1.0f; 3.0f; 4.0f|])
+        (a ||-|| b) |> should equal 13.0f
+
+    [<Test>]
     member test.``Negation should be correct.``() =
         let a = SparseVector([|0; 1; 3; 5|], [|1.0f; -2.0f; 4.0f; -6.0f|])
         -a |> should equal <| SparseVector([|0; 1; 3; 5|], [|-1.0f; 2.0f; -4.0f; 6.0f|])
