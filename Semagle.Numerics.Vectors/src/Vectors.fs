@@ -299,10 +299,9 @@ and SparseVector(indices : int[], values : float32[]) =
             let mutable j = 0
 
             while i < a.Indices.Length && j < b.Indices.Length do
-                match (i, j) with
-                | _ when a.Indices.[i] < b.Indices.[j] -> i <- i + 1
-                | _ when a.Indices.[i] > b.Indices.[j] -> j <- j + 1
-                | _ -> sum <- sum + a.Values.[i]*b.Values.[j]; i <- i + 1; j <- j + 1
+                if a.Indices.[i] < b.Indices.[j] then i <- i + 1
+                else if a.Indices.[i] > b.Indices.[j] then j <- j + 1
+                else sum <- sum + a.Values.[i]*b.Values.[j]; i <- i + 1; j <- j + 1
 
         sum
 
@@ -316,19 +315,28 @@ and SparseVector(indices : int[], values : float32[]) =
             let mutable j = 0
 
             while i < a.Indices.Length && j < b.Indices.Length do
-                match (i, j) with
-                | _ when a.Indices.[i] < b.Indices.[j] ->
+                if a.Indices.[i] < b.Indices.[j] then
                     let v = a.Values.[i]
                     i <- i + 1
                     sum <- sum + v*v
-                | _ when a.Indices.[i] > b.Indices.[j] ->
+                else if a.Indices.[i] > b.Indices.[j] then
                     let v = -b.Values.[j]
                     j <- j + 1
                     sum <- sum + v*v
-                | _ -> 
+                else 
                     let v = a.Values.[i] - b.Values.[j]
                     i <- i + 1; j <- j + 1
                     sum <- sum + v*v
+
+            while i < a.Indices.Length do
+                let v = a.Values.[i]
+                i <- i + 1
+                sum <- sum + v*v
+
+            while j < b.Indices.Length do
+                let v = -b.Values.[j]
+                j <- j + 1
+                sum <- sum + v*v
 
             sum
 
