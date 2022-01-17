@@ -43,7 +43,7 @@ module TwoClass =
     /// <returns>The class of the sample.</returns>
     let inline predict (model : SVM<'X,'Y>) (x : 'X) =
         match model with
-        | TwoClass (K,X,A,b) -> sign (SVM.predict x K X A b)
+        | TwoClass (K,X,A,b) -> if (SVM.predict x K X A b) > 0.0 then +1.0f else -1.0f
         | _ -> invalidArg "svm" "type is invalid"
 
 /// One class classification (distribution estimation)
@@ -54,7 +54,7 @@ module OneClass =
     /// <returns>The class of the sample.</returns>
     let inline predict (model : SVM<'X,'Y>) (x : 'X) =
         match model with
-        | OneClass (K,X,A,b) -> sign (SVM.predict x K X A b)
+        | OneClass (K,X,A,b) -> if (SVM.predict x K X A b) > 0.0 then +1.0f else -1.0f
         | _ -> invalidArg "svm" "type is invalid"
 
 /// Regression
@@ -79,7 +79,7 @@ module MultiClass =
         | MultiClass (K, models) ->
             models
             |> Array.Parallel.map (fun (y', y'', X, A, b) ->
-                 if sign (SVM.predict x K X A b) > 0 then y' else y'')
+                 if (SVM.predict x K X A b) > 0.0 then y' else y'')
             |> Array.countBy id
             |> Array.maxBy snd
             |> fst
