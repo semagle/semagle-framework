@@ -17,16 +17,16 @@ namespace Semagle.MachineLearning.SVM
 /// Popular kernel functions definitions
 module Kernel =
     /// Linear kernel function $(x_1 \cdot x_2)$
-    let inline linear (x1 : ^X) (x2 : ^X) : float32 = x1 .* x2
+    let inline linear (x1 : ^X) (x2 : ^X) : float = float (x1 .* x2)
 
     /// Polynomial kernel function $(\gamma*(x_1 \cdot x_2)+\mu)^n$
-    let inline polynomial (gamma : float32) (mu : float32) (n : float32) (x1 : ^X) (x2 : ^X) : float32 =
-        (gamma*(x1 .* x2) + mu) ** n
+    let inline polynomial (gamma : float) (mu : float) (n : float) (x1 : ^X) (x2 : ^X) : float =
+        (gamma*(float (x1 .* x2)) + mu) ** n
 
     /// Radial basis kernel function $exp(-\gamma||x_1 - x_2||^2)$
-    let inline rbf (gamma : float32) (x1 : ^X) (x2 : ^X) : float32 =
-        exp (-gamma*(x1 ||-|| x2))
+    let inline rbf (gamma : float) (x1 : ^X) (x2 : ^X) : float =
+        exp (-gamma*(float (x1 ||-|| x2)))
 
     /// Sigmoid kernel function $tanh(\gamma(x_1 \cdot x_2)+\mu)$
-    let inline sigmoid (gamma : float32) (mu : float32) (x1 : ^X) (x2 : ^X) : float32 =
-        tanh (gamma*(x1 .* x2) + mu)
+    let inline sigmoid (gamma : float) (mu : float) (x1 : ^X) (x2 : ^X) : float =
+        tanh (gamma*(float (x1 .* x2)) + mu)

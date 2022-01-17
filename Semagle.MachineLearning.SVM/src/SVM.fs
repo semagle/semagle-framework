@@ -16,7 +16,7 @@ namespace Semagle.MachineLearning.SVM
 
 /// <summary>Kernel function</summary>
 /// <typeparam name="'X">Type of support vector</typeparam>
-type Kernel<'X> = 'X -> 'X -> float32
+type Kernel<'X> = 'X -> 'X -> float
 
 /// <summary>SVM model definition includes kernel function, array of support vectors
 /// with respective weights and bias value.</summary>

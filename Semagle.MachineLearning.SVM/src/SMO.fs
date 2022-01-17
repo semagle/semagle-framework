@@ -25,7 +25,7 @@ open Semagle.MachineLearning.SVM.LRU
 /// Implementation of Sequential Minimal Optimization (SMO) algorithm
 module SMO =
     [<Literal>]
-    let private tau = 1e-12f
+    let private tau = 1e-12
 
     [<Literal>]
     let private not_found = -1
@@ -36,10 +36,10 @@ module SMO =
         abstract member Swap : int -> int -> unit
 
         /// Returns N elements of the main diagonal of Q matrix
-        abstract member D : float32[]
+        abstract member D : float[]
 
         /// Returns L elements of j-th column of Q matrix
-        abstract member C : int -> int -> float32[]
+        abstract member C : int -> int -> float[]
 
     /// Working set selection strategy
     type WSSStrategy = MaximalViolatingPair | SecondOrderInformation
@@ -138,9 +138,9 @@ module SMO =
         let inline minLowTo i n =
             let Q_s = Q.C i n
             let inline objective j =
-                let a = max (Q.D.[j] + Q.D.[i] - 2.0f*Q_s.[j]*Y.[j]*Y.[i]) tau
+                let a = max (Q.D.[j] + Q.D.[i] - 2.0*Q_s.[j]*(float Y.[j])*(float Y.[i])) tau
                 let b = _y_gf j - _y_gf i
-                -b*b / (float a)
+                -b*b / a
 
             let mutable min_j = not_found
             let mutable min_v = System.Double.PositiveInfinity
@@ -185,10 +185,10 @@ module SMO =
         let inline solve i j n =
             let Q_i = Q.C i n
 
-            let a = max (Q.D.[i] + Q.D.[j] - 2.0f*Q_i.[j]*Y.[i]*Y.[j]) tau
+            let a = max (Q.D.[i] + Q.D.[j] - 2.0*Q_i.[j]*(float Y.[i])*(float Y.[j])) tau
 
             if Y.[i] <> Y.[j] then
-                let delta = (-G.[i]-G.[j]) / (float a)
+                let delta = (-G.[i]-G.[j]) / a
                 let diff = A.[i] - A.[j]
                 match (A.[i] + delta, A.[j] + delta) with
                     | _, a_j when diff > 0.0 && a_j < 0.0 -> (diff, 0.0)
@@ -197,7 +197,7 @@ module SMO =
                     | _, a_j when diff <= C.[i] - C.[j] && a_j > C.[j] -> (C.[j] + diff, C.[j])
                     | a_i, a_j -> a_i, a_j
             else
-                let delta = (G.[i]-G.[j]) / (float a)
+                let delta = (G.[i]-G.[j]) / a
                 let sum = A.[i] + A.[j]
                 match (A.[i] - delta, A.[j] + delta) with
                     | a_i, _ when sum > C.[i] && a_i > C.[i] -> (C.[i], sum - C.[i])
@@ -233,7 +233,7 @@ module SMO =
 
             for t = 0 to n-1 do
                 let Q_i_t = float Q_i.[t]
-                G.[t] <- G.[t] + Q_i_t*a_i - Q_i_t*A.[i]
+                G.[t] <- G.[t] + Q_i_t*(a_i - A.[i])
 
             if options.shrinking then
                 let inline updateG' C =
@@ -320,8 +320,7 @@ module SMO =
             n'
 
         let inline isOptimal m M epsilon =
-            let diff = abs (m - M)
-            diff <= epsilon || diff <= epsilon * (min (abs m) (abs M))
+            abs (m - M) <= epsilon
 
         /// Sequential Minimal Optimization (SMO) Algorithm
         let inline optimize_solve n =
@@ -447,7 +446,7 @@ module SMO =
         (X,Y,A,bias)
 
     /// Q matrix for classification problems
-    type private Q_C(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
+    type private Q_C(capacity : int, N : int, Q : int -> int -> float, parallelize : bool) =
         let diagonal = Array.init N (fun i -> Q i i)
         let lru = LRU(capacity, N, Q, parallelize)
 
@@ -481,7 +480,7 @@ module SMO =
         let A = Array.zeroCreate N
 
         let Q = new Q_C(capacity options.cacheSize N, N,
-                        (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]), options.parallelize)
+                        (fun i j -> (K X'.[i] X'.[j])*(float Y'.[i])*(float Y'.[j])), options.parallelize)
         let (X',Y',A',b) = C_SMO X' Y' Q { A = A; C = C; p = p } options
 
         // Remove support vectors with A.[i] = 0.0 and compute Y.[i]*A.[i]
@@ -557,7 +556,7 @@ module SMO =
         OneClass(K,X'',A'',b)
 
     /// Q matrix for regression problems
-    type private Q_R(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
+    type private Q_R(capacity : int, N : int, Q : int -> int -> float, parallelize : bool) =
         let diagonal = Q_R.initDiagonal N Q
         let indices = Array.init (2*N) id
         let lru = LRU(capacity, 2*N, Q, parallelize)
@@ -607,7 +606,7 @@ module SMO =
         let A' = Array.zeroCreate N'
 
         let Q = new Q_R(capacity options.cacheSize (2*N), N,
-                        (fun i j -> (K X'.[i] X'.[j])*Y'.[i]*Y'.[j]), options.parallelize)
+                        (fun i j -> (K X'.[i] X'.[j])*(float Y'.[i])*(float Y'.[j])), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y' Q { A = A'; C = C'; p = p' } options
 
         // Compute -A.[i] + A.[i+N]
