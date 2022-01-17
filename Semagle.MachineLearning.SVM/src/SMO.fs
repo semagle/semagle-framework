@@ -307,8 +307,9 @@ module SMO =
                     n' <- n' - 1
                     while i < n' && isShrinked n' do
                         n' <- n' - 1
-                    swaps <- swaps + 1
-                    swapAll i n'
+                    if i < n' then
+                        swaps <- swaps + 1
+                        swapAll i n'
                 i <- i + 1
 
             logger { verbose (sprintf "shrink active set: shrinked = %d, active = %d, swaps = %d" (n - n') n' swaps) }
