@@ -101,6 +101,9 @@ module SMO =
         let G = Array.copy p
         let G' = Array.zeroCreate<float> N
 
+        let maxIterations = max options.maxIterations (100*N)
+        let shrinkingIterations = min options.shrinkingIterations N
+
         // working set selection helper functions
         let inline _y_gf i = -G.[i]*(float Y.[i])
 
@@ -354,6 +357,7 @@ module SMO =
 
         /// optimize with shrinking every 1000 iterations
         let rec optimize_shrinking k s n unshrinked =
+            let s = s - 1
             let inline optimize_shrink m M n =
                 if s = 0 then
                     // time to shrink
@@ -369,7 +373,7 @@ module SMO =
                     // no time to shrink
                     unshrinked, n
 
-            if k <= options.maxIterations then
+            if k <= maxIterations then
                 if k % 1000 = 0 then
                     logger { debug (sprintf "iteration = %d, objective = %f" k (objective n)) }
 
@@ -391,7 +395,7 @@ module SMO =
                         logger { info (sprintf "iteration = %d, objective = %f" k (objective N)) }
                 else
                     if optimize_solve n then
-                        let s = if s > 0 then (s - 1) else options.shrinkingIterations
+                        let s = if s > 0 then s else shrinkingIterations
                         optimize_shrinking (k + 1) s n unshrinked
                     else
                         logger { info ((sprintf "iteration = %d, objective = %f" k (objective n))) }
@@ -400,7 +404,7 @@ module SMO =
 
         /// optimize without shrinking every 1000 iterations
         let rec optimize_non_shrinking k =
-            if k <= options.maxIterations then
+            if k <= maxIterations then
                 if k % 1000 = 0 then
                     logger { debug (sprintf "iteration = %d, objective = %f" k (objective N)) }
 
@@ -417,7 +421,7 @@ module SMO =
         initialize_gradient ()
 
         if options.shrinking then
-            optimize_shrinking 1 options.shrinkingIterations N false
+            optimize_shrinking 1 (shrinkingIterations + 1) N false
         else
             optimize_non_shrinking 1
 
