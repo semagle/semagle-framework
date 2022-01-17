@@ -296,10 +296,10 @@ module SMO =
                 (_y_gf i) < M && (A.[i] <= 0.0 && Y.[i] = +1.0f || A.[i] >= C.[i] && Y.[i] = -1.0f)
 
             let inline swapAll i j =
+                Q.Swap i j // always swap before X and Y to compute missing Q
                 swap X i j; swap Y i j
-                swap C i j; swap p i j;
-                swap A i j; swap G i j;
-                swap G' i j; Q.Swap i j
+                swap C i j; swap p i j; swap A i j;
+                swap G i j; swap G' i j
 
             let mutable i = 0
             let mutable n' = n
