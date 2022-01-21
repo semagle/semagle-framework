@@ -32,7 +32,6 @@ module LRU =
         let lengths = Array.zeroCreate<int> capacity
 
         let mutable N = N
-        let mutable last = 0
 
         /// Resize columns of Q matrix
         member lru.Resize (n : int) =
@@ -48,30 +47,48 @@ module LRU =
 
         /// Returns L elements of j-th column of Q matrix
         member lru.Get (j : int) (L : int) =
-            let index = lru.tryFindIndex j
-            if index <> not_found then
-                let column = columns.[index]
-                let length = lengths.[index]
+            let k = lru.tryFindIndex j
+            if k <> not_found then
+                let column = columns.[k]
+                let length = lengths.[k]
                 if length < L then
                     if parallelize then
                         Parallel.For(length, L, fun i -> column.[i] <- Q i j) |> ignore
                     else
                         for i = length to L-1 do
                             column.[i] <- Q i j
-                    lengths.[index] <- L
+                    lengths.[k] <- L
+
+                if k <> 0 then
+                    // shift [0,k-1]-th elements
+                    for k' = k downto 1 do
+                        indices.[k'] <- indices.[k'-1]
+                        lengths.[k'] <- lengths.[k'-1]
+                        columns.[k'] <- columns.[k'-1]
+                    // replace 0-th element
+                    indices.[0] <- j
+                    lengths.[0] <- L
+                    columns.[0] <- column
+
                 column
             else
-                let column = columns.[last]
+                let column = columns.[columns.Length-1]
+                // shift [0,...]-th element
+                for k' = indices.Length-1 downto 1 do
+                    indices.[k'] <- indices.[k'-1]
+                    lengths.[k'] <- lengths.[k'-1]
+                    columns.[k'] <- columns.[k'-1]
+
                 if parallelize then
                     Parallel.For(0, L, fun i -> column.[i] <- Q i j) |> ignore
                 else
                     for i = 0 to L-1 do
                         column.[i] <- Q i j
 
-                indices.[last] <- j
-                lengths.[last] <- L
-
-                last <- (last + 1) % capacity
+                // replace 0-th element
+                indices.[0] <- j
+                lengths.[0] <- L
+                columns.[0] <- column
 
                 column
 
