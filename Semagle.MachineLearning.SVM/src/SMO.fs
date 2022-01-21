@@ -327,7 +327,6 @@ module SMO =
             // Find a pair of elements that violate the optimality condition
             match selectWorkingSet n with
                 | Some (i, j) ->
-                    logger { verbose(sprintf "working set = {%d, %d}" i j) }
                     // Solve the optimization sub-problem
                     let a_i, a_j = solve i j n
                     // Update the gradient
@@ -337,7 +336,6 @@ module SMO =
                     A.[i] <- a_i; A.[j] <- a_j
                     true
                 | None ->
-                    logger { verbose(sprintf "working set = {}") }
                     false
 
         let objective n =
