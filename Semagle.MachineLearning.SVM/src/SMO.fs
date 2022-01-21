@@ -206,6 +206,7 @@ module SMO =
                     | a_i, _ when sum <= C.[j] && a_i < 0.0 -> (0.0, sum)
                     | a_i, a_j -> a_i, a_j
 
+
         /// Initialize gradient
         let inline initialize_gradient () =
             for i = 0 to N-1 do
@@ -213,7 +214,7 @@ module SMO =
                     let Q_i = Q.C i N
                     let inline updateG (a_i : float) (G : float[]) =
                         for j = 0 to N-1 do
-                            G.[j] <- G.[j] + a_i*(float Q_i.[j])
+                            G.[j] <- G.[j] + a_i*Q_i.[j]
 
                     updateG A.[i] G
 
@@ -232,13 +233,12 @@ module SMO =
             let Q_i = Q.C i n'
 
             for t = 0 to n-1 do
-                let Q_i_t = float Q_i.[t]
-                G.[t] <- G.[t] + Q_i_t*(a_i - A.[i])
+                G.[t] <- G.[t] + Q_i.[t]*(a_i - A.[i])
 
             if options.shrinking then
                 let inline updateG' C =
                     for t = 0 to N-1 do
-                        G'.[t] <- G'.[t] + C*(float Q_i.[t])
+                        G'.[t] <- G'.[t] + C*Q_i.[t]
 
                 if isAddedBound then
                     updateG' C.[i]
@@ -261,7 +261,7 @@ module SMO =
                     let Q_i = Q.C i n
                     for j = 0 to n-1 do
                         if isFree j then
-                            G.[i] <- G.[i] + A.[j]*(float Q_i.[j])
+                            G.[i] <- G.[i] + A.[j]*Q_i.[j]
             else
                 // active/passive
                 logger { verbose (sprintf "reconstruct gradient: active = %d / passive = %d" n (N - n)) }
@@ -269,7 +269,7 @@ module SMO =
                     if isFree j then
                         let Q_j = Q.C j N
                         for i = n to N-1 do
-                            G.[i] <- G.[i] + A.[j]*(float Q_j.[i])
+                            G.[i] <- G.[i] + A.[j]*Q_j.[i]
 
         let inline m n =
             let mutable max_v = System.Double.NegativeInfinity
@@ -443,7 +443,6 @@ module SMO =
                                if A.[i] >= C.[i] then
                                    bounded <- bounded + 1
                        sprintf "support vectors = %d, bounded = %d, bias=%f" support bounded bias) }
-
         (X,Y,A,bias)
 
     /// Q matrix for classification problems
