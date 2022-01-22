@@ -64,7 +64,7 @@ module SMO =
 
     /// Default optimization options
     let defaultOptimizationOptions : OptimizationOptions =
-        { epsilon = 0.001; maxIterations = 1000000;
+        { epsilon = 0.001; maxIterations = 10_000_000;
           strategy = SecondOrderInformation;
           shrinking = true; shrinkingIterations = 1000;
           cacheSize = 100<MB>; parallelize = true }
