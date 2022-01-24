@@ -51,7 +51,7 @@ module OneSlack =
     }
 
     /// Q matrix for structured problems
-    type private Q_S(capacity : int, N : int, Q : int -> int -> float, dJF : LRF, parallelize : bool) =
+    type private Q_S(capacity : int, N : int, Q : int -> int -> float32, dJF : LRF, parallelize : bool) =
         let mutable N = N
         let mutable D = Array.init N (fun i -> Q i i)
         let lru = LRU(capacity, N, Q, parallelize)
@@ -123,7 +123,7 @@ module OneSlack =
             let W_k = updates k
             let W_k' = if k <> k' then updates k' else W_k
 
-            Array.fold2 (fun sum w_k w_k' -> sum + w_k * w_k') 0.0 W_k W_k'
+            float32 (Array.fold2 (fun sum w_k w_k' -> sum + w_k * w_k') 0.0 W_k W_k')
 
         let M = int (1.0 / options.epsilon)
         let Q = Q_S(SMO.capacity options.smoOptimizationOptions.cacheSize M, 0, H, dJF,

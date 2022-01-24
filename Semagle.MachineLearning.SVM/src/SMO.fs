@@ -36,10 +36,10 @@ module SMO =
         abstract member Swap : int -> int -> unit
 
         /// Returns N elements of the main diagonal of Q matrix
-        abstract member D : float[]
+        abstract member D : float32[]
 
         /// Returns L elements of j-th column of Q matrix
-        abstract member C : int -> int -> float[]
+        abstract member C : int -> int -> float32[]
 
     /// Working set selection strategy
     type WSSStrategy = MaximalViolatingPair | SecondOrderInformation
@@ -71,7 +71,7 @@ module SMO =
 
     /// Returns the required capacity for the specified cache size and column length
     let capacity (cacheSize : int<MB>) (length : int) =
-       let columnSize = sizeof<float>*length + sizeof<int>*2 + sizeof<float[]>
+       let columnSize = sizeof<float32>*length + sizeof<int>*2 + sizeof<float32[]>
        max 2 (((int cacheSize)*1024*1024) / columnSize)
 
     /// General parameters for C_SMO problem
@@ -138,7 +138,7 @@ module SMO =
         let inline minLowTo i n =
             let Q_s = Q.C i n
             let inline objective j =
-                let a = max (Q.D.[j] + Q.D.[i] - 2.0*Q_s.[j]*(float Y.[j])*(float Y.[i])) tau
+                let a = max ((float Q.D.[j]) + (float Q.D.[i]) - 2.0*(float (Q_s.[j]*Y.[j]*Y.[i]))) tau
                 let b = _y_gf j - _y_gf i
                 -b*b / a
 
@@ -185,7 +185,7 @@ module SMO =
         let inline solve i j n =
             let Q_i = Q.C i n
 
-            let a = max (Q.D.[i] + Q.D.[j] - 2.0*Q_i.[j]*(float Y.[i])*(float Y.[j])) tau
+            let a = max ((float Q.D.[i]) + (float Q.D.[j]) - 2.0*(float (Q_i.[j]*Y.[i]*Y.[j]))) tau
 
             if Y.[i] <> Y.[j] then
                 let delta = (-G.[i]-G.[j]) / a
@@ -214,7 +214,7 @@ module SMO =
                     let Q_i = Q.C i N
                     let inline updateG (a_i : float) (G : float[]) =
                         for j = 0 to N-1 do
-                            G.[j] <- G.[j] + a_i*Q_i.[j]
+                            G.[j] <- G.[j] + a_i*(float Q_i.[j])
 
                     updateG A.[i] G
 
@@ -233,12 +233,12 @@ module SMO =
             let Q_i = Q.C i n'
 
             for t = 0 to n-1 do
-                G.[t] <- G.[t] + Q_i.[t]*(a_i - A.[i])
+                G.[t] <- G.[t] + (float Q_i.[t])*(a_i - A.[i])
 
             if options.shrinking then
                 let inline updateG' C =
                     for t = 0 to N-1 do
-                        G'.[t] <- G'.[t] + C*Q_i.[t]
+                        G'.[t] <- G'.[t] + C*(float Q_i.[t])
 
                 if isAddedBound then
                     updateG' C.[i]
@@ -261,7 +261,7 @@ module SMO =
                     let Q_i = Q.C i n
                     for j = 0 to n-1 do
                         if isFree j then
-                            G.[i] <- G.[i] + A.[j]*Q_i.[j]
+                            G.[i] <- G.[i] + A.[j]*(float Q_i.[j])
             else
                 // active/passive
                 logger { verbose (sprintf "reconstruct gradient: active = %d / passive = %d" n (N - n)) }
@@ -269,7 +269,7 @@ module SMO =
                     if isFree j then
                         let Q_j = Q.C j N
                         for i = n to N-1 do
-                            G.[i] <- G.[i] + A.[j]*Q_j.[i]
+                            G.[i] <- G.[i] + A.[j]*(float Q_j.[i])
 
         let inline m n =
             let mutable max_v = System.Double.NegativeInfinity
@@ -444,7 +444,7 @@ module SMO =
         (X,Y,A,bias)
 
     /// Q matrix for classification problems
-    type private Q_C(capacity : int, N : int, Q : int -> int -> float, parallelize : bool) =
+    type private Q_C(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
         let diagonal = Array.init N (fun i -> Q i i)
         let lru = LRU(capacity, N, Q, parallelize)
 
@@ -478,7 +478,7 @@ module SMO =
         let A = Array.zeroCreate N
 
         let Q = new Q_C(capacity options.cacheSize N, N,
-                        (fun i j -> (K X'.[i] X'.[j])*(float Y'.[i])*(float Y'.[j])), options.parallelize)
+                        (fun i j -> (float32 ((K X'.[i] X'.[j])*(float Y'.[i])*(float Y'.[j])))), options.parallelize)
         let (X',Y',A',b) = C_SMO X' Y' Q { A = A; C = C; p = p } options
 
         // Remove support vectors with A.[i] = 0.0 and compute Y.[i]*A.[i]
@@ -536,7 +536,7 @@ module SMO =
             | _ -> parameters.nu * (float N) - (float n))
 
         let Q = new Q_C(capacity options.cacheSize N, N,
-                        (fun i j -> K X'.[i] X'.[j]), options.parallelize)
+                        (fun i j -> (float32 (K X'.[i] X'.[j]))), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y Q { A = A; C = C; p = p } options
 
         // Remove support vectors with A.[i] = 0.0
@@ -554,7 +554,7 @@ module SMO =
         OneClass(K,X'',A'',b)
 
     /// Q matrix for regression problems
-    type private Q_R(capacity : int, N : int, Q : int -> int -> float, parallelize : bool) =
+    type private Q_R(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
         let diagonal = Q_R.initDiagonal N Q
         let indices = Array.init (2*N) id
         let lru = LRU(capacity, 2*N, Q, parallelize)
@@ -604,7 +604,7 @@ module SMO =
         let A' = Array.zeroCreate N'
 
         let Q = new Q_R(capacity options.cacheSize (2*N), N,
-                        (fun i j -> (K X'.[i] X'.[j])*(float Y'.[i])*(float Y'.[j])), options.parallelize)
+                        (fun i j -> (float32 ((K X'.[i] X'.[j])*(float Y'.[i])*(float Y'.[j])))), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y' Q { A = A'; C = C'; p = p' } options
 
         // Compute -A.[i] + A.[i+N]
