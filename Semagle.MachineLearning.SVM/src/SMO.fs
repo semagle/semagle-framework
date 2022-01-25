@@ -222,28 +222,33 @@ module SMO =
                         updateG C.[i] G'
 
         /// update gradient
-        let inline update_gradient i a_i n =
-            let isAddedBound = a_i >= C.[i] && A.[i] < C.[i]
-            let isRemovedBound = a_i < C.[i] && A.[i] >= C.[i]
-            let n' =
-                if options.shrinking && (isAddedBound || isRemovedBound) then
-                    N
-                else
-                    n
-            let Q_i = Q.C i n'
+        let inline update_gradient2 i a_i j a_j n =
+            let Q_i = Q.C i n
+            let Q_j = Q.C j n
 
+            let delta_i = a_i - A.[i]
+            let delta_j = a_j - A.[j]
             for t = 0 to n-1 do
-                G.[t] <- G.[t] + (float Q_i.[t])*(a_i - A.[i])
+                G.[t] <- G.[t] + ((float Q_i.[t])*delta_i + (float Q_j.[t])*delta_j)
 
             if options.shrinking then
-                let inline updateG' C =
+                if a_i >= C.[i] && A.[i] < C.[i] then
+                    let Q_i = Q.C i N
                     for t = 0 to N-1 do
-                        G'.[t] <- G'.[t] + C*(float Q_i.[t])
+                        G'.[t] <- G'.[t] + C.[i]*(float Q_i.[t])
+                else if a_i < C.[i] && A.[i] >= C.[i] then
+                    let Q_i = Q.C i N
+                    for t = 0 to N-1 do
+                        G'.[t] <- G'.[t] - C.[i]*(float Q_i.[t])
 
-                if isAddedBound then
-                    updateG' C.[i]
-                else if isRemovedBound then
-                    updateG' -C.[i]
+                if a_j >= C.[j] && A.[j] < C.[j] then
+                    let Q_j = Q.C j N
+                    for t = 0 to N-1 do
+                        G'.[t] <- G'.[t] + C.[j]*(float Q_j.[t])
+                else if a_j < C.[j] && A.[j] >= C.[j] then
+                    let Q_j = Q.C j N
+                    for t = 0 to N-1 do
+                        G'.[t] <- G'.[t] - C.[j]*(float Q_j.[t])
 
         /// reconstruct gradient
         let inline reconstruct_gradient (G : float[]) n =
@@ -330,8 +335,7 @@ module SMO =
                     // Solve the optimization sub-problem
                     let a_i, a_j = solve i j n
                     // Update the gradient
-                    update_gradient i a_i n
-                    update_gradient j a_j n
+                    update_gradient2 i a_i j a_j n
                     // Update the solution
                     A.[i] <- a_i; A.[j] <- a_j
                     true
