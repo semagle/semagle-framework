@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+﻿// Copyright 2016-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@ open LanguagePrimitives
 
 open Semagle.Logging
 open Semagle.MachineLearning.SVM.LRU
-
-/// Unit of measure for cache size
-[<Measure>] type MB
 
 /// Implementation of Sequential Minimal Optimization (SMO) algorithm
 module SMO =
@@ -68,11 +65,6 @@ module SMO =
           strategy = SecondOrderInformation;
           shrinking = true; shrinkingIterations = 1000;
           cacheSize = 100<MB>; parallelize = true }
-
-    /// Returns the required capacity for the specified cache size and column length
-    let capacity (cacheSize : int<MB>) (length : int) =
-       let columnSize = sizeof<float32>*length + sizeof<int>*2 + sizeof<float32[]>
-       max 2 (((int cacheSize)*1024*1024) / columnSize)
 
     /// General parameters for C_SMO problem
     type C_SMO = {
@@ -448,9 +440,9 @@ module SMO =
         (X,Y,A,bias)
 
     /// Q matrix for classification problems
-    type private Q_C(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
+    type private Q_C(size : int<MB>, N : int, Q : int -> int -> float32, parallelize : bool) =
         let diagonal = Array.init N (fun i -> Q i i)
-        let lru = LRU(capacity, N, Q, parallelize)
+        let lru = LRU(size, N, Q, parallelize)
 
         interface Q with
             /// Swap column elements
@@ -481,7 +473,7 @@ module SMO =
         let p = Array.create N -1.0
         let A = Array.zeroCreate N
 
-        let Q = new Q_C(capacity options.cacheSize N, N,
+        let Q = new Q_C(options.cacheSize, N,
                         (fun i j -> (float32 ((K X'.[i] X'.[j])*(float Y'.[i])*(float Y'.[j])))), options.parallelize)
         let (X',Y',A',b) = C_SMO X' Y' Q { A = A; C = C; p = p } options
 
@@ -539,7 +531,7 @@ module SMO =
             | _ when i > n -> 0.0
             | _ -> parameters.nu * (float N) - (float n))
 
-        let Q = new Q_C(capacity options.cacheSize N, N,
+        let Q = new Q_C(options.cacheSize, N,
                         (fun i j -> (float32 (K X'.[i] X'.[j]))), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y Q { A = A; C = C; p = p } options
 
@@ -558,10 +550,10 @@ module SMO =
         OneClass(K,X'',A'',b)
 
     /// Q matrix for regression problems
-    type private Q_R(capacity : int, N : int, Q : int -> int -> float32, parallelize : bool) =
+    type private Q_R(size : int<MB>, N : int, Q : int -> int -> float32, parallelize : bool) =
         let diagonal = Q_R.initDiagonal N Q
         let indices = Array.init (2*N) id
-        let lru = LRU(capacity, 2*N, Q, parallelize)
+        let lru = LRU(size, 2*N, Q, parallelize)
 
         /// Initialize elements of the main diagonal of Q
         static member initDiagonal N Q =
@@ -607,7 +599,7 @@ module SMO =
         let p' = Array.init N' (fun i -> parameters.eta - (if i < N then (float Y.[i]) else (float -Y.[i-N])))
         let A' = Array.zeroCreate N'
 
-        let Q = new Q_R(capacity options.cacheSize (2*N), N,
+        let Q = new Q_R(options.cacheSize, N,
                         (fun i j -> (float32 ((K X'.[i] X'.[j])*(float Y'.[i])*(float Y'.[j])))), options.parallelize)
         let (X',_,A',b) = C_SMO X' Y' Q { A = A'; C = C'; p = p' } options
 

@@ -1,4 +1,4 @@
-﻿// Copyright 2018 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+﻿// Copyright 2018-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,10 +51,10 @@ module OneSlack =
     }
 
     /// Q matrix for structured problems
-    type private Q_S(capacity : int, N : int, Q : int -> int -> float32, dJF : LRF, parallelize : bool) =
+    type private Q_S(size: int<MB>, N : int, Q : int -> int -> float32, dJF : LRF, parallelize : bool) =
         let mutable N = N
         let mutable D = Array.init N (fun i -> Q i i)
-        let lru = LRU(capacity, N, Q, parallelize)
+        let lru = LRU(size, N, Q, parallelize)
 
         /// Resize Q matrix
         member this.Resize (N' : int) =
@@ -126,7 +126,7 @@ module OneSlack =
             float32 (Array.fold2 (fun sum w_k w_k' -> sum + w_k * w_k') 0.0 W_k W_k')
 
         let M = int (1.0 / options.epsilon)
-        let Q = Q_S(SMO.capacity options.smoOptimizationOptions.cacheSize M, 0, H, dJF,
+        let Q = Q_S(options.smoOptimizationOptions.cacheSize, 0, H, dJF,
                     options.smoOptimizationOptions.parallelize)
 
         let inline xi X' =

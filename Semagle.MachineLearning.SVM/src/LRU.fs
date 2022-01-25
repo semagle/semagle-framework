@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+﻿// Copyright 2016-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,13 +20,20 @@ module LRU =
     [<Literal>]
     let private not_found = -1
 
+    /// Unit of measure for cache size
+    [<Measure>] type MB
+
     let inline swap (a : 'A[]) i j =
         let tmp = a.[i]
         a.[i] <- a.[j]
         a.[j] <- tmp
 
     /// LRU list of computed columns
-    type LRU<'A>(capacity : int, N : int, Q : int -> int -> 'A, parallelize : bool) =
+    type LRU<'A>(size : int<MB>, N : int, Q : int -> int -> 'A, parallelize : bool) =
+        let capacity =
+            let columnSize = sizeof<'A>*N + sizeof<int>*2 + sizeof<'A[]> in
+            max 2 (((int size)*1024*1024) / columnSize)
+
         let indices = Array.create capacity not_found
         let columns = Array.init capacity (fun _ -> Array.zeroCreate<'A> N)
         let lengths = Array.zeroCreate<int> capacity
