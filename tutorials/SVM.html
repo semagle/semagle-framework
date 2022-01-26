@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>SVM classification and regression
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Semagle: F# Framework for Machine Learning and Natural Language Processing">
+    <meta name="author" content="Serge Slipchenko">
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="/semagle-framework/content/style.css" />
+    <script type="text/javascript" src="/semagle-framework/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <h3 class="muted">
+            <a href="/semagle-framework/index.html">Semagle.Framework</a>
+        </h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          <h1><a name="SVM-classification-and-regression" class="anchor" href="#SVM-classification-and-regression">SVM classification and regression</a></h1>
+<p>This tutorial shows how to train and evaluate the performance of SVM models for
+for two and one class classification and regression problems using LIBSVM datasets.</p>
+<h2><a name="Initialization" class="anchor" href="#Initialization">Initialization</a></h2>
+<p>First, we need to load Semagle framework assemblies for manipulation of vector data
+and SVM training/prediction.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="pp">#r</span> <span class="s">&quot;Semagle.Numerics.Vectors.dll&quot;</span>
+<span class="pp">#r</span> <span class="s">&quot;Semagle.Numerics.Vectors.IO.dll&quot;</span>
+<span class="pp">#r</span> <span class="s">&quot;Semagle.MachineLearning.Metrics.dll&quot;</span>
+<span class="pp">#r</span> <span class="s">&quot;Semagle.MachineLearning.SVM.dll&quot;</span>
+
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="id">LanguagePrimitives</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="id">System</span>
+
+<span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Numerics</span><span class="pn">.</span><span class="id">Vectors</span>
+<span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Numerics</span><span class="pn">.</span><span class="id">Vectors</span><span class="pn">.</span><span class="id">IO</span>
+<span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">MachineLearning</span><span class="pn">.</span><span class="id">Metrics</span>
+<span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">MachineLearning</span><span class="pn">.</span><span class="id">SVM</span>
+</code></pre></td>
+</tr>
+</table>
+<h2><a name="Reading-LIBSVM-Data" class="anchor" href="#Reading-LIBSVM-Data">Reading LIBSVM Data</a></h2>
+<p><a href="Semagle.Numerics.Vectors.IO/index.html"><code>Semagle.Numerics.Vectors.IO</code></a> provides function <code>LibSVM.read</code>
+that returns the lazy sequence of <code>(y, x)</code> pairs, but <a href="Semagle.MachineLearning.SVM/index.html"><code>Semagle.MachineLearning.SVM</code></a>
+requires separate arrays of labels and samples for training. Function <code>readData</code> converts the sequence to array and splits
+the array of pairs.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="fn">readData</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="id">file</span> <span class="o">=</span> <span class="id">LibSVM</span><span class="pn">.</span><span class="id">read</span> <span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="id">file</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs5', 6)" onmouseover="showTip(event, 'fs5', 6)" class="m">Seq</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs6', 7)" onmouseover="showTip(event, 'fs6', 7)" class="id">toArray</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs7', 8)" onmouseover="showTip(event, 'fs7', 8)" class="m">Array</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="id">unzip</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 10)" onmouseover="showTip(event, 'fs9', 10)" class="id">train_y</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs10', 11)" onmouseover="showTip(event, 'fs10', 11)" class="id">train_x</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 12)" onmouseover="showTip(event, 'fs3', 12)" class="fn">readData</span> <span class="id">fsi</span><span class="pn">.</span><span class="id">CommandLineArgs</span><span class="pn">.</span><span class="pn">[</span><span class="n">1</span><span class="pn">]</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 13)" onmouseover="showTip(event, 'fs11', 13)" class="id">test_y</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs12', 14)" onmouseover="showTip(event, 'fs12', 14)" class="id">test_x</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 15)" onmouseover="showTip(event, 'fs3', 15)" class="fn">readData</span> <span class="id">fsi</span><span class="pn">.</span><span class="id">CommandLineArgs</span><span class="pn">.</span><span class="pn">[</span><span class="n">2</span><span class="pn">]</span>
+</code></pre></td>
+</tr>
+</table>
+<h2><a name="Training" class="anchor" href="#Training">Training</a></h2>
+<p>There are three different functions <a href="reference/semagle-machinelearning-svm-smo.html"><code>SMO.C_SVC</code>, <code>SMO.OneClass</code> and <code>SMO.C_SVR</code></a>
+that build two class classification, one class classification and regression SVM models. The functions take
+the samples array <code>train_x</code>, the labels array <code>train_y</code> (except for <code>OneClass</code>), the kernel function <code>(Kernel.rbf 0.1f)</code> and
+parameters specific to the particular optimization problem.</p>
+<h3><a name="Two-Class" class="anchor" href="#Two-Class">Two Class</a></h3>
+<p>Two class classification problem requires separate penalties for positive <code>C_p</code> and negative <code>C_n</code> samples:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 16)" onmouseover="showTip(event, 'fs13', 16)" class="id">svm</span> <span class="o">=</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">C_SVC</span> <span onmouseout="hideTip(event, 'fs10', 17)" onmouseover="showTip(event, 'fs10', 17)" class="id">train_x</span> <span onmouseout="hideTip(event, 'fs9', 18)" onmouseover="showTip(event, 'fs9', 18)" class="id">train_y</span> <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span> 
+                    <span class="pn">{</span> <span class="id">C_p</span> <span class="o">=</span> <span class="n">1.0f</span><span class="pn">;</span> <span class="id">C_n</span> <span class="o">=</span> <span class="n">1.0f</span> <span class="pn">}</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">defaultOptimizationOptions</span> <span class="pn">}</span>
+</code></pre></td>
+</tr>
+</table>
+<h3><a name="One-Class" class="anchor" href="#One-Class">One Class</a></h3>
+<p>One class classification problem requires the fraction of support vectors <code>nu</code>:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 19)" onmouseover="showTip(event, 'fs14', 19)" class="id">svm</span> <span class="o">=</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">OneClass</span> <span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="id">train_x</span> <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span> 
+                      <span class="pn">{</span> <span class="id">nu</span> <span class="o">=</span> <span class="n">0.5f</span> <span class="pn">}</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">defaultOptimizationOptions</span>
+</code></pre></td>
+</tr>
+</table>
+<h3><a name="Regression" class="anchor" href="#Regression">Regression</a></h3>
+<p>Regression problem requires the boundary <code>eta</code> and the penalty <code>C</code>:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 21)" onmouseover="showTip(event, 'fs14', 21)" class="id">svm</span> <span class="o">=</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">C_SVR</span> <span onmouseout="hideTip(event, 'fs10', 22)" onmouseover="showTip(event, 'fs10', 22)" class="id">train_x</span> <span onmouseout="hideTip(event, 'fs9', 23)" onmouseover="showTip(event, 'fs9', 23)" class="id">train_y</span> <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span> 
+                    <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span> <span class="pn">{</span> <span class="id">eta</span> <span class="o">=</span> <span class="n">0.1f</span><span class="pn">;</span> <span class="id">C</span> <span class="o">=</span> <span class="n">1.0f</span> <span class="pn">}</span>
+        <span class="id">SMO</span><span class="pn">.</span><span class="id">defaultOptimizationOptions</span>
+</code></pre></td>
+</tr>
+</table>
+<h2><a name="Predicting" class="anchor" href="#Predicting">Predicting</a></h2>
+<p>There are three different prediction functions <a href="reference/semagle-machinelearning-svm-twoclass.html"><code>TwoClass.predict</code></a>,
+<a href="reference/semagle-machinelearning-svm-oneclass.html"><code>OneClass.predict</code></a> and
+<a href="reference/semagle-machinelearning-svm-regression.html"><code>Regression.predict</code></a>. The functions take the model <code>model</code> and the sample <code>x</code>
+and return the label <code>y</code>. The prediction function can be curried</p>
+<ul>
+<li>
+<p>Two Class</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="id">predict</span> <span class="o">=</span> <span class="id">TwoClass</span><span class="pn">.</span><span class="id">predict</span> <span onmouseout="hideTip(event, 'fs14', 24)" onmouseover="showTip(event, 'fs14', 24)" class="id">svm</span>
+</code></pre></td>
+</tr>
+</table>
+</li>
+<li>
+<p>One Class</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"> <span class="k">let</span> <span class="id">predict</span> <span class="o">=</span> <span class="id">OneClass</span><span class="pn">.</span><span class="id">predict</span> <span onmouseout="hideTip(event, 'fs14', 25)" onmouseover="showTip(event, 'fs14', 25)" class="id">svm</span>
+</code></pre></td>
+</tr>
+</table>
+</li>
+<li>
+<p>Regression</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"> <span class="k">let</span> <span class="id">predict</span> <span class="o">=</span> <span class="id">Regression</span><span class="pn">.</span><span class="id">predict</span> <span onmouseout="hideTip(event, 'fs14', 26)" onmouseover="showTip(event, 'fs14', 26)" class="id">svm</span>   
+</code></pre></td>
+</tr>
+</table>
+</li>
+</ul>
+<p>and applied to the test samples vector</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="id">predict_y</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 27)" onmouseover="showTip(event, 'fs12', 27)" class="id">test_x</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs7', 28)" onmouseover="showTip(event, 'fs7', 28)" class="id">Array</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs15', 29)" onmouseover="showTip(event, 'fs15', 29)" class="id">map</span> <span class="pn">(</span><span class="k">fun</span> <span class="id">x</span> <span class="k">-&gt;</span> <span class="id">predict</span> <span class="id">x</span><span class="pn">)</span>
+</code></pre></td>
+</tr>
+</table>
+<h2><a name="Evaluating" class="anchor" href="#Evaluating">Evaluating</a></h2>
+<p>There are two widely used metrics for the evaluation of the performace:</p>
+<ul>
+<li>
+<p>Accuracy (two and one class classification)</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"> <span class="k">let</span> <span class="id">accuracy</span> <span class="o">=</span> <span class="id">Classification</span><span class="pn">.</span><span class="id">accuracy</span> <span onmouseout="hideTip(event, 'fs11', 30)" onmouseover="showTip(event, 'fs11', 30)" class="id">test_y</span> <span class="id">predict_y</span>
+</code></pre></td>
+</tr>
+</table>
+</li>
+<li>
+<p>Mean Squared Error (regression)</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"> <span class="k">let</span> <span class="id">mse</span> <span class="o">=</span> <span class="id">Regression</span><span class="pn">.</span><span class="id">mse</span> <span onmouseout="hideTip(event, 'fs11', 31)" onmouseover="showTip(event, 'fs11', 31)" class="id">test_y</span> <span class="id">predict_y</span>
+</code></pre></td>
+</tr>
+</table>
+</li>
+</ul>
+
+<div class="tip" id="fs1">module LanguagePrimitives<br /><br />from Microsoft.FSharp.Core</div>
+<div class="tip" id="fs2">namespace System</div>
+<div class="tip" id="fs3">val readData : file:&#39;a -&gt; &#39;b [] * &#39;c []</div>
+<div class="tip" id="fs4">val file : &#39;a</div>
+<div class="tip" id="fs5">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
+<div class="tip" id="fs6">val toArray : source:seq&lt;&#39;T&gt; -&gt; &#39;T []</div>
+<div class="tip" id="fs7">type Array =<br />&#160;&#160;member Clone : unit -&gt; obj<br />&#160;&#160;member CopyTo : array:Array * index:int -&gt; unit + 1 overload<br />&#160;&#160;member GetEnumerator : unit -&gt; IEnumerator<br />&#160;&#160;member GetLength : dimension:int -&gt; int<br />&#160;&#160;member GetLongLength : dimension:int -&gt; int64<br />&#160;&#160;member GetLowerBound : dimension:int -&gt; int<br />&#160;&#160;member GetUpperBound : dimension:int -&gt; int<br />&#160;&#160;member GetValue : [&lt;ParamArray&gt;] indices:int[] -&gt; obj + 7 overloads<br />&#160;&#160;member Initialize : unit -&gt; unit<br />&#160;&#160;member IsFixedSize : bool<br />&#160;&#160;...</div>
+<div class="tip" id="fs8">val unzip : array:(&#39;T1 * &#39;T2) [] -&gt; &#39;T1 [] * &#39;T2 []</div>
+<div class="tip" id="fs9">val train_y : obj []</div>
+<div class="tip" id="fs10">val train_x : obj []</div>
+<div class="tip" id="fs11">val test_y : obj []</div>
+<div class="tip" id="fs12">val test_x : obj []</div>
+<div class="tip" id="fs13">val svm : &#39;a</div>
+<div class="tip" id="fs14">val svm : obj</div>
+<div class="tip" id="fs15">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; array:&#39;T [] -&gt; &#39;U []</div>
+
+        </div>
+        <div class="span3">
+            <ul class="nav nav-list" id="menu">
+
+            <li class="nav-header">Semagle.Framework</li>
+
+            <li class="divider"></li>
+
+            <!-- <li><a href="">Get Semagle.Framework package via NuGet</a></li> -->
+            <li><a href="http://blog.semagle.com">Semagle Blog</a>
+            <li><a href="https://github.com/semagle/semagle-framework">Source Code on GitHub</a></li>
+            <li><a href="https://github.com/semagle/semagle-framework/blob/master/LICENSE.md">License (Apache 2.0)</a></li>
+
+            <li class="nav-header">Documentation</li>
+
+            <li><a href="/semagle-framework/index.html">Introduction</a></li>
+
+            <li class="nav-header">Libraries</li>
+
+            <li><a href="/semagle-framework/Semagle.MachineLearning.Metrics/index.html">Metrics Library</a></li>
+            <li><a href="/semagle-framework/Semagle.MachineLearning.SVM/index.html">SVM Library</a></li>            
+            <li><a href="/semagle-framework/Semagle.Numerics.Vectors/index.html">Vectors Library</a></li>
+            <li><a href="/semagle-framework/Semagle.Numerics.Vectors.IO/index.html">Vectors I/O Library</a></li>
+
+            <li class="nav-header">Tutorials</li>
+
+            <li><a href="/semagle-framework/tutorials/SVM.html">SVM classification and regression</a></li>
+
+            <li class="nav-header">Reference</li>
+
+            <li><a href="/semagle-framework/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/semagle/semagle-framework"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  </body>
+  </html>
