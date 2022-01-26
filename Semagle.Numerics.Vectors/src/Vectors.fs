@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+﻿// Copyright 2016-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -85,32 +85,28 @@ and DenseVector(values : float32[]) =
     /// Returns hash code
     override vector.GetHashCode() = vector.Values.GetHashCode()
 
-    /// Apply function `f` to vector `a` elements and return the resulting `DenseVector` 
-    static member inline map (f : float32 -> float32) (a : DenseVector) =
-        DenseVector(Array.map f a.Values)
-
-    /// Apply function `f` to vector `a` and `b` elements and return the resulting `DenseVector`
-    static member inline map2 (f : float32 -> float32 -> float32) (a : DenseVector) (b : DenseVector) =
-        DenseVector(Array.map2 f a.Values b.Values)
-
     /// Zero dense vector
     static member inline Zero = DenseVector([||])
 
     /// Element-wise addition
-    static member inline (+) (a : DenseVector, b : DenseVector) = DenseVector.map2 (+) a b
+    static member inline (+) (a : DenseVector, b : DenseVector) =
+        DenseVector(Array.map2 (+) a.Values b.Values)
 
     /// Element-wise substraction
-    static member inline (-) (a : DenseVector, b : DenseVector) = DenseVector.map2 (-) a b
+    static member inline (-) (a : DenseVector, b : DenseVector) =
+        DenseVector(Array.map2 (-) a.Values b.Values)
 
     /// Element-wise multiplication
-    static member inline (*) (a : DenseVector, b : DenseVector) = DenseVector.map2 (*) a b
+    static member inline (*) (a : DenseVector, b : DenseVector) =
+        DenseVector(Array.map2 (*) a.Values b.Values)
 
     /// Negation of vector
-    static member inline (~-)(a : DenseVector) = DenseVector.map (~-) a
+    static member inline (~-)(a : DenseVector) =
+        DenseVector(Array.map (~-) a.Values)
 
     /// Scalar product
     static member inline (.*) (a : DenseVector, b : DenseVector) =
-        if System.Object.ReferenceEquals(a, b) then
+        if LanguagePrimitives.PhysicalEquality a b then
             // optimization for x .* x cases
             Array.sumBy (fun v -> v*v) a.Values
         else
@@ -119,7 +115,7 @@ and DenseVector(values : float32[]) =
 
     /// Squared Euclidean distance $||a-b||^2$
     static member inline (||-||) (a : DenseVector, b : DenseVector) =
-        if System.Object.ReferenceEquals(a, b) then
+        if LanguagePrimitives.PhysicalEquality a b then
             // optimization for x .* x cases
             0.0f
         else
@@ -131,12 +127,14 @@ and DenseVector(values : float32[]) =
         Array.fold2 (fun sum i v -> if i < a.Length then sum + a.[i]*v else sum) 0.0f b.Indices b.Values
 
     /// Mutiply each element of vector by scalar
-    static member inline (*)(a : DenseVector, c : float32) = DenseVector.map (fun va -> va * c) a
+    static member inline (*)(a : DenseVector, c : float32) =
+        DenseVector (Array.map (fun va -> va * c) a.Values)
 
     /// Divide each element of vector by scalar
-    static member inline (/)(a : DenseVector, c : float32) = DenseVector.map (fun va -> va / c) a
+    static member inline (/)(a : DenseVector, c : float32) =
+        DenseVector (Array.map (fun va -> va / c) a.Values)
 
-/// Sparse vector stores non-zero values and non-zero values indeces
+/// Sparse vector stores non-zero values and non-zero values indices
 and SparseVector(indices : int[], values : float32[]) =
     inherit Vector()
 
@@ -206,145 +204,227 @@ and SparseVector(indices : int[], values : float32[]) =
     /// Returns hash code
     override vector.GetHashCode() = 32*vector.Indices.GetHashCode() + 16*vector.Values.GetHashCode()
 
-    /// Apply function `f` to vector `a` elements and return the resulting `SparseVector`
-    static member inline map (f : float32 -> float32) (a : SparseVector) =
-        let mutable k = 0
-
-        let newIndices = Array.zeroCreate a.Indices.Length
-        let newValues = Array.zeroCreate a.Values.Length
-
-        for i in 0 .. a.Indices.Length-1 do
-            let value = f a.Values.[i]
-            if value <> 0.0f then
-                newIndices.[k] <- a.Indices.[i]; newValues.[k] <- value; k <- k + 1
-
-        SparseVector(newIndices, newValues)
-
-    /// Apply function `f` to vector `a` and `b` elements and return the resulting `SparseVector`
-    static member inline map2 (f : float32 -> float32 -> float32) (a : SparseVector) (b : SparseVector) =
-        let mutable i = 0
-        let mutable j = 0
-        let mutable k = 0
-
-        let newIndices = Array.zeroCreate (a.Indices.Length + b.Indices.Length)
-        let newValues = Array.zeroCreate (a.Values.Length + b.Values.Length)
-
-        let addValue index value =
-            if value <> 0.0f then 
-                newIndices.[k] <- index; newValues.[k] <- value; k <- k + 1
-
-        while i < a.Indices.Length && j < b.Indices.Length do
-            match (i, j) with
-            | _ when a.Indices.[i] < b.Indices.[j] -> addValue a.Indices.[i] (f a.Values.[i] 0.0f); i <- i + 1
-            | _ when a.Indices.[i] > b.Indices.[j] -> addValue b.Indices.[j] (f 0.0f b.Values.[j]); j <- j + 1
-            | _ -> addValue a.Indices.[i] (f a.Values.[i] b.Values.[j]); i <- i + 1; j <- j + 1
-
-        while i < a.Indices.Length do
-            addValue a.Indices.[i] (f a.Values.[i] 0.0f); i <- i + 1
-
-        while j < b.Indices.Length do
-            addValue b.Indices.[j] (f 0.0f b.Values.[j]); j <- j + 1
-
-        if k = 0 then
-            SparseVector([||], [||])
-        else
-            SparseVector(newIndices.[..k-1], newValues.[..k-1])
-
     /// Zero sparse vector
     static member inline Zero = SparseVector([||],[||])
 
     /// Element-wise addition
-    static member inline (+) (a : SparseVector, b : SparseVector) = SparseVector.map2 (+) a b
+    static member inline (+) (a : SparseVector, b : SparseVector) =
+        let a_indices = a.Indices
+        let a_values = a.Values
 
-    /// Element-wise substraction
-    static member inline (-) (a : SparseVector, b : SparseVector) = SparseVector.map2 (-) a b
+        let b_indices = b.Indices
+        let b_values = b.Values
 
-    /// Element-wise multiplication
-    static member inline (*) (a : SparseVector, b : SparseVector) = SparseVector.map2 (*) a b
+        let indices = Array.zeroCreate (a_indices.Length + b_indices.Length)
+        let values = Array.zeroCreate (a_values.Length + b_values.Length)
 
-    /// Fold vectors `a` and `b` by function `f`
-    static member inline fold2 (f : float32 -> float32 -> float32 -> float32) (state: float32) (a : SparseVector) (b : SparseVector) = 
         let mutable i = 0
         let mutable j = 0
+        let mutable k = 0
 
-        let mutable s = state
+        while i < a_indices.Length && j < b_indices.Length do
+            let a_index = a_indices.[i]
+            let b_index = b_indices.[j]
+            if a_index < b_index then
+                indices.[k] <- a_index
+                values.[k] <- a_values.[i]
+                i <- i + 1
+                k <- k + 1
+            else if a_index > b_index then
+                indices.[k] <- b_index
+                values.[k] <- b_values.[j]
+                j <- j + 1
+                k <- k + 1
+            else
+                let v = a_values.[i] + b_values.[j]
+                if v <> 0.0f then
+                    indices.[k] <- a_index
+                    values.[k] <- v
+                    k <- k + 1
+                i <- i + 1
+                j <- j + 1
 
-        let inline updateState a b = 
-            s <- (f s a b)
+        while i < a_indices.Length do
+            indices.[k] <- a_indices.[i]
+            values.[k] <- a_values.[i]
+            i <- i + 1
+            k <- k + 1
 
-        while i < a.Indices.Length && j < b.Indices.Length do
-            match (i, j) with
-            | _ when a.Indices.[i] < b.Indices.[j] -> updateState a.Values.[i] 0.0f; i <- i + 1
-            | _ when a.Indices.[i] > b.Indices.[j] -> updateState 0.0f b.Values.[j]; j <- j + 1
-            | _ -> updateState a.Values.[i] b.Values.[j]; i <- i + 1; j <- j + 1
+        while j < b_indices.Length do
+            indices.[k] <- b_indices.[j]
+            values.[k] <- b_values.[j]
+            j <- j + 1
+            k <- k + 1
 
-        while i < a.Indices.Length do
-            updateState a.Values.[i] 0.0f; i <- i + 1
+        if k = 0 then
+            SparseVector([||], [||])
+        else
+            SparseVector(indices.[..k-1], values.[..k-1])
 
-        while j < b.Indices.Length do
-            updateState 0.0f b.Values.[j]; j <- j + 1
+    /// Element-wise substraction
+    static member inline (-) (a : SparseVector, b : SparseVector) =
+        let a_indices = a.Indices
+        let a_values = a.Values
 
-        s 
+        let b_indices = b.Indices
+        let b_values = b.Values
+
+        let indices = Array.zeroCreate (a_indices.Length + b_indices.Length)
+        let values = Array.zeroCreate (a_values.Length + b_values.Length)
+
+        let mutable i = 0
+        let mutable j = 0
+        let mutable k = 0
+
+        while i < a_indices.Length && j < b_indices.Length do
+            let a_index = a_indices.[i]
+            let b_index = b_indices.[j]
+            if a_index < b_index then
+                indices.[k] <- a_index
+                values.[k] <- a_values.[i]
+                i <- i + 1
+                k <- k + 1
+            else if a_index > b_index then
+                indices.[k] <- b_index
+                values.[k] <- -b_values.[j]
+                j <- j + 1
+                k <- k + 1
+            else
+                let v = a_values.[i] - b_values.[j]
+                if v <> 0.0f then
+                    indices.[k] <- a_index
+                    values.[k] <- v
+                    k <- k + 1
+                i <- i + 1
+                j <- j + 1
+
+        while i < a_indices.Length do
+            indices.[k] <- a_indices.[i]
+            values.[k] <- a_values.[i]
+            i <- i + 1
+            k <- k + 1
+
+        while j < b_indices.Length do
+            indices.[k] <- b_indices.[j]
+            values.[k] <- -b_values.[j]
+            j <- j + 1
+            k <- k + 1
+
+        if k = 0 then
+            SparseVector([||], [||])
+        else
+            SparseVector(indices.[..k-1], values.[..k-1])
+
+    /// Element-wise multiplication
+    static member inline (*) (a : SparseVector, b : SparseVector) =
+        let a_indices = a.Indices
+        let a_values = a.Values
+
+        let b_indices = b.Indices
+        let b_values = b.Values
+
+        let indices = Array.zeroCreate (a_indices.Length + b_indices.Length)
+        let values = Array.zeroCreate (a_values.Length + b_values.Length)
+
+        let mutable i = 0
+        let mutable j = 0
+        let mutable k = 0
+
+        while i < a_indices.Length && j < b_indices.Length do
+            let a_index = a_indices.[i]
+            let b_index = b_indices.[j]
+            if a_index < b_index then
+                i <- i + 1
+            else if a_index > b_index then
+                j <- j + 1
+            else
+                indices.[k] <- a_index
+                values.[k] <- a_values.[i] * b_values.[j]
+                k <- k + 1
+                i <- i + 1
+                j <- j + 1
+
+        if k = 0 then
+            SparseVector([||], [||])
+        else
+            SparseVector(indices.[..k-1], values.[..k-1])
 
     /// Scalar product
     static member inline (.*) (a : SparseVector, b : SparseVector) =
         let mutable sum = 0.0f
-        if System.Object.ReferenceEquals(a, b) then
+        if LanguagePrimitives.PhysicalEquality a b then
             // optimization for x .* x cases
-            for i = 0 to a.Values.Length-1 do
-                sum <- sum + a.Values.[i]*a.Values.[i]
+            let values = a.Values
+            for i = 0 to values.Length-1 do
+                let v = values.[i]
+                sum <- sum + v*v
         else
             // general case
             let mutable i = 0
             let mutable j = 0
 
-            while i < a.Indices.Length && j < b.Indices.Length do
-                if a.Indices.[i] < b.Indices.[j] then i <- i + 1
-                else if a.Indices.[i] > b.Indices.[j] then j <- j + 1
-                else sum <- sum + a.Values.[i]*b.Values.[j]; i <- i + 1; j <- j + 1
+            let a_indices = a.Indices
+            let a_values = a.Values
+
+            let b_indices = b.Indices
+            let b_values = b.Values
+
+            while i < a_indices.Length && j < b_indices.Length do
+                if a_indices.[i] < b_indices.[j] then i <- i + 1
+                else if a_indices.[i] > b_indices.[j] then j <- j + 1
+                else sum <- sum + a_values.[i]*b_values.[j]; i <- i + 1; j <- j + 1
 
         sum
 
     /// Squared Euclidean distance $||a-b||^2$
     static member inline (||-||) (a : SparseVector, b : SparseVector) =
-        if System.Object.ReferenceEquals(a, b) then
+        if LanguagePrimitives.PhysicalEquality a b then
             0.0f
         else
             let mutable sum = 0.0f
             let mutable i = 0
             let mutable j = 0
 
-            while i < a.Indices.Length && j < b.Indices.Length do
-                if a.Indices.[i] < b.Indices.[j] then
-                    let v = a.Values.[i]
+            let a_indices = a.Indices
+            let a_values = a.Values
+
+            let b_indices = b.Indices
+            let b_values = b.Values
+
+            while i < a_indices.Length && j < b_indices.Length do
+                if a_indices.[i] < b_indices.[j] then
+                    let v = a_values.[i]
                     i <- i + 1
                     sum <- sum + v*v
-                else if a.Indices.[i] > b.Indices.[j] then
-                    let v = -b.Values.[j]
+                else if a_indices.[i] > b_indices.[j] then
+                    let v = -b_values.[j]
                     j <- j + 1
                     sum <- sum + v*v
                 else 
-                    let v = a.Values.[i] - b.Values.[j]
+                    let v = a_values.[i] - b_values.[j]
                     i <- i + 1; j <- j + 1
                     sum <- sum + v*v
 
-            while i < a.Indices.Length do
-                let v = a.Values.[i]
+            while i < a_indices.Length do
+                let v = a_values.[i]
                 i <- i + 1
                 sum <- sum + v*v
 
-            while j < b.Indices.Length do
-                let v = -b.Values.[j]
+            while j < b_indices.Length do
+                let v = -b_values.[j]
                 j <- j + 1
                 sum <- sum + v*v
 
             sum
 
     /// Negation of vector
-    static member inline (~-)(a : SparseVector) = SparseVector.map (~-) a
+    static member inline (~-)(a : SparseVector) =
+        SparseVector(Array.copy a.Indices, Array.map (~-) a.Values)
 
     /// Mutiply each element of vector by scalar
-    static member inline (*)(a : SparseVector, c : float32) = SparseVector.map (fun va -> va * c) a
+    static member inline (*)(a : SparseVector, c : float32) =
+        SparseVector(Array.copy a.Indices, Array.map (fun va -> va * c) a.Values)
 
     /// Divide each element of vector by scalar
-    static member inline (/)(a : SparseVector, c : float32) = SparseVector.map (fun va -> va / c) a
+    static member inline (/)(a : SparseVector, c : float32) =
+        SparseVector(Array.copy a.Indices, Array.map (fun va -> va / c) a.Values)
