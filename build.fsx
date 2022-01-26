@@ -180,6 +180,9 @@ Target.create "GenerateHelp" (fun _ ->
                 ProjectParameters = ("root", documentation.WebsiteRoot)::documentation.ProjectInfo
                 Template = documentation.DocumentTemplate
         })
+
+        !! (docDir @@ "*.png")
+        |> Seq.iter (fun file -> Shell.copyFile (documentation.OutputDirectory @@ projectName) file)
     )
 )
 
