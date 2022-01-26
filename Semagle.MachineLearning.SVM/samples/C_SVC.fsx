@@ -45,7 +45,7 @@ let main(args) =
     Global.initialise { Global.defaultConfig with getLogger = (fun name -> Targets.create Info name) }
 
     // load train and test data
-    let readData file = LibSVM.read file |> Seq.toArray |> Array.unzip
+    let readData file = LibSVM.read file |> Seq.sortByDescending fst |> Seq.toArray |> Array.unzip
 
     logger { info ("Loading train data...") }
     let train_y, train_x = logger { time(readData args.[0]) }
