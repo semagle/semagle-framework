@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Message - Semagle.Framework</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Serge Slipchenko">
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="/semagle-framework/content/style.css" />
+    <script type="text/javascript" src="/semagle-framework/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <h3 class="muted">
+            <a href="/semagle-framework/index.html">Semagle.Framework</a>
+        </h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+<h1>Message</h1>
+<p>
+  <span>Namespace: Semagle.Logging</span><br />
+        <span>
+          Attributes:<br />
+[&lt;CompilationRepresentation(4)&gt;]<br />
+          
+      </span>
+</p>
+<div class="xmldoc">
+<p>The Message module contains functions that can help callers compose messages. This
+module is especially helpful to open to make calls into Logary's facade small.</p>
+
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
+            addCallerInfo(...)
+          </code>
+          <div class="tip" id="32">
+            <strong>Signature:</strong> (memberName:string option * path:string option * line:int option) -&gt; msg:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1206-1206" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
+            addExn e msg
+          </code>
+          <div class="tip" id="33">
+            <strong>Signature:</strong> e:exn -&gt; msg:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1195-1195" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Adds an exception to the Message, to the 'errors' field, inside a list.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
+            addGauge gaugeName gauge message
+          </code>
+          <div class="tip" id="34">
+            <strong>Signature:</strong> gaugeName:string -&gt; gauge:Gauge -&gt; message:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1146-1146" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
+            create context level name value
+          </code>
+          <div class="tip" id="35">
+            <strong>Signature:</strong> context:Map&lt;string,obj&gt; -&gt; level:LogLevel -&gt; name:string [] -&gt; value:string -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1129-1129" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
+            event level value
+          </code>
+          <div class="tip" id="36">
+            <strong>Signature:</strong> level:LogLevel -&gt; value:string -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1138-1138" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a new event log message.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
+            eventX template level
+          </code>
+          <div class="tip" id="37">
+            <strong>Signature:</strong> template:string -&gt; level:LogLevel -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1143-1143" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a new event log message – like <code>event</code> but with parameters flipped.
+E.g. <code>logger.verbose (eventX "Returned {code}" &gt;&gt; setField "code" 24)</code></p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
+            gauge sensorName gaugeName value
+          </code>
+          <div class="tip" id="38">
+            <strong>Signature:</strong> sensorName:string [] -&gt; gaugeName:string -&gt; value:Value -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1154-1154" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
+            gaugeWithUnit sensorName gaugeName gauge
+          </code>
+          <div class="tip" id="39">
+            <strong>Signature:</strong> sensorName:string [] -&gt; gaugeName:string -&gt; gauge:Gauge -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1150-1150" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
+            getAllFields(message)
+          </code>
+          <div class="tip" id="40">
+            <strong>Signature:</strong> message:Message -&gt; seq&lt;string * obj&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1115-1115" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
+            getAllTags(message)
+          </code>
+          <div class="tip" id="41">
+            <strong>Signature:</strong> message:Message -&gt; Set&lt;&#39;?8334&gt;<br />
+                          <strong>Type parameters:</strong> '?8334                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1118-1118" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
+            getContextByPrefix prefix message
+          </code>
+          <div class="tip" id="42">
+            <strong>Signature:</strong> prefix:string -&gt; message:Message -&gt; seq&lt;string * obj&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1098-1098" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
+            getExns(msg)
+          </code>
+          <div class="tip" id="43">
+            <strong>Signature:</strong> msg:Message -&gt; exn list<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1204-1204" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
+            hasTag tag message
+          </code>
+          <div class="tip" id="44">
+            <strong>Signature:</strong> tag:string -&gt; message:Message -&gt; bool<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1158-1158" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Check if the Message has a tag</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
+            setContext name value message
+          </code>
+          <div class="tip" id="45">
+            <strong>Signature:</strong> name:string -&gt; value:&#39;?8323 -&gt; message:Message -&gt; Message<br />
+                          <strong>Type parameters:</strong> '?8323                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1085-1085" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
+            setEvent value m
+          </code>
+          <div class="tip" id="46">
+            <strong>Signature:</strong> value:string -&gt; m:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1183-1183" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Sets the message value / template / message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
+            setField name value message
+          </code>
+          <div class="tip" id="47">
+            <strong>Signature:</strong> name:string -&gt; value:&#39;?8328 -&gt; message:Message -&gt; Message<br />
+                          <strong>Type parameters:</strong> '?8328                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1106-1106" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
+            setFields fields message
+          </code>
+          <div class="tip" id="48">
+            <strong>Signature:</strong> fields:Map&lt;string,obj&gt; -&gt; message:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1109-1109" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
+            setLevel level x
+          </code>
+          <div class="tip" id="49">
+            <strong>Signature:</strong> level:LogLevel -&gt; x:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1191-1191" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Sets the level on the log message.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
+            setName name x
+          </code>
+          <div class="tip" id="50">
+            <strong>Signature:</strong> name:string [] -&gt; x:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1162-1162" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Sets the name/path of the log message.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
+            setNameEnding ending x
+          </code>
+          <div class="tip" id="51">
+            <strong>Signature:</strong> ending:string -&gt; x:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1166-1166" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Sets the final portion o fthe name of the Message.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
+            setSingleName name x
+          </code>
+          <div class="tip" id="52">
+            <strong>Signature:</strong> name:string -&gt; x:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1174-1174" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Sets the name as a single string; if this string contains dots, the string
+will be split on these dots.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
+            setTimestamp ts x
+          </code>
+          <div class="tip" id="53">
+            <strong>Signature:</strong> ts:EpochNanoSeconds -&gt; x:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1187-1187" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Sets the timestamp on the log message.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
+            tag tag message
+          </code>
+          <div class="tip" id="54">
+            <strong>Signature:</strong> tag:string -&gt; message:Message -&gt; Message<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1123-1123" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Tag the message</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
+            tryGetContext name message
+          </code>
+          <div class="tip" id="55">
+            <strong>Signature:</strong> name:string -&gt; message:Message -&gt; &#39;a option<br />
+                          <strong>Type parameters:</strong> 'a                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1089-1089" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
+            tryGetField name message
+          </code>
+          <div class="tip" id="56">
+            <strong>Signature:</strong> name:string -&gt; message:Message -&gt; &#39;a option<br />
+                          <strong>Type parameters:</strong> 'a                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1112-1112" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+            <ul class="nav nav-list" id="menu">
+
+            <li class="nav-header">Semagle.Framework</li>
+
+            <li class="divider"></li>
+
+            <!-- <li><a href="">Get Semagle.Framework package via NuGet</a></li> -->
+            <li><a href="http://blog.semagle.com">Semagle Blog</a>
+            <li><a href="https://github.com/semagle/semagle-framework">Source Code on GitHub</a></li>
+            <li><a href="https://github.com/semagle/semagle-framework/blob/master/LICENSE.md">License (Apache 2.0)</a></li>
+
+            <li class="nav-header">Documentation</li>
+
+            <li><a href="/semagle-framework/index.html">Introduction</a></li>
+
+            <li class="nav-header">Libraries</li>
+
+            <li><a href="/semagle-framework/Semagle.MachineLearning.Metrics/index.html">Metrics Library</a></li>
+            <li><a href="/semagle-framework/Semagle.MachineLearning.SVM/index.html">SVM Library</a></li>            
+            <li><a href="/semagle-framework/Semagle.Numerics.Vectors/index.html">Vectors Library</a></li>
+            <li><a href="/semagle-framework/Semagle.Numerics.Vectors.IO/index.html">Vectors I/O Library</a></li>
+
+            <li class="nav-header">Tutorials</li>
+
+            <li><a href="/semagle-framework/tutorials/SVM.html">SVM classification and regression</a></li>
+
+            <li class="nav-header">Reference</li>
+
+            <li><a href="/semagle-framework/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/semagle/semagle-framework"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  </body>
+  </html>

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>MB - Semagle.Framework</title>
+    <title>Targets - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
@@ -31,16 +31,48 @@
         <div class="span9" id="main">
           
 
-
-
-<h1>MB</h1>
+<h1>Targets</h1>
 <p>
-  <span>Namespace: Semagle.MachineLearning.SVM</span><br />
-</p>
+  <span>Namespace: Semagle.Logging</span><br />
+  </p>
 <div class="xmldoc">
-<p>Unit of measure for cache size</p>
+<p>"Shortcut" for creating targets; useful at the top-level configuration point of
+your library.</p>
 
 </div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
+            create level name
+          </code>
+          <div class="tip" id="61">
+            <strong>Signature:</strong> level:LogLevel -&gt; name:string [] -&gt; Logger<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L1057-1057" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a new target. Prefer <code>Log.create</code> in your own libraries, or let the
+composing app replace your target instance through your configuration.</p>
+<p>Will log to console (colourised) by default, and also to the output window
+in your IDE if you specify a level below Info.</p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
         </div>
         <div class="span3">

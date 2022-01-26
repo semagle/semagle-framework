@@ -2,10 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Semagle.MachineLearning.Metrics
-</title>
+    <title>Rescaling - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Semagle: F# Framework for Machine Learning and Natural Language Processing">
+    <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
 
     <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
@@ -25,39 +24,64 @@
       <div class="masthead">
         <h3 class="muted">
             <a href="/semagle-framework/index.html">Semagle.Framework</a>
-            <span>::</span>
-            <a href="/semagle-framework/Semagle.MachineLearning.Metrics/index.html">Semagle.MachineLearning.Metrics</a> 
         </h3>
       </div>
       <hr />
       <div class="row">
         <div class="span9" id="main">
           
-<h1>Semagle.MachineLearning.Metrics</h1>
-<p>Semagle.MachineLearning.SVM implements performance evaluation metrics:</p>
-<ul>
-<li>
-<p>Accuracy (two and one class classification)</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"> <span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">accuracy</span> <span class="o">=</span> <span class="i">Classification</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs1', 2)" onmouseover="showTip(event, 'fs1', 2)" class="i">accuracy</span> <span class="i">test_y</span> <span class="i">predict_y</span>
-</code></pre></td>
-</tr>
-</table>
-</li>
-<li>
-<p>Mean Squared Error (regression)</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"> <span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 3)" onmouseover="showTip(event, 'fs2', 3)" class="i">mse</span> <span class="o">=</span> <span class="i">Regression</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs2', 4)" onmouseover="showTip(event, 'fs2', 4)" class="i">mse</span> <span class="i">test_y</span> <span class="i">predict_y</span>
-</code></pre></td>
-</tr>
-</table>
-</li>
-</ul>
 
-<div class="tip" id="fs1">val accuracy : obj<br /><br />Full name: index.accuracy</div>
-<div class="tip" id="fs2">val mse : obj<br /><br />Full name: index.mse</div>
+<h1>Rescaling</h1>
+<p>
+
+    <span>Namespace: Semagle.MachineLearning.SSVM</span><br />
+    </p>
+<div class="xmldoc">
+<p>Structured SVM rescaling</p>
+
+</div>
+  <h3>Union Cases</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Union Case</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '193', 193)" onmouseover="showTip(event, '193', 193)">
+            Margin
+          </code>
+          <div class="tip" id="193">
+            <strong>Signature:</strong> <br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SSVM/src/SSVM.fs#L29-29" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '194', 194)" onmouseover="showTip(event, '194', 194)">
+            Slack
+          </code>
+          <div class="tip" id="194">
+            <strong>Signature:</strong> <br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SSVM/src/SSVM.fs#L29-29" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
         </div>
         <div class="span3">

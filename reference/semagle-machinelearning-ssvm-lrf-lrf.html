@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>TwoClass - Semagle.Framework</title>
+    <title>LRF - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
@@ -31,38 +31,82 @@
         <div class="span9" id="main">
           
 
-<h1>TwoClass</h1>
+<h1>LRF</h1>
 <p>
-  <span>Namespace: Semagle.MachineLearning.SVM</span><br />
-  </p>
+
+    <span>Namespace: Semagle.MachineLearning.SSVM</span><br />
+        <span>Parent Module: <a href="semagle-machinelearning-ssvm-lrf.html">LRF</a></span><br />
+    </p>
 <div class="xmldoc">
-<p>Two class classification</p>
+<p>LRU list of computed feature columns</p>
 
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '85', 85)" onmouseover="showTip(event, '85', 85)">
-            predict model x
+          <code onmouseout="hideTip(event, '176', 176)" onmouseover="showTip(event, '176', 176)">
+            new(capacity, N, dJF, parallelize)
           </code>
-          <div class="tip" id="85">
-            <strong>Signature:</strong> model:SVM&lt;&#39;X,&#39;Y&gt; -&gt; x:&#39;X -&gt; float32<br />
-                          <strong>Type parameters:</strong> 'X, 'Y                      </div>
+          <div class="tip" id="176">
+            <strong>Signature:</strong> (capacity:int * N:int * dJF:(int -&gt; int -&gt; SparseVector) * parallelize:bool) -&gt; LRF<br />
+                                  </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SVM.fs#L44-44" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SSVM/src/LRF.fs#L29-29" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Predict {+1,0,-1} class of the sample x using the specified SVM model.</p>
+          
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '177', 177)" onmouseover="showTip(event, '177', 177)">
+            [k]
+          </code>
+          <div class="tip" id="177">
+            <strong>Signature:</strong> k:int -&gt; SparseVector []<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SSVM/src/LRF.fs#L37-37" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Returns k-th column of dJF matrix</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '178', 178)" onmouseover="showTip(event, '178', 178)">
+            x.Swap i j
+          </code>
+          <div class="tip" id="178">
+            <strong>Signature:</strong> i:int -&gt; j:int -&gt; unit<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SSVM/src/LRF.fs#L47-47" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Swap column elements</p>
 
 
         </td>

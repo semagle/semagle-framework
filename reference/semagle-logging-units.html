@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>LRU<'A> - Semagle.Framework</title>
+    <title>Units - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
@@ -31,38 +31,85 @@
         <div class="span9" id="main">
           
 
-<h1>LRU<'A></h1>
+<h1>Units</h1>
 <p>
 
-    <span>Namespace: Semagle.MachineLearning.SVM</span><br />
-        <span>Parent Module: <a href="semagle-machinelearning-svm-lru.html">LRU</a></span><br />
+    <span>Namespace: Semagle.Logging</span><br />
     </p>
 <div class="xmldoc">
-<p>LRU list of computed columns</p>
-
 </div>
-  <h3>Constructors</h3>
+  <h3>Union Cases</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Constructor</td><td>Description</td></tr>
+      <tr><td>Union Case</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '195', 195)" onmouseover="showTip(event, '195', 195)">
-            new(size, N, Q, parallelize)
+          <code onmouseout="hideTip(event, '164', 164)" onmouseover="showTip(event, '164', 164)">
+            Other(unit)
           </code>
-          <div class="tip" id="195">
-            <strong>Signature:</strong> (size:int&lt;MeasureProduct&lt;MB,MeasureOne&gt;&gt; * N:int * Q:(int -&gt; int -&gt; &#39;A) * parallelize:bool) -&gt; LRU&lt;&#39;A&gt;<br />
+          <div class="tip" id="164">
+            <strong>Signature:</strong> string<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/LRU.fs#L32-32" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L140-140" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
-              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '165', 165)" onmouseover="showTip(event, '165', 165)">
+            Scalar
+          </code>
+          <div class="tip" id="165">
+            <strong>Signature:</strong> <br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L139-139" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '166', 166)" onmouseover="showTip(event, '166', 166)">
+            Scaled(unit,value)
+          </code>
+          <div class="tip" id="166">
+            <strong>Signature:</strong> Units * float<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L137-137" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '167', 167)" onmouseover="showTip(event, '167', 167)">
+            Seconds
+          </code>
+          <div class="tip" id="167">
+            <strong>Signature:</strong> <br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L138-138" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
         </td>
       </tr>
     </tbody>
@@ -75,59 +122,56 @@
     <tbody>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '196', 196)" onmouseover="showTip(event, '196', 196)">
-            x.Get j L
+          <code onmouseout="hideTip(event, '168', 168)" onmouseover="showTip(event, '168', 168)">
+            x.otherUnit
           </code>
-          <div class="tip" id="196">
-            <strong>Signature:</strong> j:int -&gt; L:int -&gt; &#39;A []<br />
+          <div class="tip" id="168">
+            <strong>Signature:</strong> string<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/LRU.fs#L56-56" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L144-144" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Returns L elements of j-th column of Q matrix</p>
-
-
+          
+              <p>CompiledName: <code>get_otherUnit</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '197', 197)" onmouseover="showTip(event, '197', 197)">
-            x.Resize(n)
+          <code onmouseout="hideTip(event, '169', 169)" onmouseover="showTip(event, '169', 169)">
+            x.scaledFloat
           </code>
-          <div class="tip" id="197">
-            <strong>Signature:</strong> n:int -&gt; unit<br />
+          <div class="tip" id="169">
+            <strong>Signature:</strong> float<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/LRU.fs#L44-44" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L142-142" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Resize columns of Q matrix</p>
-
-
+          
+              <p>CompiledName: <code>get_scaledFloat</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '198', 198)" onmouseover="showTip(event, '198', 198)">
-            x.Swap i j
+          <code onmouseout="hideTip(event, '170', 170)" onmouseover="showTip(event, '170', 170)">
+            x.scaledUnit
           </code>
-          <div class="tip" id="198">
-            <strong>Signature:</strong> i:int -&gt; j:int -&gt; unit<br />
+          <div class="tip" id="170">
+            <strong>Signature:</strong> Units<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/LRU.fs#L103-103" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L143-143" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Swap column elements</p>
-
-
+          
+              <p>CompiledName: <code>get_scaledUnit</code></p>
         </td>
       </tr>
     </tbody>

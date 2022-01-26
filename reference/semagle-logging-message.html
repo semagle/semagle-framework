@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>OptimizationOptions - Semagle.Framework</title>
+    <title>Message - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
@@ -31,14 +31,14 @@
         <div class="span9" id="main">
           
 
-<h1>OptimizationOptions</h1>
+<h1>Message</h1>
 <p>
 
-    <span>Namespace: Semagle.MachineLearning.SVM</span><br />
-        <span>Parent Module: <a href="semagle-machinelearning-svm-smo.html">SMO</a></span><br />
+    <span>Namespace: Semagle.Logging</span><br />
     </p>
 <div class="xmldoc">
-<p>Optimization options of SMO algorithm</p>
+<p>This is record that is logged. It's capable of representing both metrics
+(gauges) and events. See <a href="https://github.com/logary/logary">https://github.com/logary/logary</a> for details.</p>
 
 </div>
   <h3>Record Fields</h3>
@@ -49,135 +49,180 @@
     <tbody>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '207', 207)" onmouseover="showTip(event, '207', 207)">
-            cacheSize
+          <code onmouseout="hideTip(event, '149', 149)" onmouseover="showTip(event, '149', 149)">
+            context
           </code>
-          <div class="tip" id="207">
-            <strong>Signature:</strong> int&lt;MeasureProduct&lt;MB,MeasureOne&gt;&gt;<br />
+          <div class="tip" id="149">
+            <strong>Signature:</strong> Map&lt;string,obj&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L57-57" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L330-330" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Kernel cache size</p>
+          <p>Where in the code? Who did the operation? What tenant did the principal
+who did it belong to? ... context can be anything, you can decide how to deal with them in target
+through its key.</p>
 
 
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '208', 208)" onmouseover="showTip(event, '208', 208)">
-            epsilon
+          <code onmouseout="hideTip(event, '150', 150)" onmouseover="showTip(event, '150', 150)">
+            level
           </code>
-          <div class="tip" id="208">
-            <strong>Signature:</strong> float<br />
+          <div class="tip" id="150">
+            <strong>Signature:</strong> LogLevel<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L47-47" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L332-332" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The maximum optimization error</p>
+          <p>How important? See the docs on the LogLevel type for details.</p>
 
 
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '209', 209)" onmouseover="showTip(event, '209', 209)">
-            maxIterations
+          <code onmouseout="hideTip(event, '151', 151)" onmouseover="showTip(event, '151', 151)">
+            name
           </code>
-          <div class="tip" id="209">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="151">
+            <strong>Signature:</strong> string []<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L49-49" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L324-324" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The maximum number of SMO algorithm iterations</p>
+          <p>The 'path' or 'name' of this data point. Do not confuse message template in message.value</p>
 
 
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '210', 210)" onmouseover="showTip(event, '210', 210)">
-            parallelize
+          <code onmouseout="hideTip(event, '152', 152)" onmouseover="showTip(event, '152', 152)">
+            timestamp
           </code>
-          <div class="tip" id="210">
-            <strong>Signature:</strong> bool<br />
+          <div class="tip" id="152">
+            <strong>Signature:</strong> EpochNanoSeconds<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L59-59" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L334-334" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Parallelize kernel evaluations</p>
+          <p>When? The # of nanoseconds since the UNIX epoch (1970-01-01T00:00:00Z)</p>
 
 
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '211', 211)" onmouseover="showTip(event, '211', 211)">
-            shrinking
+          <code onmouseout="hideTip(event, '153', 153)" onmouseover="showTip(event, '153', 153)">
+            value
           </code>
-          <div class="tip" id="211">
-            <strong>Signature:</strong> bool<br />
+          <div class="tip" id="153">
+            <strong>Signature:</strong> string<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L53-53" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L326-326" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Enable/disable working set shrinking</p>
+          <p>Event (template or raw message) E.g. "{user} logged in"</p>
 
 
         </td>
       </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '212', 212)" onmouseover="showTip(event, '212', 212)">
-            shrinkingIterations
+          <code onmouseout="hideTip(event, '154', 154)" onmouseover="showTip(event, '154', 154)">
+            x.getContext()
           </code>
-          <div class="tip" id="212">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="154">
+            <strong>Signature:</strong> unit -&gt; Map&lt;string,obj&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L55-55" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L345-345" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Maximum number of iterations before shrinking</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '213', 213)" onmouseover="showTip(event, '213', 213)">
-            strategy
+          <code onmouseout="hideTip(event, '155', 155)" onmouseover="showTip(event, '155', 155)">
+            x.getFields()
           </code>
-          <div class="tip" id="213">
-            <strong>Signature:</strong> WSSStrategy<br />
+          <div class="tip" id="155">
+            <strong>Signature:</strong> unit -&gt; Map&lt;string,obj&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.MachineLearning.SVM/src/SMO.fs#L51-51" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L339-339" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>The working set selection strategy</p>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '156', 156)" onmouseover="showTip(event, '156', 156)">
+            x.README
+          </code>
+          <div class="tip" id="156">
+            <strong>Signature:</strong> unit<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L354-354" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>If you're looking for how to transform the Message's fields, then use the
+module methods rather than instance methods, since you'll be creating new
+values rather than changing an existing value.</p>
 
 
+              <p>CompiledName: <code>get_README</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '157', 157)" onmouseover="showTip(event, '157', 157)">
+            x.timestampDateTimeOffset()
+          </code>
+          <div class="tip" id="157">
+            <strong>Signature:</strong> unit -&gt; DateTimeOffset<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L336-336" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
         </td>
       </tr>
     </tbody>

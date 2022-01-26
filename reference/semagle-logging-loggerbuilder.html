@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LoggerBuilder - Semagle.Framework</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Serge Slipchenko">
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="/semagle-framework/content/style.css" />
+    <script type="text/javascript" src="/semagle-framework/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <h3 class="muted">
+            <a href="/semagle-framework/index.html">Semagle.Framework</a>
+        </h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+<h1>LoggerBuilder</h1>
+<p>
+
+    <span>Namespace: Semagle.Logging</span><br />
+    </p>
+<div class="xmldoc">
+</div>
+  <h3>Constructors</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Constructor</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '137', 137)" onmouseover="showTip(event, '137', 137)">
+            new(logger)
+          </code>
+          <div class="tip" id="137">
+            <strong>Signature:</strong> logger:Logger -&gt; LoggerBuilder<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Logging/src/Builder.fs#L20-20" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '138', 138)" onmouseover="showTip(event, '138', 138)">
+            x.debug((), message)
+          </code>
+          <div class="tip" id="138">
+            <strong>Signature:</strong> (unit * message:(unit -&gt; string)) -&gt; unit<br />
+                                    <span>
+            <strong>Attributes:</strong><br />
+[&lt;CustomOperation(&quot;debug&quot;)&gt;]<br />
+          </span>
+          </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Logging/src/Builder.fs#L31-31" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '139', 139)" onmouseover="showTip(event, '139', 139)">
+            x.error((), message)
+          </code>
+          <div class="tip" id="139">
+            <strong>Signature:</strong> (unit * message:(unit -&gt; string)) -&gt; unit<br />
+                                    <span>
+            <strong>Attributes:</strong><br />
+[&lt;CustomOperation(&quot;error&quot;)&gt;]<br />
+          </span>
+          </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Logging/src/Builder.fs#L43-43" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '140', 140)" onmouseover="showTip(event, '140', 140)">
+            x.fatal((), message)
+          </code>
+          <div class="tip" id="140">
+            <strong>Signature:</strong> (unit * message:(unit -&gt; string)) -&gt; unit<br />
+                                    <span>
+            <strong>Attributes:</strong><br />
+[&lt;CustomOperation(&quot;fatal&quot;)&gt;]<br />
+          </span>
+          </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Logging/src/Builder.fs#L47-47" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '141', 141)" onmouseover="showTip(event, '141', 141)">
+            x.info((), message)
+          </code>
+          <div class="tip" id="141">
+            <strong>Signature:</strong> (unit * message:(unit -&gt; string)) -&gt; unit<br />
+                                    <span>
+            <strong>Attributes:</strong><br />
+[&lt;CustomOperation(&quot;info&quot;)&gt;]<br />
+          </span>
+          </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Logging/src/Builder.fs#L35-35" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '142', 142)" onmouseover="showTip(event, '142', 142)">
+            x.time((), f)
+          </code>
+          <div class="tip" id="142">
+            <strong>Signature:</strong> (unit * f:(unit -&gt; &#39;result)) -&gt; &#39;result<br />
+                          <strong>Type parameters:</strong> 'result                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CustomOperation(&quot;time&quot;)&gt;]<br />
+          </span>
+          </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Logging/src/Builder.fs#L51-51" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '143', 143)" onmouseover="showTip(event, '143', 143)">
+            x.verbose((), message)
+          </code>
+          <div class="tip" id="143">
+            <strong>Signature:</strong> (unit * message:(unit -&gt; string)) -&gt; unit<br />
+                                    <span>
+            <strong>Attributes:</strong><br />
+[&lt;CustomOperation(&quot;verbose&quot;)&gt;]<br />
+          </span>
+          </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Logging/src/Builder.fs#L27-27" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '144', 144)" onmouseover="showTip(event, '144', 144)">
+            x.warn((), message)
+          </code>
+          <div class="tip" id="144">
+            <strong>Signature:</strong> (unit * message:(unit -&gt; string)) -&gt; unit<br />
+                                    <span>
+            <strong>Attributes:</strong><br />
+[&lt;CustomOperation(&quot;warn&quot;)&gt;]<br />
+          </span>
+          </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Logging/src/Builder.fs#L39-39" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '145', 145)" onmouseover="showTip(event, '145', 145)">
+            x.Yield()
+          </code>
+          <div class="tip" id="145">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Logging/src/Builder.fs#L24-24" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+            <ul class="nav nav-list" id="menu">
+
+            <li class="nav-header">Semagle.Framework</li>
+
+            <li class="divider"></li>
+
+            <!-- <li><a href="">Get Semagle.Framework package via NuGet</a></li> -->
+            <li><a href="http://blog.semagle.com">Semagle Blog</a>
+            <li><a href="https://github.com/semagle/semagle-framework">Source Code on GitHub</a></li>
+            <li><a href="https://github.com/semagle/semagle-framework/blob/master/LICENSE.md">License (Apache 2.0)</a></li>
+
+            <li class="nav-header">Documentation</li>
+
+            <li><a href="/semagle-framework/index.html">Introduction</a></li>
+
+            <li class="nav-header">Libraries</li>
+
+            <li><a href="/semagle-framework/Semagle.MachineLearning.Metrics/index.html">Metrics Library</a></li>
+            <li><a href="/semagle-framework/Semagle.MachineLearning.SVM/index.html">SVM Library</a></li>            
+            <li><a href="/semagle-framework/Semagle.Numerics.Vectors/index.html">Vectors Library</a></li>
+            <li><a href="/semagle-framework/Semagle.Numerics.Vectors.IO/index.html">Vectors I/O Library</a></li>
+
+            <li class="nav-header">Tutorials</li>
+
+            <li><a href="/semagle-framework/tutorials/SVM.html">SVM classification and regression</a></li>
+
+            <li class="nav-header">Reference</li>
+
+            <li><a href="/semagle-framework/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="https://github.com/semagle/semagle-framework"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  </body>
+  </html>

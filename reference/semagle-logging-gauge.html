@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>SparseVector - Semagle.Framework</title>
+    <title>Gauge - Semagle.Framework</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Serge Slipchenko">
@@ -31,37 +31,39 @@
         <div class="span9" id="main">
           
 
-<h1>SparseVector</h1>
+<h1>Gauge</h1>
 <p>
 
-    <span>Namespace: Semagle.Numerics.Vectors</span><br />
-    </p>
+    <span>Namespace: Semagle.Logging</span><br />
+            <span>
+            Attributes: <br />
+[&lt;Struct&gt;]<br />
+            
+        </span>
+</p>
 <div class="xmldoc">
-<p>Sparse vector stores non-zero values and non-zero values indices</p>
-
 </div>
-  <h3>Constructors</h3>
+  <h3>Union Cases</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Constructor</td><td>Description</td></tr>
+      <tr><td>Union Case</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '238', 238)" onmouseover="showTip(event, '238', 238)">
-            new(indices, values)
+          <code onmouseout="hideTip(event, '109', 109)" onmouseover="showTip(event, '109', 109)">
+            Gauge(Value,Units)
           </code>
-          <div class="tip" id="238">
-            <strong>Signature:</strong> (indices:int [] * values:float32 []) -&gt; SparseVector<br />
+          <div class="tip" id="109">
+            <strong>Signature:</strong> Value * Units<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L138-138" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L184-184" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
-              <p>CompiledName: <code>.ctor</code></p>
         </td>
       </tr>
     </tbody>
@@ -74,80 +76,38 @@
     <tbody>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '239', 239)" onmouseover="showTip(event, '239', 239)">
-            x.GetSlice(a, b)
+          <code onmouseout="hideTip(event, '110', 110)" onmouseover="showTip(event, '110', 110)">
+            x.unit
           </code>
-          <div class="tip" id="239">
-            <strong>Signature:</strong> (a:int option * b:int option) -&gt; SparseVector<br />
+          <div class="tip" id="110">
+            <strong>Signature:</strong> Units<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L180-180" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L188-188" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Returns vector slice</p>
-
-
+          
+              <p>CompiledName: <code>get_unit</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '240', 240)" onmouseover="showTip(event, '240', 240)">
-            x.Indices
+          <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
+            x.value
           </code>
-          <div class="tip" id="240">
-            <strong>Signature:</strong> int []<br />
+          <div class="tip" id="111">
+            <strong>Signature:</strong> Value<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L168-168" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L186-186" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Returns underlying indices array</p>
-
-
-              <p>CompiledName: <code>get_Indices</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-          <code onmouseout="hideTip(event, '241', 241)" onmouseover="showTip(event, '241', 241)">
-            [i]
-          </code>
-          <div class="tip" id="241">
-            <strong>Signature:</strong> i:int -&gt; float32<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L174-174" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Gets vector element value</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-          <code onmouseout="hideTip(event, '242', 242)" onmouseover="showTip(event, '242', 242)">
-            x.Values
-          </code>
-          <div class="tip" id="242">
-            <strong>Signature:</strong> float32 []<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L171-171" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Returns underlying values array</p>
-
-
-              <p>CompiledName: <code>get_Values</code></p>
+          
+              <p>CompiledName: <code>get_value</code></p>
         </td>
       </tr>
     </tbody>
@@ -160,182 +120,206 @@
     <tbody>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '243', 243)" onmouseover="showTip(event, '243', 243)">
-            SparseVector.( - )(a, b)
+          <code onmouseout="hideTip(event, '112', 112)" onmouseover="showTip(event, '112', 112)">
+            Gauge.ofBclTicks(bclTicks)
           </code>
-          <div class="tip" id="243">
-            <strong>Signature:</strong> (a:SparseVector * b:SparseVector) -&gt; SparseVector<br />
+          <div class="tip" id="112">
+            <strong>Signature:</strong> bclTicks:float -&gt; Gauge<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L265-265" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L206-206" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Element-wise substraction</p>
-
-
-              <p>CompiledName: <code>op_Subtraction</code></p>
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '244', 244)" onmouseover="showTip(event, '244', 244)">
-            SparseVector.( .* )(a, b)
+          <code onmouseout="hideTip(event, '113', 113)" onmouseover="showTip(event, '113', 113)">
+            Gauge.ofBclTicks(bclTicks)
           </code>
-          <div class="tip" id="244">
-            <strong>Signature:</strong> (a:SparseVector * b:SparseVector) -&gt; float32<br />
+          <div class="tip" id="113">
+            <strong>Signature:</strong> bclTicks:int64 -&gt; Gauge<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L353-353" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L204-204" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Scalar product</p>
-
-
-              <p>CompiledName: <code>op_DotMultiply</code></p>
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '245', 245)" onmouseover="showTip(event, '245', 245)">
-            SparseVector.( * )(a, c)
+          <code onmouseout="hideTip(event, '114', 114)" onmouseover="showTip(event, '114', 114)">
+            Gauge.ofBclTicks(bclTicks)
           </code>
-          <div class="tip" id="245">
-            <strong>Signature:</strong> (a:SparseVector * c:float32) -&gt; SparseVector<br />
+          <div class="tip" id="114">
+            <strong>Signature:</strong> bclTicks:Value -&gt; Gauge<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L425-425" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L202-202" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Mutiply each element of vector by scalar</p>
-
-
-              <p>CompiledName: <code>op_Multiply</code></p>
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '246', 246)" onmouseover="showTip(event, '246', 246)">
-            SparseVector.( * )(a, b)
+          <code onmouseout="hideTip(event, '115', 115)" onmouseover="showTip(event, '115', 115)">
+            Gauge.ofMillis(ms)
           </code>
-          <div class="tip" id="246">
-            <strong>Signature:</strong> (a:SparseVector * b:SparseVector) -&gt; SparseVector<br />
+          <div class="tip" id="115">
+            <strong>Signature:</strong> ms:int64 -&gt; Gauge<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L319-319" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L200-200" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Element-wise multiplication</p>
-
-
-              <p>CompiledName: <code>op_Multiply</code></p>
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '247', 247)" onmouseover="showTip(event, '247', 247)">
-            SparseVector.( / )(a, c)
+          <code onmouseout="hideTip(event, '116', 116)" onmouseover="showTip(event, '116', 116)">
+            Gauge.ofMillis(ms)
           </code>
-          <div class="tip" id="247">
-            <strong>Signature:</strong> (a:SparseVector * c:float32) -&gt; SparseVector<br />
+          <div class="tip" id="116">
+            <strong>Signature:</strong> ms:float -&gt; Gauge<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L429-429" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L198-198" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Divide each element of vector by scalar</p>
-
-
-              <p>CompiledName: <code>op_Division</code></p>
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '248', 248)" onmouseover="showTip(event, '248', 248)">
-            SparseVector.( + )(a, b)
+          <code onmouseout="hideTip(event, '117', 117)" onmouseover="showTip(event, '117', 117)">
+            Gauge.ofMillis(ms)
           </code>
-          <div class="tip" id="248">
-            <strong>Signature:</strong> (a:SparseVector * b:SparseVector) -&gt; SparseVector<br />
+          <div class="tip" id="117">
+            <strong>Signature:</strong> ms:Value -&gt; Gauge<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L211-211" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L196-196" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Element-wise addition</p>
-
-
-              <p>CompiledName: <code>op_Addition</code></p>
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '249', 249)" onmouseover="showTip(event, '249', 249)">
-            SparseVector.( ||-|| )(a, b)
+          <code onmouseout="hideTip(event, '118', 118)" onmouseover="showTip(event, '118', 118)">
+            Gauge.ofNanos(ns)
           </code>
-          <div class="tip" id="249">
-            <strong>Signature:</strong> (a:SparseVector * b:SparseVector) -&gt; float32<br />
+          <div class="tip" id="118">
+            <strong>Signature:</strong> ns:float -&gt; Gauge<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L380-380" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L194-194" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Squared Euclidean distance <span class="math">\(||a-b||^2\)</span></p>
-
-
-              <p>CompiledName: <code>op_BarBarMinusBarBar</code></p>
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '250', 250)" onmouseover="showTip(event, '250', 250)">
-            SparseVector.( ~- )(a)
+          <code onmouseout="hideTip(event, '119', 119)" onmouseover="showTip(event, '119', 119)">
+            Gauge.ofNanos(ns)
           </code>
-          <div class="tip" id="250">
-            <strong>Signature:</strong> a:SparseVector -&gt; SparseVector<br />
+          <div class="tip" id="119">
+            <strong>Signature:</strong> ns:int64 -&gt; Gauge<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L421-421" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L192-192" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Negation of vector</p>
-
-
-              <p>CompiledName: <code>op_UnaryNegation</code></p>
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
-          <code onmouseout="hideTip(event, '251', 251)" onmouseover="showTip(event, '251', 251)">
-            SparseVector.Zero
+          <code onmouseout="hideTip(event, '120', 120)" onmouseover="showTip(event, '120', 120)">
+            Gauge.ofNanos(ns)
           </code>
-          <div class="tip" id="251">
-            <strong>Signature:</strong> SparseVector<br />
+          <div class="tip" id="120">
+            <strong>Signature:</strong> ns:Value -&gt; Gauge<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/semagle/semagle-framework/tree/master/Semagle.Numerics.Vectors/src/Vectors.fs#L208-208" class="github-link">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L190-190" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Zero sparse vector</p>
-
-
-              <p>CompiledName: <code>get_Zero</code></p>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '121', 121)" onmouseover="showTip(event, '121', 121)">
+            Gauge.ofStopwatchTicks(swTicks)
+          </code>
+          <div class="tip" id="121">
+            <strong>Signature:</strong> swTicks:float -&gt; Gauge<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L212-212" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '122', 122)" onmouseover="showTip(event, '122', 122)">
+            Gauge.ofStopwatchTicks(swTicks)
+          </code>
+          <div class="tip" id="122">
+            <strong>Signature:</strong> swTicks:int64 -&gt; Gauge<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L210-210" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+          <code onmouseout="hideTip(event, '123', 123)" onmouseover="showTip(event, '123', 123)">
+            Gauge.ofStopwatchTicks(swTicks)
+          </code>
+          <div class="tip" id="123">
+            <strong>Signature:</strong> swTicks:Value -&gt; Gauge<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/semagle/semagle-framework/tree/master/paket-files/logary/logary/src/Logary.Facade/Facade.fs#L208-208" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
         </td>
       </tr>
     </tbody>
