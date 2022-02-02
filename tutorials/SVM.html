@@ -50,7 +50,7 @@ and SVM training/prediction.</p>
 <span class="l">12: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="pp">#r</span> <span class="s">&quot;Semagle.Numerics.Vectors.dll&quot;</span>
-<span class="pp">#r</span> <span class="s">&quot;Semagle.Numerics.Vectors.IO.dll&quot;</span>
+<span class="pp">#r</span> <span class="s">&quot;Semagle.Data.Formats.dll&quot;</span>
 <span class="pp">#r</span> <span class="s">&quot;Semagle.MachineLearning.Metrics.dll&quot;</span>
 <span class="pp">#r</span> <span class="s">&quot;Semagle.MachineLearning.SVM.dll&quot;</span>
 
@@ -58,14 +58,14 @@ and SVM training/prediction.</p>
 <span class="k">open</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="id">System</span>
 
 <span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Numerics</span><span class="pn">.</span><span class="id">Vectors</span>
-<span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Numerics</span><span class="pn">.</span><span class="id">Vectors</span><span class="pn">.</span><span class="id">IO</span>
+<span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Data</span><span class="pn">.</span><span class="id">Formats</span>
 <span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">MachineLearning</span><span class="pn">.</span><span class="id">Metrics</span>
 <span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">MachineLearning</span><span class="pn">.</span><span class="id">SVM</span>
 </code></pre></td>
 </tr>
 </table>
 <h2><a name="Reading-LIBSVM-Data" class="anchor" href="#Reading-LIBSVM-Data">Reading LIBSVM Data</a></h2>
-<p><a href="Semagle.Numerics.Vectors.IO/index.html"><code>Semagle.Numerics.Vectors.IO</code></a> provides function <code>LibSVM.read</code>
+<p><a href="Semagle.Data.Formats/index.html"><code>Semagle.Data.Formats</code></a> provides function <code>LibSVM.read</code>
 that returns the lazy sequence of <code>(y, x)</code> pairs, but <a href="Semagle.MachineLearning.SVM/index.html"><code>Semagle.MachineLearning.SVM</code></a>
 requires separate arrays of labels and samples for training. Function <code>readData</code> converts the sequence to array and splits
 the array of pairs.</p>
@@ -93,7 +93,7 @@ parameters specific to the particular optimization problem.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 16)" onmouseover="showTip(event, 'fs13', 16)" class="id">svm</span> <span class="o">=</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">C_SVC</span> <span onmouseout="hideTip(event, 'fs10', 17)" onmouseover="showTip(event, 'fs10', 17)" class="id">train_x</span> <span onmouseout="hideTip(event, 'fs9', 18)" onmouseover="showTip(event, 'fs9', 18)" class="id">train_y</span> <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span> 
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 16)" onmouseover="showTip(event, 'fs13', 16)" class="id">svm</span> <span class="o">=</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">C_SVC</span> <span onmouseout="hideTip(event, 'fs10', 17)" onmouseover="showTip(event, 'fs10', 17)" class="id">train_x</span> <span onmouseout="hideTip(event, 'fs9', 18)" onmouseover="showTip(event, 'fs9', 18)" class="id">train_y</span> <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span>
                     <span class="pn">{</span> <span class="id">C_p</span> <span class="o">=</span> <span class="n">1.0f</span><span class="pn">;</span> <span class="id">C_n</span> <span class="o">=</span> <span class="n">1.0f</span> <span class="pn">}</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">defaultOptimizationOptions</span> <span class="pn">}</span>
 </code></pre></td>
 </tr>
@@ -103,7 +103,7 @@ parameters specific to the particular optimization problem.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 19)" onmouseover="showTip(event, 'fs14', 19)" class="id">svm</span> <span class="o">=</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">OneClass</span> <span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="id">train_x</span> <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span> 
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 19)" onmouseover="showTip(event, 'fs14', 19)" class="id">svm</span> <span class="o">=</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">OneClass</span> <span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="id">train_x</span> <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span>
                       <span class="pn">{</span> <span class="id">nu</span> <span class="o">=</span> <span class="n">0.5f</span> <span class="pn">}</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">defaultOptimizationOptions</span>
 </code></pre></td>
 </tr>
@@ -114,7 +114,7 @@ parameters specific to the particular optimization problem.</p>
 <span class="l">2: </span>
 <span class="l">3: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 21)" onmouseover="showTip(event, 'fs14', 21)" class="id">svm</span> <span class="o">=</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">C_SVR</span> <span onmouseout="hideTip(event, 'fs10', 22)" onmouseover="showTip(event, 'fs10', 22)" class="id">train_x</span> <span onmouseout="hideTip(event, 'fs9', 23)" onmouseover="showTip(event, 'fs9', 23)" class="id">train_y</span> <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span> 
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 21)" onmouseover="showTip(event, 'fs14', 21)" class="id">svm</span> <span class="o">=</span> <span class="id">SMO</span><span class="pn">.</span><span class="id">C_SVR</span> <span onmouseout="hideTip(event, 'fs10', 22)" onmouseover="showTip(event, 'fs10', 22)" class="id">train_x</span> <span onmouseout="hideTip(event, 'fs9', 23)" onmouseover="showTip(event, 'fs9', 23)" class="id">train_y</span> <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span>
                     <span class="pn">(</span><span class="id">Kernel</span><span class="pn">.</span><span class="id">rbf</span> <span class="n">0.1f</span><span class="pn">)</span> <span class="pn">{</span> <span class="id">eta</span> <span class="o">=</span> <span class="n">0.1f</span><span class="pn">;</span> <span class="id">C</span> <span class="o">=</span> <span class="n">1.0f</span> <span class="pn">}</span>
         <span class="id">SMO</span><span class="pn">.</span><span class="id">defaultOptimizationOptions</span>
 </code></pre></td>
@@ -148,7 +148,7 @@ and return the label <code>y</code>. The prediction function can be curried</p>
 <p>Regression</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"> <span class="k">let</span> <span class="id">predict</span> <span class="o">=</span> <span class="id">Regression</span><span class="pn">.</span><span class="id">predict</span> <span onmouseout="hideTip(event, 'fs14', 26)" onmouseover="showTip(event, 'fs14', 26)" class="id">svm</span>   
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"> <span class="k">let</span> <span class="id">predict</span> <span class="o">=</span> <span class="id">Regression</span><span class="pn">.</span><span class="id">predict</span> <span onmouseout="hideTip(event, 'fs14', 26)" onmouseover="showTip(event, 'fs14', 26)" class="id">svm</span>
 </code></pre></td>
 </tr>
 </table>

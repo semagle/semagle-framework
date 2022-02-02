@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Semagle.Numerics.Vectors.IO Library
+    <title>Semagle.Data.Formats Library
 </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Semagle: F# Framework for Machine Learning and Natural Language Processing">
@@ -30,8 +30,8 @@
       <hr />
       <div class="row">
         <div class="span9" id="main">
-          <h1><a name="Semagle-Numerics-Vectors-IO-Library" class="anchor" href="#Semagle-Numerics-Vectors-IO-Library">Semagle.Numerics.Vectors.IO Library</a></h1>
-<p>Semagle.Numerics.Vectors.IO provides reading and writing functions for popular
+          <h1><a name="Semagle-Data-Formats-Library" class="anchor" href="#Semagle-Data-Formats-Library">Semagle.Data.Formats Library</a></h1>
+<p>Semagle.Data.Formats provides reading and writing functions for popular
 machine learning dataset formats.</p>
 <h2><a name="LIBSVM" class="anchor" href="#LIBSVM">LIBSVM</a></h2>
 <p>LIBSVM uses "sparse" vector format where zero values do not need to be stored.
@@ -52,7 +52,7 @@ followed by index/value pairs of non-zero elements of the feature vector <code>x
 <span class="l">4: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Numerics</span><span class="pn">.</span><span class="id">Vectors</span>
-<span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Numerics</span><span class="pn">.</span><span class="id">Vectors</span><span class="pn">.</span><span class="id">IO</span>
+<span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Data</span><span class="pn">.</span><span class="id">Formats</span>
 
 <span class="id">LibSVM</span><span class="pn">.</span><span class="id">read</span> <span class="s">&quot;train file&quot;</span>
 </code></pre></td>
@@ -71,10 +71,10 @@ followed by index/value pairs of non-zero elements of the feature vector <code>x
 <span class="l">9: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Numerics</span><span class="pn">.</span><span class="id">Vectors</span>
-<span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Numerics</span><span class="pn">.</span><span class="id">Vectors</span><span class="pn">.</span><span class="id">IO</span>
+<span class="k">open</span> <span class="id">Semagle</span><span class="pn">.</span><span class="id">Data</span><span class="pn">.</span><span class="id">Formats</span>
 
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="id">data</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="id">toSeq</span> <span class="pn">[</span>
-    <span class="pn">(</span><span class="o">+</span><span class="n">1.0f</span><span class="pn">,</span> <span class="id">SparseVector</span><span class="pn">(</span><span class="pn">[|</span><span class="n">0</span><span class="pn">;</span> <span class="n">3</span><span class="pn">;</span> <span class="n">7</span><span class="pn">|]</span><span class="pn">,</span> <span class="pn">[|</span><span class="n">1.0f</span><span class="pn">;</span> <span class="n">2.0f</span><span class="pn">;</span> <span class="n">5.0f</span><span class="pn">|]</span><span class="pn">)</span><span class="pn">)</span><span class="pn">;</span> 
+    <span class="pn">(</span><span class="o">+</span><span class="n">1.0f</span><span class="pn">,</span> <span class="id">SparseVector</span><span class="pn">(</span><span class="pn">[|</span><span class="n">0</span><span class="pn">;</span> <span class="n">3</span><span class="pn">;</span> <span class="n">7</span><span class="pn">|]</span><span class="pn">,</span> <span class="pn">[|</span><span class="n">1.0f</span><span class="pn">;</span> <span class="n">2.0f</span><span class="pn">;</span> <span class="n">5.0f</span><span class="pn">|]</span><span class="pn">)</span><span class="pn">)</span><span class="pn">;</span>
     <span class="pn">(</span><span class="o">+</span><span class="n">1.0f</span><span class="pn">,</span> <span class="id">SparseVector</span><span class="pn">(</span><span class="pn">[|</span><span class="n">0</span><span class="pn">;</span> <span class="n">2</span><span class="pn">;</span> <span class="n">9</span><span class="pn">|]</span><span class="pn">,</span> <span class="pn">[|</span><span class="n">3.0f</span><span class="pn">;</span> <span class="n">2.0f</span><span class="pn">;</span> <span class="n">5.0f</span><span class="pn">|]</span><span class="pn">)</span><span class="pn">)</span><span class="pn">;</span>
     <span class="pn">(</span><span class="o">-</span><span class="n">1.0f</span><span class="pn">,</span> <span class="id">SparseVector</span><span class="pn">(</span><span class="pn">[|</span><span class="n">4</span><span class="pn">;</span> <span class="n">8</span><span class="pn">|]</span><span class="pn">,</span> <span class="pn">[|</span><span class="n">0.1f</span><span class="pn">;</span> <span class="n">0.5f</span><span class="pn">|]</span><span class="pn">)</span><span class="pn">)</span><span class="pn">]</span>
 
