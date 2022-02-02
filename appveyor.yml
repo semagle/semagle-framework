@@ -1,9 +1,0 @@
-image: Visual Studio 2017
-init:
-  - git config --global core.autocrlf input
-build_script:
-  - cmd: build.cmd
-test: off 
-artifacts:
-  - path: build\Semagle.*.dll
-    name: Libraries
