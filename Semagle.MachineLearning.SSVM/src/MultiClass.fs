@@ -1,4 +1,4 @@
-﻿// Copyright 2018 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+﻿// Copyright 2018-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,8 +55,8 @@ module MultiClass =
             let F = (F x).AsSparse
             let k = Array.findIndex ((=) y) Y'
             let WxJF = F.SumBy(fun i v -> (float32 W.[index D k i])*v)
-            let y_max, loss_max, cost_max = 
-                Y' 
+            let y_max, loss_max, cost_max =
+                Y'
                 |> Array.map (fun y' ->
                     let k' = Array.findIndex ((=) y') Y'
                     let WxdJF = WxJF - F.SumBy(fun i v -> (float32 W.[index D k' i])*v)
@@ -79,7 +79,7 @@ module MultiClass =
         let mutable WxJF_max = System.Single.NegativeInfinity
         for k = 0 to Y.Length-1 do
             let inline index_k i = index D k i
-            let WxJF = F.SumBy (fun i v -> 
+            let WxJF = F.SumBy (fun i v ->
                 if i < D then
                     (float32 W.[index_k i])*v
                 else

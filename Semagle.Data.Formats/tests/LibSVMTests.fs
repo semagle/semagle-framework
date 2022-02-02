@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+﻿// Copyright 2016-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Semagle.Numerics.Vectors.IO.Tests
+namespace Semagle.Data.Formats.Tests
 open System
 open System.IO
 open NUnit.Framework
 open FsUnit
 open Semagle.Numerics.Vectors
-open Semagle.Numerics.Vectors.IO
+open Semagle.Data.Formats
 
 [<TestFixture>]
-type ``LibSVM tests``() = 
+type ``LibSVM tests``() =
 
     let makeTmpData =
         let tmp = Path.GetTempFileName() + ".data"
@@ -33,15 +33,15 @@ type ``LibSVM tests``() =
 
         tmp
 
-    let expectedData = 
-        [(+1.0f, SparseVector([|0; 2; 6|], [|1.0f; 2.0f; 5.0f|])); 
+    let expectedData =
+        [(+1.0f, SparseVector([|0; 2; 6|], [|1.0f; 2.0f; 5.0f|]));
          (+1.0f, SparseVector([|0; 1; 8|], [|3.0f; 2.0f; 5.0f|]));
          (-1.0f, SparseVector([|3; 7|], [|0.1f; 0.5f|]))] |> List.toSeq
 
     [<Test>]
     member x.``Test LibSVM file read.``() =
         let tmp = makeTmpData
-        try 
+        try
             LibSVM.read tmp |> should equal expectedData
         finally
             if File.Exists tmp then File.Delete tmp

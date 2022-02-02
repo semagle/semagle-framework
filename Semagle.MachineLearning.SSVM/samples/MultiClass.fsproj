@@ -14,7 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Semagle.Numerics.Vectors\Semagle.Numerics.Vectors.fsproj" />
-    <ProjectReference Include="..\..\Semagle.Numerics.Vectors.IO\Semagle.Numerics.Vectors.IO.fsproj" />
+    <ProjectReference Include="..\..\Semagle.Data.Formats\Semagle.Data.Formats.fsproj" />
     <ProjectReference Include="..\..\Semagle.MachineLearning.Metrics\Semagle.MachineLearning.Metrics.fsproj" />
     <ProjectReference Include="..\..\Semagle.MachineLearning.SVM\Semagle.MachineLearning.SVM.fsproj" />
     <ProjectReference Include="..\Semagle.MachineLearning.SSVM.fsproj" />

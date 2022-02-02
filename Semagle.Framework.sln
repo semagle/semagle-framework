@@ -11,9 +11,9 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Semagle.Algorithms", "Semag
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Semagle.Algorithms.Tests", "Semagle.Algorithms\tests\Semagle.Algorithms.Tests.fsproj", "{9AAB18E5-C969-4081-AEBF-94F6E9E52E8E}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Semagle.Numerics.Vectors.IO", "Semagle.Numerics.Vectors.IO\Semagle.Numerics.Vectors.IO.fsproj", "{21F0585A-0737-4733-8133-572F3495C03A}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Semagle.Data.Formats", "Semagle.Data.Formats\Semagle.Data.Formats.fsproj", "{21F0585A-0737-4733-8133-572F3495C03A}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Semagle.Numerics.Vectors.IO.Tests", "Semagle.Numerics.Vectors.IO\tests\Semagle.Numerics.Vectors.IO.Tests.fsproj", "{48F5093D-FD98-485B-A18F-A64ED869744A}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Semagle.Data.Formats.Tests", "Semagle.Data.Formats\tests\Semagle.Data.Formats.Tests.fsproj", "{48F5093D-FD98-485B-A18F-A64ED869744A}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Semagle.Logging", "Semagle.Logging\Semagle.Logging.fsproj", "{0B7C2B42-3767-4192-A722-9C0F6D196CCC}"
 EndProject

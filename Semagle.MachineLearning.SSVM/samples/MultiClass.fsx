@@ -17,7 +17,7 @@
 
 #r "Semagle.Logging.dll"
 #r "Semagle.Numerics.Vectors.dll"
-#r "Semagle.Numerics.Vectors.IO.dll"
+#r "Semagle.Data.Formats.dll"
 #r "Semagle.MachineLearning.Metrics.dll"
 #r "Semagle.MachineLearning.SVM.dll"
 #r "Semagle.MachineLearning.SSVM.dll"
@@ -27,7 +27,7 @@ open System
 
 open Semagle.Logging
 open Semagle.Numerics.Vectors
-open Semagle.Numerics.Vectors.IO
+open Semagle.Data.Formats
 open Semagle.MachineLearning.Metrics
 open Semagle.MachineLearning.SSVM
 

@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+﻿// Copyright 2016-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@
 #r "Hopac.dll"
 #r "Semagle.Logging.dll"
 #r "Semagle.Numerics.Vectors.dll"
-#r "Semagle.Numerics.Vectors.IO.dll"
+#r "Semagle.Data.Formats.dll"
 #r "Semagle.MachineLearning.Metrics.dll"
 #r "Semagle.MachineLearning.SVM.dll"
 #endif // INTERACTIVE
 
 open Hopac
 open Semagle.Logging
-open Semagle.Numerics.Vectors.IO
+open Semagle.Data.Formats
 open Semagle.MachineLearning.Metrics
 open Semagle.MachineLearning.SVM
 

@@ -11,7 +11,7 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Semagle.Numerics.Vectors.IO.fsproj" />
+    <ProjectReference Include="..\Semagle.Data.Formats.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

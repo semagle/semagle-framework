@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+﻿// Copyright 2016-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Semagle.Numerics.Vectors.IO
+namespace Semagle.Data.Formats
 
 open System.IO
 open Semagle.Numerics.Vectors
@@ -27,7 +27,7 @@ module LibSVM =
             let fields = line.Split [|' '|]
             let y = float32 fields.[0]
             let indices, values = fields.[1..]
-                                  |> Array.map (fun field -> 
+                                  |> Array.map (fun field ->
                                     let x_i = field.Split [|':'|] in (int x_i.[0])-1, float32 x_i.[1])
                                   |> Array.unzip
             yield y, SparseVector(indices, values)
