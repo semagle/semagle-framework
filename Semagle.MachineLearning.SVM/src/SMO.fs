@@ -385,15 +385,15 @@ module SMO =
                         // shrink on next iteration
                         optimize_shrinking (k + 1) 1 N unshrinked
                     else
-                        logger { info (sprintf "iteration = %d, objective = %f" k (objective N)) }
+                        logger { info (sprintf "iterations = %d, objective = %f" k (objective N)) }
                 else
                     if optimize_solve n then
                         let s = if s > 0 then s else shrinkingIterations
                         optimize_shrinking (k + 1) s n unshrinked
                     else
-                        logger { info ((sprintf "iteration = %d, objective = %f" k (objective n))) }
+                        logger { info ((sprintf "iterations = %d, objective = %f" k (objective N))) }
              else
-                failwith "Exceeded iterations limit"
+                logger { warn ((sprintf "Exceeded iterations limit = %d, objective = %f" k (objective n))) }
 
         /// optimize without shrinking every 1000 iterations
         let rec optimize_non_shrinking k =
@@ -407,9 +407,9 @@ module SMO =
                 if not (isOptimal m_k M_k epsilon) && optimize_solve N then
                     optimize_non_shrinking (k + 1)
                 else
-                    logger { info (sprintf "iteration = %d, objective = %f" k (objective N)) }
+                    logger { info (sprintf "iterations = %d, objective = %f" k (objective N)) }
             else
-                failwith "Exceeded iterations limit"
+                logger { warn ((sprintf "Exceeded iterations limit = %d, objective = %f" k (objective N))) }
 
         initialize_gradient ()
 
