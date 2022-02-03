@@ -26,11 +26,6 @@ type ``SparseVector tests``() =
         a.Dimensions |> should equal 6
 
     [<Test>]
-    member test.``SumBy should be correct.``() =
-        let a = SparseVector([|0; 1; 3; 5|], [|1.0f; 2.0f; 4.0f; 6.0f|])
-        a.SumBy (fun i v -> float32(i)*v) |> should equal (0.0f + 1.0f*2.0f + 3.0f*4.0f + 5.0f*6.0f)
-
-    [<Test>]
     member test.``AsDense should be correct.``() =
         let a = SparseVector([|0; 1; 3; 5|], [|1.0f; 2.0f; 4.0f; 6.0f|])
         a.AsDense |> should equal <| DenseVector([|1.0f; 2.0f; 0.0f; 4.0f; 0.0f; 6.0f|])

@@ -1,4 +1,4 @@
-﻿// Copyright 2018 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+﻿// Copyright 2018-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,16 +23,16 @@ type FeatureFunction<'X> = 'X -> Vector
 type JointFeatureFunction<'X,'Y> = (* x *) 'X -> (* y *) 'Y -> SparseVector
 
 /// Joint kernel function type
-type JointKernel<'X, 'Y> = (* x *) 'X -> (* y *) 'Y -> (* x' *) 'X -> (* y' *) 'Y -> float32
+type JointKernel<'X, 'Y> = (* x *) 'X -> (* y *) 'Y -> (* x' *) 'X -> (* y' *) 'Y -> float
 
 /// Structured SVM rescaling
 type Rescaling = Slack | Margin
 
 /// Structured SVM loss function type
-type LossFunction<'Y> = (* y *) 'Y -> (* y' *)'Y -> float32
+type LossFunction<'Y> = (* y *) 'Y -> (* y' *)'Y -> float
 
 /// Argmax function result
-type Argmax<'Y> = (* y *) 'Y * (* loss *) float32 * (* cost *) float32
+type Argmax<'Y> = (* y *) 'Y * (* loss *) float * (* cost *) float
 
 /// Argmax function type
 type ArgmaxFunction<'Y> = (* W *) float[] -> (* i *) int -> Argmax<'Y>

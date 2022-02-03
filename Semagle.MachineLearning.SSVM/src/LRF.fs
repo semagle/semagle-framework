@@ -1,4 +1,4 @@
-﻿// Copyright 2018 Serge Slipchenko (Serge.Slipchenko@gmail.com)
+﻿// Copyright 2018-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,50 +27,53 @@ module LRF =
 
     /// LRU list of computed feature columns
     type LRF(capacity : int, N : int, dJF : int -> int -> SparseVector, parallelize : bool) =
-        let indices = Array.zeroCreate<int> capacity
+        let indices = Array.create capacity not_found
         let columns = Array.zeroCreate<SparseVector[]> capacity
 
-        let mutable first = 0
-        let mutable last = 0
-
         /// Returns k-th column of dJF matrix
-        member lrf.Item k =
-            let index = lrf.tryFindIndex k
-            if index <> not_found then
-                columns.[index]
-            else 
-                let column = (if parallelize then Array.Parallel.init else Array.init) N (fun i -> dJF k i)
-                lrf.insert k column
-                column
+        member lrf.Item i =
+            lock lrf (fun () ->
+                let k = lrf.tryFindIndex i
+                if k <> not_found then
+                    let column = columns.[k]
+
+                    if k <> 0 then
+                        lrf.shiftAndReplace k i column
+
+                    column
+                else
+                    let column =
+                        if parallelize then
+                            Array.Parallel.init N (fun j -> dJF i j)
+                        else
+                            Array.init N (fun j -> dJF i j)
+
+                    lrf.shiftAndReplace (indices.Length-1) i column
+
+                    column)
 
         /// Swap column elements
-        member lru.Swap (i : int) (j : int) = 
-            let mutable index_i = not_found
-            let mutable index_j = not_found
-
-            let mutable k = first
-            while k <> last do
-                if indices.[k] = i then index_i <- k
-                if indices.[k] = j then index_j <- k
-                k <- (k + 1) % capacity 
-
-            if index_i <> not_found then indices.[index_i] <- j
-            if index_j <> not_found then indices.[index_j] <- i
+        member lrf.Swap (i : int) (j : int) =
+            lock lrf (fun () ->
+                 for k = 0 to indices.Length - 1 do
+                    let index_k = indices.[k]
+                    if index_k = i then indices.[k] <- j
+                    else if index_k = j then indices.[k] <- i)
 
         /// Try to find computed column values
-        member private lru.tryFindIndex t =
-            let mutable i = first
-            while (i <> last) && (indices.[i] <> t) do
-                i <- (i + 1) % capacity 
+        member private lrf.tryFindIndex i =
+            let mutable k = 0
+            while k < indices.Length && indices.[k] <> i do
+                k <- k + 1
 
-            if i <> last then i else not_found
+            if k < indices.Length then k else not_found
 
-        /// Insert new computed column values
-        member private lru.insert index column =
-            indices.[last] <- index
-            columns.[last] <- column
-            last <- (last + 1) % capacity
-
-            if first = last then first <- (first + 1) % capacity
-
-
+        /// Shift [0,k-1]-th elements and replace 0-th element
+        member private lrf.shiftAndReplace k i column =
+            // shift [0,k-1]-th elements
+            for k' = k downto 1 do
+                indices.[k'] <- indices.[k'-1]
+                columns.[k'] <- columns.[k'-1]
+            // replace 0-th element
+            indices.[0] <- i
+            columns.[0] <- column

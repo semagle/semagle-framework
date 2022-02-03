@@ -14,7 +14,9 @@
 
 namespace Semagle.MachineLearning.SSVM
 
+open Semagle.Logging
 open Semagle.Numerics.Vectors
+open System
 
 /// Structured SVM model for multi-class classification
 type MultiClass<'X,'Y> = MultiClass of FeatureFunction<'X> * (* W *) float[] * 'Y[]
@@ -29,11 +31,8 @@ module MultiClass =
     }
 
     let defaultMultiClass : MultiClass<'Y> = {
-        C = 1.0; loss = (fun y y' -> if y = y' then 0.0f else 1.0f)
+        C = 1.0; loss = (fun y y' -> if y = y' then 0.0 else 1.0)
     }
-
-    /// Returns i-th feature index for k-th class
-    let inline private index D k i = D*k + i
 
     /// Learn structured SVM model for multi-class classification
     let learn (X : 'X[])(Y : 'Y[])(F: FeatureFunction<'X>)(parameters: MultiClass<'Y>)(options : OneSlack.OptimizationOptions) =
@@ -41,27 +40,34 @@ module MultiClass =
         let K = Array.length Y'
         let D = Array.fold (fun d x -> max d (F x).Dimensions) 0 X
 
+        let logger = LoggerBuilder(Log.create "MultiClass")
+
+        logger { info (sprintf "classes = %d, dimensons = %d" K D) }
+
         let loss = parameters.loss
 
         let JF (x : 'X) (y : 'Y) =
             let F_x = (F x).AsSparse
             let k = Array.findIndex ((=) y) Y'
-            let index_k = index D k
-            SparseVector(Array.map index_k F_x.Indices, F_x.Values)
+            SparseVector(Array.map ((+) (D*k)) F_x.Indices, F_x.Values)
 
         let argmax (W : float[]) (i : int) =
             let x = X.[i]
             let y = Y.[i]
-            let F = (F x).AsSparse
+            let F_x = (F x).AsSparse
             let k = Array.findIndex ((=) y) Y'
-            let WxJF = F.SumBy(fun i v -> (float32 W.[index D k i])*v)
+            let W_k = Span<float>(W, D*k, D)
+            // TODO: Check W_k .* F in future F# compilers
+            let WxJF = SparseVector.(.*)(W_k, F_x)
             let y_max, loss_max, cost_max =
                 Y'
                 |> Array.map (fun y' ->
                     let k' = Array.findIndex ((=) y') Y'
-                    let WxdJF = WxJF - F.SumBy(fun i v -> (float32 W.[index D k' i])*v)
+                    let W_k' = Span<float>(W, D*k', D)
+                    // TODO: Check W_k' .* F in future F# compilers
+                    let WxdJF = WxJF - SparseVector.(.*)(W_k', F_x)
                     let loss = loss y y'
-                    let m = match options.rescaling with | Slack -> loss | Margin -> 1.0f
+                    let m = match options.rescaling with | Slack -> loss | Margin -> 1.0
                     let cost = loss - m*WxdJF
                     (y', loss, cost))
                 |> Array.maxBy (fun (_, _, cost) -> cost)
@@ -73,17 +79,17 @@ module MultiClass =
 
     /// Predict class by multi-class structured model
     let predict (MultiClass(F, W, Y) : MultiClass<'X,'Y>) (x : 'X) : 'Y =
-        let F = F x
         let D = W.Length / (Array.length Y)
+        let F_x = (F x).AsSparse
+        if F_x.Dimensions > D then
+            invalidArg "x" "F(x).Dimensions > D"
+
         let mutable k_max = 0
-        let mutable WxJF_max = System.Single.NegativeInfinity
+        let mutable WxJF_max = System.Double.NegativeInfinity
         for k = 0 to Y.Length-1 do
-            let inline index_k i = index D k i
-            let WxJF = F.SumBy (fun i v ->
-                if i < D then
-                    (float32 W.[index_k i])*v
-                else
-                    0.0f)
+            let W_k = Span<float>(W, D*k, D)
+            // TODO: Check W_k .* F in future F# compilers
+            let WxJF = SparseVector.(.*)(W_k, F_x)
             if WxJF > WxJF_max then
                 k_max <- k
                 WxJF_max <- WxJF
