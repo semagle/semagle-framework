@@ -20,9 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\LIBSVM.fs" />
+    <Compile Include="src\CrfSuite.fs" />
     <None Include="paket.references" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Semagle.Numerics.Vectors\Semagle.Numerics.Vectors.fsproj" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
