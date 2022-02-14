@@ -385,15 +385,15 @@ module SMO =
                         // shrink on next iteration
                         optimize_shrinking (k + 1) 1 N unshrinked
                     else
-                        logger { info (sprintf "iterations = %d, objective = %f" k (objective N)) }
+                        logger { debug (sprintf "iterations = %d, objective = %f" k (objective N)) }
                 else
                     if optimize_solve n then
                         let s = if s > 0 then s else shrinkingIterations
                         optimize_shrinking (k + 1) s n unshrinked
                     else
-                        logger { info ((sprintf "iterations = %d, objective = %f" k (objective N))) }
+                        logger { debug ((sprintf "iterations = %d, objective = %f" k (objective N))) }
              else
-                logger { warn ((sprintf "Exceeded iterations limit = %d, objective = %f" k (objective n))) }
+                logger { warn (sprintf "Exceeded iterations limit = %d, objective = %f" k (objective n)) }
 
         /// optimize without shrinking every 1000 iterations
         let rec optimize_non_shrinking k =
