@@ -93,7 +93,7 @@ module OneSlack =
 
         let logger = LoggerBuilder(Log.create "OneSlack")
 
-        logger { info (sprintf "dimensons = %d" parameters.dimensions)}
+        logger { debug (sprintf "dimensons = %d" parameters.dimensions)}
 
         let N = Array.length X
         let W = Array.zeroCreate<float> parameters.dimensions
@@ -157,13 +157,16 @@ module OneSlack =
                     for n = 0 to indices.Length-1 do
                         sum_i <- sum_i + W.[indices.[n]] * (float values.[n])
                     sum <- sum + (L_k.[i] - mu_i * sum_i)
-                DivideByInt sum N
+                max (DivideByInt sum N) 0.0
 
             if (Array.isEmpty X') then
-                System.Double.NegativeInfinity
+                0.0
             else
-                (if options.parallelize then Array.Parallel.init else Array.init) X'.Length xi_k
-                |> Array.max
+                let xi = (if options.parallelize then Array.Parallel.init else Array.init) X'.Length xi_k
+
+                logger { verbose(sprintf "xi=%A" xi) }
+
+                xi |> Array.max
 
         let inline solve X' Y' A C p = 
             logger { verbose(sprintf "A=%A" A) }
@@ -200,15 +203,13 @@ module OneSlack =
         let rec optimize (k : int) (Y' : float32[]) (A : float[]) (C : float[]) (p : float[]) =
             logger { debug (sprintf "iteration = %d" k) }
 
-            let xi = solve X' Y' A C p
-
-            logger { debug (sprintf "A=%A" A) }
+            let xi_max = solve X' Y' A C p
 
             let x_k,h = newConstraint ()
 
             let xi_k = DivideByInt (float (Array.sum h)) N
 
-            if not (isOptimal xi xi_k) then
+            if not (isOptimal xi_max xi_k) then
                 X' <- append X' x_k
                 let Y' = append Y' 1.0f
                 let C = append C parameters.C
@@ -218,7 +219,7 @@ module OneSlack =
 
                 optimize (k+1) Y' A C p
             else
-                logger { info (sprintf "iteration=%d, xi=%f" k xi)}
+                logger { debug (sprintf "iteration=%d, xi=%f" k xi_max)}
 
         optimize (* k *) 0 (* Y' *) Array.empty (* A *) Array.empty (* p *) Array.empty (* C *) Array.empty
 
