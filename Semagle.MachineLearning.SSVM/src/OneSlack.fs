@@ -144,21 +144,21 @@ module OneSlack =
             for k = 0 to A.Length-1 do
                 addToW W k (DivideByInt A.[k] N)
 
-        let inline xi () =
-            let xi_k k =
-                let L_k = snd X'.[k]
-                let dJF_k = dJF.[k]
-                let mutable sum = 0.0
-                for i = 0 to L_k.Length-1 do
-                    let mu_i = mu L_k.[i]
-                    let indices = dJF_k.[i].Indices
-                    let values = dJF_k.[i].Values
-                    let mutable sum_i = 0.0
-                    for n = 0 to indices.Length-1 do
-                        sum_i <- sum_i + W.[indices.[n]] * (float values.[n])
-                    sum <- sum + (L_k.[i] - mu_i * sum_i)
-                max (DivideByInt sum N) 0.0
+        let xi_k k =
+            let L_k = snd X'.[k]
+            let dJF_k = dJF.[k]
+            let mutable sum = 0.0
+            for i = 0 to L_k.Length-1 do
+                let mu_i = mu L_k.[i]
+                let indices = dJF_k.[i].Indices
+                let values = dJF_k.[i].Values
+                let mutable sum_i = 0.0
+                for n = 0 to indices.Length-1 do
+                    sum_i <- sum_i + W.[indices.[n]] * (float values.[n])
+                sum <- sum + (L_k.[i] - mu_i * sum_i)
+            max (DivideByInt sum N) 0.0
 
+        let inline xi_max () =
             if (Array.isEmpty X') then
                 0.0
             else
@@ -180,7 +180,7 @@ module OneSlack =
 
                 reconstructW A
 
-            xi ()
+            xi_max ()
 
         let newConstraint () =
             let Y', L, H = 
@@ -188,10 +188,10 @@ module OneSlack =
                 |> Array.unzip3
             (Y',L), H
 
-        let inline isOptimal xi xi_k =
-            logger { debug (sprintf "xi=%f, xi_k=%f" xi xi_k) }
+        let inline isOptimal xi_max xi_new =
+            logger { debug (sprintf "xi_max=%f, xi_new=%f" xi_max xi_new) }
 
-            (xi_k - xi) <= options.epsilon
+            (xi_new - xi_max) <= options.epsilon
 
         let inline append (a : 'A[]) (e: 'A) =
             let M = Array.length a
@@ -205,17 +205,19 @@ module OneSlack =
 
             let xi_max = solve X' Y' A C p
 
-            let x_k,h = newConstraint ()
+            let x_new,h_new = newConstraint ()
 
-            let xi_k = DivideByInt (float (Array.sum h)) N
+            let xi_new = DivideByInt (float (Array.sum h_new)) N
 
-            if not (isOptimal xi_max xi_k) then
-                X' <- append X' x_k
+            if not (isOptimal xi_max xi_new) then
+                X' <- append X' x_new
                 let Y' = append Y' 1.0f
                 let C = append C parameters.C
                 let A = append A (parameters.C - Array.sum A)
-                let p = append p (DivideByInt (float -(Array.sum (snd x_k))) N)
+                let p = append p (DivideByInt (float -(Array.sum (snd x_new))) N)
                 Q.Resize (Array.length X')
+
+                assert (abs (xi_new - (xi_k k)) <= 0.000001)
 
                 optimize (k+1) Y' A C p
             else
