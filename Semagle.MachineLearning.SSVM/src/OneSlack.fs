@@ -126,13 +126,7 @@ module OneSlack =
             let L_k' = snd X'.[k']
             let dJF_k' = dJF.[k']
             for i = 0 to L_k'.Length-1 do
-                let mu_i = mu L_k'.[i]
-                let mutable sum_i = 0.0
-                let indices = dJF_k'.[i].Indices
-                let values = dJF_k'.[i].Values
-                for n = 0 to indices.Length-1 do
-                    sum_i <- sum_i + W_k.[indices.[n]] * (float values.[n])
-                sum <- sum + mu_i * sum_i
+                sum <- sum + (mu L_k'.[i]) * (W_k .* dJF_k'.[i])
 
             DivideByInt (float32 sum) (N*N)
 
@@ -149,13 +143,7 @@ module OneSlack =
             let dJF_k = dJF.[k]
             let mutable sum = 0.0
             for i = 0 to L_k.Length-1 do
-                let mu_i = mu L_k.[i]
-                let indices = dJF_k.[i].Indices
-                let values = dJF_k.[i].Values
-                let mutable sum_i = 0.0
-                for n = 0 to indices.Length-1 do
-                    sum_i <- sum_i + W.[indices.[n]] * (float values.[n])
-                sum <- sum + (L_k.[i] - mu_i * sum_i)
+                sum <- sum + (L_k.[i] - (mu L_k.[i]) * (W .* dJF_k.[i]))
             max (DivideByInt sum N) 0.0
 
         let inline xi_max () =
