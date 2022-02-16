@@ -24,12 +24,13 @@
     <Compile Include="src\LRF.fs" />
     <Compile Include="src\OneSlack.fs" />
     <Compile Include="src\MultiClass.fs" />
+    <Compile Include="src\Sequence.fs" />
     <None Include="samples\MultiClass.fsx" />
+    <None Include="samples\Sequence.fsx" />
     <None Include="paket.references" />
-   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Semagle.Numerics.Vectors\Semagle.Numerics.Vectors.fsproj" />
+    <ProjectReference Include="..\Semagle.Algorithms\Semagle.Algorithms.fsproj" />
     <ProjectReference Include="..\Semagle.Logging\Semagle.Logging.fsproj" />
+    <ProjectReference Include="..\Semagle.Numerics.Vectors\Semagle.Numerics.Vectors.fsproj" />
     <ProjectReference Include="..\Semagle.MachineLearning.SVM\Semagle.MachineLearning.SVM.fsproj" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
