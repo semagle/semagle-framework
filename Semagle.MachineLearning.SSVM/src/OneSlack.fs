@@ -171,10 +171,8 @@ module OneSlack =
             xi_max ()
 
         let newConstraint () =
-            let Y', L, H = 
-                (if options.parallelize then Array.Parallel.init else Array.init) N (parameters.argmax W) 
-                |> Array.unzip3
-            (Y',L), H
+            (if options.parallelize then Array.Parallel.init else Array.init) N (parameters.argmax W) 
+            |> Array.unzip
 
         let inline isOptimal xi_max xi_new =
             logger { debug (sprintf "xi_max=%f, xi_new=%f" xi_max xi_new) }
@@ -193,16 +191,17 @@ module OneSlack =
 
             let xi_max = solve X' Y' A C p
 
-            let x_new,h_new = newConstraint ()
+            let y_new, delta_new = newConstraint ()
 
-            let xi_new = DivideByInt (float (Array.sum h_new)) N
+            let xi_new = DivideByInt (float (Array.sumBy (fun (delta : Delta) -> delta.Value) delta_new)) N
 
             if not (isOptimal xi_max xi_new) then
-                X' <- append X' x_new
+                let loss_new = Array.map (fun (delta : Delta) -> delta.Loss) delta_new
+                X' <- append X' (y_new, loss_new)
                 let Y' = append Y' 1.0f
                 let C = append C parameters.C
                 let A = append A (parameters.C - Array.sum A)
-                let p = append p (DivideByInt (float -(Array.sum (snd x_new))) N)
+                let p = append p (DivideByInt (float -(Array.sum loss_new)) N)
                 Q.Resize (Array.length X')
 
                 assert (abs (xi_new - (xi_k k)) <= 0.000001)

@@ -15,6 +15,8 @@
 namespace Semagle.MachineLearning.SSVM
 
 open Semagle.Numerics.Vectors
+open System
+open System.Runtime.CompilerServices
 
 /// Simple feature function
 type FeatureFunction<'X> = 'X -> Vector
@@ -31,8 +33,33 @@ type Rescaling = Slack | Margin
 /// Structured SVM loss function type
 type LossFunction<'Y> = (* y *) 'Y -> (* y' *)'Y -> float
 
-/// Argmax function result
-type Argmax<'Y> = (* y *) 'Y * (* loss *) float * (* cost *) float
+/// Delta value
+[<Struct;IsReadOnly;CustomEquality;CustomComparison>]
+type Delta(rescaling: Rescaling, loss: float, dJFxW: float) =
+    member _.Rescaling = rescaling
+    member _.Loss = loss
+    member _.WxdJF = dJFxW
+    member _.Value =
+        match rescaling with
+        | Slack -> loss*(1.0 - dJFxW)
+        | Margin -> loss - dJFxW
+
+    override a.Equals b =
+        match b with
+        | :? Delta as b -> a.Value = b.Value
+        | _ -> failwith "Invalid equality for Delta"
+
+    override a.GetHashCode () =
+        a.Value.GetHashCode ()
+
+    interface IComparable with
+        member a.CompareTo b =
+            match b with
+            | :? Delta as b -> sign (a.Value - b.Value)
+            | _ -> failwith "Invalid comparison for Delta"
+
+    static member (+)(a: Delta, b: Delta) =
+        Delta(a.Rescaling, a.Loss + b.Loss, a.WxdJF + b.WxdJF)
 
 /// Argmax function type
-type ArgmaxFunction<'Y> = (* W *) float[] -> (* i *) int -> Argmax<'Y>
+type ArgmaxFunction<'Y> = (* W *) float[] -> (* i *) int -> 'Y * Delta

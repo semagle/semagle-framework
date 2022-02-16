@@ -59,19 +59,16 @@ module MultiClass =
             let W_k = Span<float>(W, D*k, D)
             // TODO: Check W_k .* F in future F# compilers
             let WxJF = SparseVector.(.*)(W_k, F_x)
-            let y_max, loss_max, cost_max =
+            let y_max, delta_max =
                 Y'
                 |> Array.map (fun y' ->
                     let k' = Array.findIndex ((=) y') Y'
                     let W_k' = Span<float>(W, D*k', D)
                     // TODO: Check W_k' .* F in future F# compilers
                     let WxdJF = WxJF - SparseVector.(.*)(W_k', F_x)
-                    let loss = loss y y'
-                    let m = match options.rescaling with | Slack -> loss | Margin -> 1.0
-                    let cost = loss - m*WxdJF
-                    (y', loss, cost))
-                |> Array.maxBy (fun (_, _, cost) -> cost)
-            y_max, loss_max, cost_max
+                    (y', Delta(options.rescaling, loss y y', WxdJF)))
+                |> Array.maxBy (fun (_, delta) -> delta)
+            y_max, delta_max
 
         let W = OneSlack.oneSlack X Y JF { C = parameters.C; dimensions = K*D; loss = loss; argmax = argmax } options
 
