@@ -166,6 +166,8 @@ module OneSlack =
                 SMO.C_SMO X' Y' Q { A = A; C = C; p = p } 
                           { options.SMO with epsilon = options.epsilon * 2.0 } |> ignore
 
+                assert (abs ((Array.sum A) - parameters.C) <= 0.000001)
+
                 reconstructW A
 
             xi_max ()
