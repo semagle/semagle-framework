@@ -1,5 +1,4 @@
-﻿// Copyright 2018-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)
-//
+﻿//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -31,7 +30,7 @@ module MultiClass =
     }
 
     let defaultMultiClass : MultiClass<'Y> = {
-        C = 1.0; loss = (fun y y' -> if y = y' then 0.0 else 1.0)
+        C = 1.0; loss = (fun y y' -> if y = y' then 0.0 else 100.0)
     }
 
     /// Learn structured SVM model for multi-class classification
