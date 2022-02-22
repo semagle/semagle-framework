@@ -41,16 +41,22 @@ module LRU =
         let mutable N = N
 
         /// Resize columns of Q matrix
-        member lru.Resize (n : int) =
+        member lru.Resize (N' : int) =
             for k = 0 to indices.Length - 1 do
-                if n > N then
-                    let column = Array.zeroCreate n
+                if N' > N then
+                    let column = Array.zeroCreate N'
                     Array.blit columns.[k] 0 column 0 N
                     columns.[k] <- column
                 else
-                    columns.[k] <- columns.[k].[..n-1]
-                    lengths.[k] <- n
-            N <- n
+                    columns.[k] <- columns.[k].[..N'-1]
+
+                    if indices.[k] >= N'-1 then
+                        indices.[k] <- not_found
+                        lengths.[k] <- 0
+                    else
+                        lengths.[k] <- min N' lengths.[k]
+
+            N <- N'
 
         /// Returns L elements of j-th column of Q matrix
         member lru.Get (j : int) (L : int) =
@@ -103,16 +109,17 @@ module LRU =
         member lru.Swap (i : int) (j : int) =
             for k = 0 to indices.Length - 1 do
                 let index_k = indices.[k]
-                if index_k = i then indices.[k] <- j
-                else if index_k = j then indices.[k] <- i
+                if index_k <> not_found then
+                    if index_k = i then indices.[k] <- j
+                    else if index_k = j then indices.[k] <- i
 
-                let length = lengths.[k]
-                if i < length && j < length then
-                    swap columns.[k] i j
-                else if i >= length && j < length then
-                    columns.[k].[j] <- Q index_k i
-                else if i < length && j >= length then
-                    columns.[k].[i] <- Q index_k j
+                    let length = lengths.[k]
+                    if i < length && j < length then
+                        swap columns.[k] i j
+                    else if i >= length && j < length then
+                        columns.[k].[j] <- Q index_k i
+                    else if i < length && j >= length then
+                        columns.[k].[i] <- Q index_k j
 
         /// Try to find computed column values
         member private lru.tryFindIndex i =
