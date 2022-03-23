@@ -30,6 +30,14 @@ module LRF =
         let indices = Array.create capacity not_found
         let columns = Array.zeroCreate<SparseVector[]> capacity
 
+        /// Remove columns of dJF matrix
+        member lrf.Resize M =
+            lock lrf (fun () ->
+                for n = 0 to indices.Length-1 do
+                    if indices.[n] >= M-1 then
+                        indices.[n] <- not_found
+                        columns.[n] <- null)
+
         /// Returns k-th column of dJF matrix
         member lrf.Item i =
             lock lrf (fun () ->
@@ -48,7 +56,7 @@ module LRF =
                         else
                             Array.init N (fun j -> dJF i j)
 
-                    lrf.shiftAndReplace (indices.Length-1) i column
+                    lrf.shiftAndReplace (indices.Length - 1) i column
 
                     column)
 
