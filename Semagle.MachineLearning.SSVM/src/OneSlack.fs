@@ -51,6 +51,13 @@ module OneSlack =
         argmax : ArgmaxFunction<'Y>
     }
 
+    [<Struct>]
+    type Constraint<'Y> = {
+        Y : 'Y[]
+        loss: float[]
+        mutable inactive: int
+    }
+
     /// Q matrix for structured problems
     type private Q_S(size: int<MB>, N : int, Q : int -> int -> float32, dJF : LRF, parallelize : bool) =
         let mutable N = N
@@ -58,7 +65,8 @@ module OneSlack =
         let lru = LRU(size, N, Q, parallelize)
 
         /// Resize Q matrix
-        member this.Resize (N' : int) =
+        member _.Resize (N' : int) =
+            dJF.Resize N'
             lru.Resize N'
             if N' > N then
                 let D' = Array.zeroCreate N'
@@ -74,8 +82,8 @@ module OneSlack =
 
         interface SMO.Q with
             /// Swap column elements
-            member q.Swap (i : int) (j : int) = 
-                lru.Swap i j
+            member q.Swap (i : int) (j : int) =
+                lru.Swap i j // always swap before dJF to compute missing Q
                 swap D i j
                 dJF.Swap i j
 
@@ -98,15 +106,15 @@ module OneSlack =
         let N = Array.length X
         let W = Array.zeroCreate<float> parameters.dimensions
 
-        let mutable X' = Array.empty<(* Y *) 'Y[] * (* Loss *) float[]>
+        let mutable X' = Array.empty<Constraint<'Y>>
 
-        let dJF = LRF(100, N, (fun k i -> let Y' = fst X'.[k] in (JF X.[i] Y.[i]) - (JF X.[i] Y'.[i])), options.parallelize)
+        let dJF = LRF(100, N, (fun k i -> let Y' = X'.[k].Y in (JF X.[i] Y.[i]) - (JF X.[i] Y'.[i])), options.parallelize)
 
         let mu L = match options.rescaling with | Slack -> L | Margin -> 1.0
         
         let inline addToW (W : float[]) k a =
             if a <> 0.0 then
-                let L_k = snd X'.[k]
+                let L_k = X'.[k].loss
                 let dJF_k = dJF.[k]
                 for i = 0 to L_k.Length - 1 do
                     let mu_i = mu L_k.[i]
@@ -123,7 +131,7 @@ module OneSlack =
 
             // H = \sum\limits_{i=1}^n \mu_i \sum\limits_{j=1}^N W_k[j] \delta\Psi_i(y_i^{k'})[j] / n^2
             let mutable sum = 0.0
-            let L_k' = snd X'.[k']
+            let L_k' = X'.[k'].loss
             let dJF_k' = dJF.[k']
             for i = 0 to L_k'.Length-1 do
                 sum <- sum + (mu L_k'.[i]) * (W_k .* dJF_k'.[i])
@@ -131,30 +139,30 @@ module OneSlack =
             DivideByInt (float32 sum) (N*N)
 
         let M = int (1.0 / options.epsilon)
-        let Q = Q_S(options.SMO.cacheSize, 0, H, dJF, options.SMO.parallelize)
+        let Q = Q_S(options.SMO.cacheSize, 0, H, dJF, false (* options.SMO.parallelize *))
 
         let inline reconstructW (A : float[]) =
             Array.fill W 0 W.Length 0.0
             for k = 0 to A.Length-1 do
                 addToW W k (DivideByInt A.[k] N)
 
-        let xi_k k =
-            let L_k = snd X'.[k]
+        let slack_k k =
+            let L_k = X'.[k].loss
             let dJF_k = dJF.[k]
             let mutable sum = 0.0
             for i = 0 to L_k.Length-1 do
                 sum <- sum + (L_k.[i] - (mu L_k.[i]) * (W .* dJF_k.[i]))
             max (DivideByInt sum N) 0.0
 
-        let inline xi_max () =
+        let inline slack_max () =
             if (Array.isEmpty X') then
                 0.0
             else
-                let xi = (if options.parallelize then Array.Parallel.init else Array.init) X'.Length xi_k
+                let slack = (if options.parallelize then Array.Parallel.init else Array.init) X'.Length slack_k
 
-                logger { verbose(sprintf "xi=%A" xi) }
+                logger { verbose(sprintf "slack=%A" slack) }
 
-                xi |> Array.max
+                slack |> Array.max
 
         let inline solve X' Y' A C p = 
             logger { verbose(sprintf "A=%A" A) }
@@ -164,22 +172,27 @@ module OneSlack =
 
             if not (Array.isEmpty X') then
                 SMO.C_SMO X' Y' Q { A = A; C = C; p = p } 
-                          { options.SMO with epsilon = options.epsilon * 2.0 } |> ignore
+                          { options.SMO with epsilon = options.epsilon * 2.0; parallelize = false } |> ignore
 
                 assert (abs ((Array.sum A) - parameters.C) <= 0.000001)
 
+                logger { debug(sprintf "A=%A" A) }
+                logger { debug(sprintf "inactive=%A" (Array.map (fun C -> C.inactive) X'))}
+
                 reconstructW A
 
-            xi_max ()
+            slack_max ()
 
         let newConstraint () =
             (if options.parallelize then Array.Parallel.init else Array.init) N (parameters.argmax W) 
             |> Array.unzip
 
-        let inline isOptimal xi_max xi_new =
-            logger { debug (sprintf "xi_max=%f, xi_new=%f" xi_max xi_new) }
+        let inline isOptimal slack_max slack_new =
+            logger { debug (sprintf "slack_max=%f - slack_new=%f = %f"
+                                    slack_max slack_new (slack_new - slack_max)) }
+            assert (slack_new + 1e-6 >= slack_max)
 
-            (xi_new - xi_max) <= options.epsilon
+            (slack_new - slack_max) <= options.epsilon
 
         let inline append (a : 'A[]) (e: 'A) =
             let M = Array.length a
@@ -188,29 +201,52 @@ module OneSlack =
             b.[M] <- e
             b
 
+        let inline remove_inactive (Y' : float32[]) (A : float[]) (C : float[]) (p : float[]) =
+            for i = 0 to X'.Length - 1 do
+                if A.[i] = 0.0 then
+                    X'.[i].inactive <- X'.[i].inactive + 1
+
+            let mutable i = 0
+            let mutable j = X'.Length - 1
+            while i < j do
+                if X'.[i].inactive = 50 then
+                    (Q :> SMO.Q).Swap i j; swap X' i j
+                    swap Y' i j; swap A i j; swap C i j; swap p i j
+                    j <- j - 1
+                else
+                    i <- i + 1
+
+            if j <> X'.Length - 1 then
+                logger { debug(sprintf "Removed %d inactive" (X'.Length - 1 - j)) }
+                X' <- X'.[..j]; Q.Resize (j+1)
+                Y'.[..j], A.[..j], C.[..j], p.[..j]
+            else
+                Y', A, C, p
+
         let rec optimize (k : int) (Y' : float32[]) (A : float[]) (C : float[]) (p : float[]) =
             logger { debug (sprintf "iteration = %d" k) }
 
-            let xi_max = solve X' Y' A C p
+            let slack_max = solve X' Y' A C p
 
             let y_new, delta_new = newConstraint ()
 
-            let xi_new = DivideByInt (float (Array.sumBy (fun (delta : Delta) -> delta.Value) delta_new)) N
+            let slack_new = DivideByInt (float (Array.sumBy (fun (delta : Delta) -> delta.Value) delta_new)) N
 
-            if not (isOptimal xi_max xi_new) then
+            if not (isOptimal slack_max slack_new) then
+                let Y', A, C, p = remove_inactive Y' A C p
                 let loss_new = Array.map (fun (delta : Delta) -> delta.Loss) delta_new
-                X' <- append X' (y_new, loss_new)
+                X' <- append X' { Y = y_new; loss = loss_new; inactive = 0 }
                 let Y' = append Y' 1.0f
                 let C = append C parameters.C
                 let A = append A (parameters.C - Array.sum A)
                 let p = append p (DivideByInt (float -(Array.sum loss_new)) N)
                 Q.Resize (Array.length X')
 
-                assert (abs (xi_new - (xi_k k)) <= 0.000001)
+                assert (abs (slack_new - (slack_k (X'.Length - 1))) <= 0.000001)
 
                 optimize (k+1) Y' A C p
             else
-                logger { debug (sprintf "iteration=%d, xi=%f" k xi_max)}
+                logger { debug (sprintf "iteration=%d, slack=%f" k slack_max)}
 
         optimize (* k *) 0 (* Y' *) Array.empty (* A *) Array.empty (* p *) Array.empty (* C *) Array.empty
 
