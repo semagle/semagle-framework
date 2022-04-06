@@ -32,12 +32,14 @@ module OneSlack =
         rescaling : Rescaling;
         /// Parellelize
         parallelize : bool;
+        /// Features Cache size
+        cacheSize: int;
         /// SMO optimization options
         SMO : SMO.OptimizationOptions
     }
 
     let defaultOptimizationOptions : OptimizationOptions = {
-        epsilon = 0.001; rescaling = Slack; parallelize = true; SMO = SMO.defaultOptimizationOptions
+        epsilon = 0.001; rescaling = Slack; parallelize = true; cacheSize = 500; SMO = SMO.defaultOptimizationOptions
     }
 
     type OneSlack<'X,'Y> = {
@@ -108,7 +110,9 @@ module OneSlack =
 
         let mutable X' = Array.empty<Constraint<'Y>>
 
-        let dJF = LRF(100, N, (fun k i -> let Y' = X'.[k].Y in (JF X.[i] Y.[i]) - (JF X.[i] Y'.[i])), options.parallelize)
+        let dJF = LRF(options.cacheSize, N,
+                      (fun k i -> let Y' = X'.[k].Y in (JF X.[i] Y.[i]) - (JF X.[i] Y'.[i])),
+                      options.parallelize)
 
         let mu L = match options.rescaling with | Slack -> L | Margin -> 1.0
         
