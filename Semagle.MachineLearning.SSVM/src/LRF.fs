@@ -14,74 +14,70 @@
 
 namespace Semagle.MachineLearning.SSVM
 
+open System.Collections.Generic
 open Semagle.Numerics.Vectors
 
 module LRF =
-    [<Literal>]
-    let private not_found = -1
-
-    let inline swap (a : 'A[]) i j =
-        let tmp = a.[i]
-        a.[i] <- a.[j]
-        a.[j] <- tmp
+    [<Struct>]
+    type private Column = { index : int; features: SparseVector[] }
 
     /// LRU list of computed feature columns
     type LRF(capacity : int, N : int, dJF : int -> int -> SparseVector, parallelize : bool) =
-        let indices = Array.create capacity not_found
-        let columns = Array.zeroCreate<SparseVector[]> capacity
+        let indices = Dictionary<int, LinkedListNode<Column>>()
+        let columns = LinkedList<Column>()
 
         /// Remove columns of dJF matrix
         member lrf.Resize M =
             lock lrf (fun () ->
-                for n = 0 to indices.Length-1 do
-                    if indices.[n] >= M-1 then
-                        indices.[n] <- not_found
-                        columns.[n] <- null)
+                let mutable node = columns.First
+                while node <> null do
+                    if node.Value.index >= M-1 then
+                        let removed = node
+                        node <- node.Next
+                        indices.Remove removed.Value.index |> ignore
+                        columns.Remove removed
+                    else
+                        node <- node.Next)
 
         /// Returns k-th column of dJF matrix
         member lrf.Item i =
             lock lrf (fun () ->
-                let k = lrf.tryFindIndex i
-                if k <> not_found then
-                    let column = columns.[k]
-
-                    if k <> 0 then
-                        lrf.shiftAndReplace k i column
-
-                    column
+                let mutable node : LinkedListNode<Column> = null
+                if indices.TryGetValue (i, &node) then
+                    columns.Remove node
                 else
-                    let column =
+                    if columns.Count >= capacity then
+                        indices.Remove columns.Last.Value.index |> ignore
+                        columns.RemoveLast ()
+
+                    let features =
                         if parallelize then
                             Array.Parallel.init N (fun j -> dJF i j)
                         else
                             Array.init N (fun j -> dJF i j)
 
-                    lrf.shiftAndReplace (indices.Length - 1) i column
+                    node <- LinkedListNode({ index = i; features = features })
+                    indices.Add (i, node) 
 
-                    column)
+                columns.AddFirst node
+
+                node.Value.features)
 
         /// Swap column elements
         member lrf.Swap (i : int) (j : int) =
             lock lrf (fun () ->
-                 for k = 0 to indices.Length - 1 do
-                    let index_k = indices.[k]
-                    if index_k = i then indices.[k] <- j
-                    else if index_k = j then indices.[k] <- i)
+                let mutable node_i : LinkedListNode<Column> = null
+                if indices.TryGetValue (i, &node_i) then
+                    indices.Remove i |> ignore
+                    node_i.Value <- { index = j; features = node_i.Value.features }
 
-        /// Try to find computed column values
-        member private lrf.tryFindIndex i =
-            let mutable k = 0
-            while k < indices.Length && indices.[k] <> i do
-                k <- k + 1
+                let mutable node_j : LinkedListNode<Column> = null
+                if indices.TryGetValue (j, &node_j) then
+                    indices.Remove j |> ignore
+                    node_j.Value <- { index = i; features = node_j.Value.features }
 
-            if k < indices.Length then k else not_found
+                if node_i <> null then
+                    indices.Add (j, node_i)
 
-        /// Shift [0,k-1]-th elements and replace 0-th element
-        member private lrf.shiftAndReplace k i column =
-            // shift [0,k-1]-th elements
-            for k' = k downto 1 do
-                indices.[k'] <- indices.[k'-1]
-                columns.[k'] <- columns.[k'-1]
-            // replace 0-th element
-            indices.[0] <- i
-            columns.[0] <- column
+                if node_j <> null then
+                    indices.Add (i, node_j))
