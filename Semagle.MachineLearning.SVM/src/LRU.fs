@@ -80,14 +80,18 @@ module LRU =
                         columns.[k'] <- columns.[k'-1]
                     // replace 0-th element
                     indices.[0] <- j
-                    lengths.[0] <- L
+                    lengths.[0] <- max length L
                     columns.[0] <- column
 
                 column
             else
-                let column = columns.[columns.Length-1]
+                let mutable k = 0
+                while k < indices.Length - 1 && indices.[k] <> not_found do
+                    k <- k + 1
+
+                let column = columns.[k]
                 // shift [0,...]-th element
-                for k' = indices.Length-1 downto 1 do
+                for k' = k downto 1 do
                     indices.[k'] <- indices.[k'-1]
                     lengths.[k'] <- lengths.[k'-1]
                     columns.[k'] <- columns.[k'-1]
