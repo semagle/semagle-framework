@@ -210,7 +210,9 @@ module OneSlack =
             let mutable i = 0
             let mutable j = X'.Length - 1
             while i < j do
-                if X'.[i].inactive = 50 then
+                if X'.[j].inactive = 50 then
+                    j <- j - 1
+                else if X'.[i].inactive = 50 then
                     swapAll Y' A C p i j
                     j <- j - 1
                 else
