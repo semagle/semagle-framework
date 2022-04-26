@@ -198,12 +198,9 @@ module OneSlack =
 
             (slack_new - slack_max) <= options.epsilon
 
-        let inline append (a : 'A[]) (e: 'A) =
-            let M = Array.length a
-            let b = Array.zeroCreate<'A> (M+1)
-            Array.blit a 0 b 0 M
-            b.[M] <- e
-            b
+        let inline swapAll (Y' : float32[]) (A : float[]) (C : float[]) (p : float[]) (i : int) (j : int) =
+            (Q :> SMO.Q).Swap i j; swap X' i j
+            swap Y' i j; swap A i j; swap C i j; swap p i j
 
         let inline remove_inactive (Y' : float32[]) (A : float[]) (C : float[]) (p : float[]) =
             for i = 0 to X'.Length - 1 do
@@ -214,8 +211,7 @@ module OneSlack =
             let mutable j = X'.Length - 1
             while i < j do
                 if X'.[i].inactive = 50 then
-                    (Q :> SMO.Q).Swap i j; swap X' i j
-                    swap Y' i j; swap A i j; swap C i j; swap p i j
+                    swapAll Y' A C p i j
                     j <- j - 1
                 else
                     i <- i + 1
@@ -226,6 +222,13 @@ module OneSlack =
                 Y'.[..j], A.[..j], C.[..j], p.[..j]
             else
                 Y', A, C, p
+
+        let inline append (a : 'A[]) (e: 'A) =
+            let M = Array.length a
+            let b = Array.zeroCreate<'A> (M+1)
+            Array.blit a 0 b 0 M
+            b.[M] <- e
+            b
 
         let rec optimize (k : int) (Y' : float32[]) (A : float[]) (C : float[]) (p : float[]) =
             logger { debug (sprintf "iteration = %d" k) }
@@ -238,6 +241,7 @@ module OneSlack =
 
             if not (isOptimal slack_max slack_new) then
                 let Y', A, C, p = remove_inactive Y' A C p
+
                 let loss_new = Array.map (fun (delta : Delta) -> delta.Loss) delta_new
                 X' <- append X' { Y = y_new; loss = loss_new; inactive = 0 }
                 let Y' = append Y' 1.0f
@@ -247,6 +251,13 @@ module OneSlack =
                 Q.Resize (Array.length X')
 
                 assert (abs (slack_new - (slack_k (X'.Length - 1))) <= 0.000001)
+
+                if options.SMO.shrinking then
+                    let mutable i = A.Length - 1
+                    while i > 0 && A.[i-1] = 0.0 do
+                        i <- i - 1
+                    if i < A.Length - 1 && A.[i] = 0.0 then
+                        swapAll Y' A C p i (A.Length - 1)
 
                 optimize (k+1) Y' A C p
             else
