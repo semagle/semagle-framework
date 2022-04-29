@@ -78,8 +78,23 @@ let main(args) =
         |> Array.sumBy (fun (ts, ps) ->
             (Array.zip ts ps) |> Array.sumBy (fun (t, p) -> if t = p then 1 else 0))
 
+    let test_y = Array.collect id test_y
+    let predict_y = Array.collect id predict_y
+
+    let recall = Classification.recall test_y predict_y
+    let precision = Classification.precision test_y predict_y
+    let f1 = Classification.f1 test_y predict_y
+
+    printfn "Recall, precision and F1 per class"
+    Seq.ofArray test_y
+    |> Seq.iter (fun y ->
+        printfn "%A = %g, %g, %g" y (Map.find y recall) (Map.find y precision) (Map.find y f1))
+
     printfn "Accuracy = %f(%d/%d)"
             ((DivideByInt (float correct) total) * 100.0)
             correct total
+    printfn "Recall = %f" (recall |> Map.toSeq |> Seq.averageBy snd)
+    printfn "Precision = %f" (precision |> Map.toSeq |> Seq.averageBy snd)
+    printfn "F1 = %f" (f1 |> Map.toSeq |> Seq.averageBy snd)
 
     0
