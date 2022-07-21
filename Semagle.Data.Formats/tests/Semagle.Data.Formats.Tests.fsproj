@@ -3,6 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
+    <ReleaseVersion>1.0.0</ReleaseVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="LibSVMTests.fs" />

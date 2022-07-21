@@ -24,6 +24,7 @@ open Fake.Tools.Git
 open System.IO
 
 let configuration = Environment.environVarOrDefault "configuration" "Release"
+let githubToken = Environment.environVarOrNone "GITHUB_TOKEN"
 
 Target.initEnvironment ()
 
@@ -208,6 +209,33 @@ Target.create "ReleaseDocumentation" (fun _ ->
     Branches.push ghPages
 )
 
+Target.create "Pack" (fun _ ->
+    let distDir = __SOURCE_DIRECTORY__ @@ "dist"
+    Shell.cleanDir distDir
+
+    !! "**/*.*proj"
+    -- "**/samples/*.*proj"
+    -- "**/*.Tests.*proj"
+    |> Seq.iter (DotNet.pack (fun defaults -> {
+            defaults with
+                Configuration = DotNet.Custom configuration
+                OutputPath = Some(distDir)
+            }))
+)
+
+Target.create "Push" (fun _ ->
+    !! "dist/*.nupkg"
+    |> Seq.iter (DotNet.nugetPush (fun defaults -> {
+            defaults with
+                PushParams = {
+                    defaults.PushParams with
+                        DisableBuffering = true
+                        Source = Some "github"
+                        ApiKey = githubToken
+                }
+        }))
+)
+
 Target.create "All" ignore
 
 "Patch" ==> "BuildLibraries"
@@ -226,6 +254,8 @@ Target.create "All" ignore
 "BuildLibraries"
     ==> "BuildSamples"
     ==> "Publish"
+    ==> "Pack"
+    ==> "Push"
 
 "Clean"
   ==> "Build"

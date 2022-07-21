@@ -4,7 +4,9 @@
 paket-files
 .fake
 build
+dist
 packages
 *.userprefs
 bin
 obj
+nuget.config
