@@ -14,8 +14,8 @@ group Build
     nuget Fake.IO.FileSystem
     nuget Fake.Core.Target
     nuget Fake.Tools.Git
-    nuget FSharp.Formatting
-    nuget FSharp.Formatting.CommandTool
+    nuget FSharp.Formatting ~> 4
+    nuget FSharp.Formatting.CommandTool ~> 4
 
 group Test
     source https://api.nuget.org/v3/index.json
