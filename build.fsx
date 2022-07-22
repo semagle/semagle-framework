@@ -142,7 +142,7 @@ Target.create "GenerateReference" (fun _ ->
     |> Seq.map (fun projectFile ->
         let projectDir = Path.getDirectory(projectFile)
         let projectName = DirectoryInfo.ofPath(projectDir).Name
-        projectDir @@ "bin" @@ "Release" @@ "netstandard2.0" @@ (projectName + ".dll"))
+        projectDir @@ "bin" @@ "Release" @@ "netstandard2.1" @@ (projectName + ".dll"))
     |> FSFormatting.createDocsForDlls (fun args -> {
         args with
             OutputDirectory = referenceDir
