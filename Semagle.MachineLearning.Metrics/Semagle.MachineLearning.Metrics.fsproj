@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <ReleaseVersion>1.0.0</ReleaseVersion>
+    <ReleaseVersion>1.0.1</ReleaseVersion>
     <Copyright>Copyright 2017-2022 Serge Slipchenko (Serge.Slipchenko@gmail.com)</Copyright>
     <Description>Metrics for machine learning methods evaluation</Description>
     <RepositoryUrl>https://github.com/semagle/semagle-framework</RepositoryUrl>

@@ -19,7 +19,7 @@ open Semagle.Logging.Message
 
 type LoggerBuilder(logger : Logger) =
     let log (level : LogLevel) (message : unit -> string) =
-        logger.log level (fun level -> message() |> event level) |> Hopac.run |> ignore
+        logger.log level (fun level -> message() |> event level) |> queueIgnore
 
     member builder.Yield (()) = ()
 
@@ -32,7 +32,7 @@ type LoggerBuilder(logger : Logger) =
         log Debug message
 
     [<CustomOperation("info")>]
-    member builder.info (_ : unit, [<ProjectionParameter>] message : unit -> string) = 
+    member builder.info (_ : unit, [<ProjectionParameter>] message : unit -> string) =
         log Info message
 
     [<CustomOperation("warn")>]
